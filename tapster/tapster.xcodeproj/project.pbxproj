@@ -1,0 +1,527 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D51033251A55BF6800934BB1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D51033241A55BF6800934BB1 /* AppDelegate.swift */; };
+		D51033281A55BF6900934BB1 /* tapster.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D51033261A55BF6900934BB1 /* tapster.xcdatamodeld */; };
+		D510332A1A55BF6900934BB1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D51033291A55BF6900934BB1 /* ViewController.swift */; };
+		D510332D1A55BF6900934BB1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D510332B1A55BF6900934BB1 /* Main.storyboard */; };
+		D510332F1A55BF6900934BB1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D510332E1A55BF6900934BB1 /* Images.xcassets */; };
+		D51033321A55BF6900934BB1 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D51033301A55BF6900934BB1 /* LaunchScreen.xib */; };
+		D510333E1A55BF6900934BB1 /* tapsterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D510333D1A55BF6900934BB1 /* tapsterTests.swift */; };
+		D510334A1A55C01500934BB1 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033471A55C01500934BB1 /* Bolts.framework */; };
+		D510334B1A55C01600934BB1 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033481A55C01500934BB1 /* Parse.framework */; };
+		D510334C1A55C01600934BB1 /* ParseCrashReporting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033491A55C01500934BB1 /* ParseCrashReporting.framework */; };
+		D510334E1A55C11500934BB1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D510334D1A55C11500934BB1 /* AudioToolbox.framework */; };
+		D51033501A55C11B00934BB1 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D510334F1A55C11B00934BB1 /* CFNetwork.framework */; };
+		D51033521A55C12900934BB1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033511A55C12900934BB1 /* CoreGraphics.framework */; };
+		D51033541A55C13000934BB1 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033531A55C13000934BB1 /* CoreLocation.framework */; };
+		D51033561A55C13A00934BB1 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033551A55C13A00934BB1 /* MobileCoreServices.framework */; };
+		D51033581A55C14200934BB1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033571A55C14200934BB1 /* QuartzCore.framework */; };
+		D510335A1A55C14E00934BB1 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033591A55C14E00934BB1 /* Security.framework */; };
+		D510335C1A55C15500934BB1 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D510335B1A55C15500934BB1 /* StoreKit.framework */; };
+		D510335E1A55C17600934BB1 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D510335D1A55C17600934BB1 /* SystemConfiguration.framework */; };
+		D51033601A55C17F00934BB1 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D510335F1A55C17F00934BB1 /* libz.dylib */; };
+		D51033621A55C18800934BB1 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033611A55C18800934BB1 /* libsqlite3.dylib */; };
+		D51033641A55C19500934BB1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033631A55C19500934BB1 /* CoreData.framework */; };
+		D51033691A55C7EC00934BB1 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = D51033681A55C7EC00934BB1 /* background.png */; };
+		D510336B1A55E91300934BB1 /* tapSurface-r.png in Resources */ = {isa = PBXBuildFile; fileRef = D510336A1A55E91300934BB1 /* tapSurface-r.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D51033381A55BF6900934BB1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D51033171A55BF6800934BB1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D510331E1A55BF6800934BB1;
+			remoteInfo = tapster;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		D510331F1A55BF6800934BB1 /* tapster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tapster.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D51033231A55BF6800934BB1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D51033241A55BF6800934BB1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D51033271A55BF6900934BB1 /* tapster.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = tapster.xcdatamodel; sourceTree = "<group>"; };
+		D51033291A55BF6900934BB1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D510332C1A55BF6900934BB1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D510332E1A55BF6900934BB1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		D51033311A55BF6900934BB1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		D51033371A55BF6900934BB1 /* tapsterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = tapsterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D510333C1A55BF6900934BB1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D510333D1A55BF6900934BB1 /* tapsterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tapsterTests.swift; sourceTree = "<group>"; };
+		D51033471A55C01500934BB1 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bolts.framework; path = tapster/Bolts.framework; sourceTree = "<group>"; };
+		D51033481A55C01500934BB1 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = tapster/Parse.framework; sourceTree = "<group>"; };
+		D51033491A55C01500934BB1 /* ParseCrashReporting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ParseCrashReporting.framework; path = tapster/ParseCrashReporting.framework; sourceTree = "<group>"; };
+		D510334D1A55C11500934BB1 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		D510334F1A55C11B00934BB1 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		D51033511A55C12900934BB1 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		D51033531A55C13000934BB1 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		D51033551A55C13A00934BB1 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		D51033571A55C14200934BB1 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		D51033591A55C14E00934BB1 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		D510335B1A55C15500934BB1 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		D510335D1A55C17600934BB1 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		D510335F1A55C17F00934BB1 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		D51033611A55C18800934BB1 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		D51033631A55C19500934BB1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		D51033651A55C1EF00934BB1 /* tapster-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "tapster-Bridging-Header.h"; sourceTree = "<group>"; };
+		D51033681A55C7EC00934BB1 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
+		D510336A1A55E91300934BB1 /* tapSurface-r.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tapSurface-r.png"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D510331C1A55BF6800934BB1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D51033641A55C19500934BB1 /* CoreData.framework in Frameworks */,
+				D51033621A55C18800934BB1 /* libsqlite3.dylib in Frameworks */,
+				D51033601A55C17F00934BB1 /* libz.dylib in Frameworks */,
+				D510335E1A55C17600934BB1 /* SystemConfiguration.framework in Frameworks */,
+				D510335C1A55C15500934BB1 /* StoreKit.framework in Frameworks */,
+				D510335A1A55C14E00934BB1 /* Security.framework in Frameworks */,
+				D51033581A55C14200934BB1 /* QuartzCore.framework in Frameworks */,
+				D51033561A55C13A00934BB1 /* MobileCoreServices.framework in Frameworks */,
+				D51033541A55C13000934BB1 /* CoreLocation.framework in Frameworks */,
+				D51033521A55C12900934BB1 /* CoreGraphics.framework in Frameworks */,
+				D51033501A55C11B00934BB1 /* CFNetwork.framework in Frameworks */,
+				D510334E1A55C11500934BB1 /* AudioToolbox.framework in Frameworks */,
+				D510334B1A55C01600934BB1 /* Parse.framework in Frameworks */,
+				D510334C1A55C01600934BB1 /* ParseCrashReporting.framework in Frameworks */,
+				D510334A1A55C01500934BB1 /* Bolts.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D51033341A55BF6900934BB1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D51033161A55BF6800934BB1 = {
+			isa = PBXGroup;
+			children = (
+				D51033631A55C19500934BB1 /* CoreData.framework */,
+				D51033611A55C18800934BB1 /* libsqlite3.dylib */,
+				D510335F1A55C17F00934BB1 /* libz.dylib */,
+				D510335D1A55C17600934BB1 /* SystemConfiguration.framework */,
+				D510335B1A55C15500934BB1 /* StoreKit.framework */,
+				D51033591A55C14E00934BB1 /* Security.framework */,
+				D51033571A55C14200934BB1 /* QuartzCore.framework */,
+				D51033551A55C13A00934BB1 /* MobileCoreServices.framework */,
+				D51033531A55C13000934BB1 /* CoreLocation.framework */,
+				D51033511A55C12900934BB1 /* CoreGraphics.framework */,
+				D510334F1A55C11B00934BB1 /* CFNetwork.framework */,
+				D510334D1A55C11500934BB1 /* AudioToolbox.framework */,
+				D51033471A55C01500934BB1 /* Bolts.framework */,
+				D51033481A55C01500934BB1 /* Parse.framework */,
+				D51033491A55C01500934BB1 /* ParseCrashReporting.framework */,
+				D51033211A55BF6800934BB1 /* tapster */,
+				D510333A1A55BF6900934BB1 /* tapsterTests */,
+				D51033201A55BF6800934BB1 /* Products */,
+				D51033651A55C1EF00934BB1 /* tapster-Bridging-Header.h */,
+			);
+			sourceTree = "<group>";
+		};
+		D51033201A55BF6800934BB1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D510331F1A55BF6800934BB1 /* tapster.app */,
+				D51033371A55BF6900934BB1 /* tapsterTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D51033211A55BF6800934BB1 /* tapster */ = {
+			isa = PBXGroup;
+			children = (
+				D51033241A55BF6800934BB1 /* AppDelegate.swift */,
+				D51033291A55BF6900934BB1 /* ViewController.swift */,
+				D510332B1A55BF6900934BB1 /* Main.storyboard */,
+				D510332E1A55BF6900934BB1 /* Images.xcassets */,
+				D51033301A55BF6900934BB1 /* LaunchScreen.xib */,
+				D51033261A55BF6900934BB1 /* tapster.xcdatamodeld */,
+				D51033221A55BF6800934BB1 /* Supporting Files */,
+			);
+			path = tapster;
+			sourceTree = "<group>";
+		};
+		D51033221A55BF6800934BB1 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D510336A1A55E91300934BB1 /* tapSurface-r.png */,
+				D51033681A55C7EC00934BB1 /* background.png */,
+				D51033231A55BF6800934BB1 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D510333A1A55BF6900934BB1 /* tapsterTests */ = {
+			isa = PBXGroup;
+			children = (
+				D510333D1A55BF6900934BB1 /* tapsterTests.swift */,
+				D510333B1A55BF6900934BB1 /* Supporting Files */,
+			);
+			path = tapsterTests;
+			sourceTree = "<group>";
+		};
+		D510333B1A55BF6900934BB1 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D510333C1A55BF6900934BB1 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D510331E1A55BF6800934BB1 /* tapster */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D51033411A55BF6900934BB1 /* Build configuration list for PBXNativeTarget "tapster" */;
+			buildPhases = (
+				D510331B1A55BF6800934BB1 /* Sources */,
+				D510331C1A55BF6800934BB1 /* Frameworks */,
+				D510331D1A55BF6800934BB1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = tapster;
+			productName = tapster;
+			productReference = D510331F1A55BF6800934BB1 /* tapster.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D51033361A55BF6900934BB1 /* tapsterTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D51033441A55BF6900934BB1 /* Build configuration list for PBXNativeTarget "tapsterTests" */;
+			buildPhases = (
+				D51033331A55BF6900934BB1 /* Sources */,
+				D51033341A55BF6900934BB1 /* Frameworks */,
+				D51033351A55BF6900934BB1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D51033391A55BF6900934BB1 /* PBXTargetDependency */,
+			);
+			name = tapsterTests;
+			productName = tapsterTests;
+			productReference = D51033371A55BF6900934BB1 /* tapsterTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D51033171A55BF6800934BB1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+				ORGANIZATIONNAME = "iD Foundry";
+				TargetAttributes = {
+					D510331E1A55BF6800934BB1 = {
+						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = MN624PMPN4;
+					};
+					D51033361A55BF6900934BB1 = {
+						CreatedOnToolsVersion = 6.1.1;
+						TestTargetID = D510331E1A55BF6800934BB1;
+					};
+				};
+			};
+			buildConfigurationList = D510331A1A55BF6800934BB1 /* Build configuration list for PBXProject "tapster" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D51033161A55BF6800934BB1;
+			productRefGroup = D51033201A55BF6800934BB1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D510331E1A55BF6800934BB1 /* tapster */,
+				D51033361A55BF6900934BB1 /* tapsterTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D510331D1A55BF6800934BB1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D510332D1A55BF6900934BB1 /* Main.storyboard in Resources */,
+				D510336B1A55E91300934BB1 /* tapSurface-r.png in Resources */,
+				D51033691A55C7EC00934BB1 /* background.png in Resources */,
+				D51033321A55BF6900934BB1 /* LaunchScreen.xib in Resources */,
+				D510332F1A55BF6900934BB1 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D51033351A55BF6900934BB1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D510331B1A55BF6800934BB1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D510332A1A55BF6900934BB1 /* ViewController.swift in Sources */,
+				D51033251A55BF6800934BB1 /* AppDelegate.swift in Sources */,
+				D51033281A55BF6900934BB1 /* tapster.xcdatamodeld in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D51033331A55BF6900934BB1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D510333E1A55BF6900934BB1 /* tapsterTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D51033391A55BF6900934BB1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D510331E1A55BF6800934BB1 /* tapster */;
+			targetProxy = D51033381A55BF6900934BB1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		D510332B1A55BF6900934BB1 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D510332C1A55BF6900934BB1 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		D51033301A55BF6900934BB1 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D51033311A55BF6900934BB1 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D510333F1A55BF6900934BB1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D51033401A55BF6900934BB1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		D51033421A55BF6900934BB1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/tapster",
+				);
+				INFOPLIST_FILE = tapster/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "tapster-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D51033431A55BF6900934BB1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/tapster",
+				);
+				INFOPLIST_FILE = tapster/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "tapster-Bridging-Header.h";
+			};
+			name = Release;
+		};
+		D51033451A55BF6900934BB1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = tapsterTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/tapster.app/tapster";
+			};
+			name = Debug;
+		};
+		D51033461A55BF6900934BB1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = tapsterTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/tapster.app/tapster";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D510331A1A55BF6800934BB1 /* Build configuration list for PBXProject "tapster" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D510333F1A55BF6900934BB1 /* Debug */,
+				D51033401A55BF6900934BB1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D51033411A55BF6900934BB1 /* Build configuration list for PBXNativeTarget "tapster" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D51033421A55BF6900934BB1 /* Debug */,
+				D51033431A55BF6900934BB1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		D51033441A55BF6900934BB1 /* Build configuration list for PBXNativeTarget "tapsterTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D51033451A55BF6900934BB1 /* Debug */,
+				D51033461A55BF6900934BB1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		D51033261A55BF6900934BB1 /* tapster.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				D51033271A55BF6900934BB1 /* tapster.xcdatamodel */,
+			);
+			currentVersion = D51033271A55BF6900934BB1 /* tapster.xcdatamodel */;
+			path = tapster.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = D51033171A55BF6800934BB1 /* Project object */;
+}
