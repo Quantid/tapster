@@ -30,7 +30,14 @@
 		D51033621A55C18800934BB1 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033611A55C18800934BB1 /* libsqlite3.dylib */; };
 		D51033641A55C19500934BB1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033631A55C19500934BB1 /* CoreData.framework */; };
 		D51033691A55C7EC00934BB1 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = D51033681A55C7EC00934BB1 /* background.png */; };
-		D510336B1A55E91300934BB1 /* tapSurface-r.png in Resources */ = {isa = PBXBuildFile; fileRef = D510336A1A55E91300934BB1 /* tapSurface-r.png */; };
+		D51033711A56276500934BB1 /* leftOFF.png in Resources */ = {isa = PBXBuildFile; fileRef = D510336C1A56276500934BB1 /* leftOFF.png */; };
+		D51033721A56276500934BB1 /* leftON.png in Resources */ = {isa = PBXBuildFile; fileRef = D510336D1A56276500934BB1 /* leftON.png */; };
+		D51033731A56276500934BB1 /* rightOFF.png in Resources */ = {isa = PBXBuildFile; fileRef = D510336E1A56276500934BB1 /* rightOFF.png */; };
+		D51033741A56276500934BB1 /* rightON.png in Resources */ = {isa = PBXBuildFile; fileRef = D510336F1A56276500934BB1 /* rightON.png */; };
+		D51033751A56276500934BB1 /* tapSurface-l.png in Resources */ = {isa = PBXBuildFile; fileRef = D51033701A56276500934BB1 /* tapSurface-l.png */; };
+		D51033771A562B7B00934BB1 /* tapSurface-r.png in Resources */ = {isa = PBXBuildFile; fileRef = D51033761A562B7B00934BB1 /* tapSurface-r.png */; };
+		D5C1011A1A571A1A00580D31 /* ResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5C101191A571A1A00580D31 /* ResultsViewController.swift */; };
+		D5FD734A1A5797210038AAB6 /* cellResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5FD73491A5797210038AAB6 /* cellResults.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,7 +79,14 @@
 		D51033631A55C19500934BB1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		D51033651A55C1EF00934BB1 /* tapster-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "tapster-Bridging-Header.h"; sourceTree = "<group>"; };
 		D51033681A55C7EC00934BB1 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
-		D510336A1A55E91300934BB1 /* tapSurface-r.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tapSurface-r.png"; sourceTree = "<group>"; };
+		D510336C1A56276500934BB1 /* leftOFF.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = leftOFF.png; sourceTree = "<group>"; };
+		D510336D1A56276500934BB1 /* leftON.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = leftON.png; sourceTree = "<group>"; };
+		D510336E1A56276500934BB1 /* rightOFF.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rightOFF.png; sourceTree = "<group>"; };
+		D510336F1A56276500934BB1 /* rightON.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rightON.png; sourceTree = "<group>"; };
+		D51033701A56276500934BB1 /* tapSurface-l.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tapSurface-l.png"; sourceTree = "<group>"; };
+		D51033761A562B7B00934BB1 /* tapSurface-r.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tapSurface-r.png"; sourceTree = "<group>"; };
+		D5C101191A571A1A00580D31 /* ResultsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultsViewController.swift; sourceTree = "<group>"; };
+		D5FD73491A5797210038AAB6 /* cellResults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = cellResults.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +161,8 @@
 			children = (
 				D51033241A55BF6800934BB1 /* AppDelegate.swift */,
 				D51033291A55BF6900934BB1 /* ViewController.swift */,
+				D5C101191A571A1A00580D31 /* ResultsViewController.swift */,
+				D5FD73491A5797210038AAB6 /* cellResults.swift */,
 				D510332B1A55BF6900934BB1 /* Main.storyboard */,
 				D510332E1A55BF6900934BB1 /* Images.xcassets */,
 				D51033301A55BF6900934BB1 /* LaunchScreen.xib */,
@@ -159,7 +175,12 @@
 		D51033221A55BF6800934BB1 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				D510336A1A55E91300934BB1 /* tapSurface-r.png */,
+				D51033761A562B7B00934BB1 /* tapSurface-r.png */,
+				D510336C1A56276500934BB1 /* leftOFF.png */,
+				D510336D1A56276500934BB1 /* leftON.png */,
+				D510336E1A56276500934BB1 /* rightOFF.png */,
+				D510336F1A56276500934BB1 /* rightON.png */,
+				D51033701A56276500934BB1 /* tapSurface-l.png */,
 				D51033681A55C7EC00934BB1 /* background.png */,
 				D51033231A55BF6800934BB1 /* Info.plist */,
 			);
@@ -264,10 +285,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D51033741A56276500934BB1 /* rightON.png in Resources */,
+				D51033731A56276500934BB1 /* rightOFF.png in Resources */,
 				D510332D1A55BF6900934BB1 /* Main.storyboard in Resources */,
-				D510336B1A55E91300934BB1 /* tapSurface-r.png in Resources */,
+				D51033721A56276500934BB1 /* leftON.png in Resources */,
 				D51033691A55C7EC00934BB1 /* background.png in Resources */,
+				D51033751A56276500934BB1 /* tapSurface-l.png in Resources */,
+				D51033771A562B7B00934BB1 /* tapSurface-r.png in Resources */,
 				D51033321A55BF6900934BB1 /* LaunchScreen.xib in Resources */,
+				D51033711A56276500934BB1 /* leftOFF.png in Resources */,
 				D510332F1A55BF6900934BB1 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -286,8 +312,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5C1011A1A571A1A00580D31 /* ResultsViewController.swift in Sources */,
 				D510332A1A55BF6900934BB1 /* ViewController.swift in Sources */,
 				D51033251A55BF6800934BB1 /* AppDelegate.swift in Sources */,
+				D5FD734A1A5797210038AAB6 /* cellResults.swift in Sources */,
 				D51033281A55BF6900934BB1 /* tapster.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -499,6 +527,7 @@
 				D51033431A55BF6900934BB1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D51033441A55BF6900934BB1 /* Build configuration list for PBXNativeTarget "tapsterTests" */ = {
 			isa = XCConfigurationList;
@@ -507,6 +536,7 @@
 				D51033461A55BF6900934BB1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
