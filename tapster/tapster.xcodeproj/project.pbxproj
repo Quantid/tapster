@@ -34,8 +34,14 @@
 		D51033721A56276500934BB1 /* leftON.png in Resources */ = {isa = PBXBuildFile; fileRef = D510336D1A56276500934BB1 /* leftON.png */; };
 		D51033731A56276500934BB1 /* rightOFF.png in Resources */ = {isa = PBXBuildFile; fileRef = D510336E1A56276500934BB1 /* rightOFF.png */; };
 		D51033741A56276500934BB1 /* rightON.png in Resources */ = {isa = PBXBuildFile; fileRef = D510336F1A56276500934BB1 /* rightON.png */; };
-		D51033751A56276500934BB1 /* tapSurface-l.png in Resources */ = {isa = PBXBuildFile; fileRef = D51033701A56276500934BB1 /* tapSurface-l.png */; };
-		D51033771A562B7B00934BB1 /* tapSurface-r.png in Resources */ = {isa = PBXBuildFile; fileRef = D51033761A562B7B00934BB1 /* tapSurface-r.png */; };
+		D53DD1881A5C7C6400E8E59A /* background-history.png in Resources */ = {isa = PBXBuildFile; fileRef = D53DD1851A5C7C6400E8E59A /* background-history.png */; };
+		D53DD18D1A5C7F7B00E8E59A /* icon-notes.png in Resources */ = {isa = PBXBuildFile; fileRef = D53DD18B1A5C7F7B00E8E59A /* icon-notes.png */; };
+		D53DD18E1A5C7F7B00E8E59A /* icon-share.png in Resources */ = {isa = PBXBuildFile; fileRef = D53DD18C1A5C7F7B00E8E59A /* icon-share.png */; };
+		D53DD1901A5C833900E8E59A /* icon-menu-selector.png in Resources */ = {isa = PBXBuildFile; fileRef = D53DD18F1A5C833900E8E59A /* icon-menu-selector.png */; };
+		D53DD1931A5CDB8A00E8E59A /* button-chart.png in Resources */ = {isa = PBXBuildFile; fileRef = D53DD1911A5CDB8A00E8E59A /* button-chart.png */; };
+		D53DD1941A5CDB8A00E8E59A /* button-share.png in Resources */ = {isa = PBXBuildFile; fileRef = D53DD1921A5CDB8A00E8E59A /* button-share.png */; };
+		D53DD1971A5CE26300E8E59A /* tapSurface-l.png in Resources */ = {isa = PBXBuildFile; fileRef = D53DD1951A5CE26300E8E59A /* tapSurface-l.png */; };
+		D53DD1981A5CE26300E8E59A /* tapSurface-r.png in Resources */ = {isa = PBXBuildFile; fileRef = D53DD1961A5CE26300E8E59A /* tapSurface-r.png */; };
 		D5C1011A1A571A1A00580D31 /* ResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5C101191A571A1A00580D31 /* ResultsViewController.swift */; };
 		D5FD734A1A5797210038AAB6 /* cellResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5FD73491A5797210038AAB6 /* cellResults.swift */; };
 /* End PBXBuildFile section */
@@ -83,8 +89,14 @@
 		D510336D1A56276500934BB1 /* leftON.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = leftON.png; sourceTree = "<group>"; };
 		D510336E1A56276500934BB1 /* rightOFF.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rightOFF.png; sourceTree = "<group>"; };
 		D510336F1A56276500934BB1 /* rightON.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rightON.png; sourceTree = "<group>"; };
-		D51033701A56276500934BB1 /* tapSurface-l.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tapSurface-l.png"; sourceTree = "<group>"; };
-		D51033761A562B7B00934BB1 /* tapSurface-r.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tapSurface-r.png"; sourceTree = "<group>"; };
+		D53DD1851A5C7C6400E8E59A /* background-history.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "background-history.png"; sourceTree = "<group>"; };
+		D53DD18B1A5C7F7B00E8E59A /* icon-notes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-notes.png"; sourceTree = "<group>"; };
+		D53DD18C1A5C7F7B00E8E59A /* icon-share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-share.png"; sourceTree = "<group>"; };
+		D53DD18F1A5C833900E8E59A /* icon-menu-selector.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-menu-selector.png"; sourceTree = "<group>"; };
+		D53DD1911A5CDB8A00E8E59A /* button-chart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-chart.png"; sourceTree = "<group>"; };
+		D53DD1921A5CDB8A00E8E59A /* button-share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-share.png"; sourceTree = "<group>"; };
+		D53DD1951A5CE26300E8E59A /* tapSurface-l.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tapSurface-l.png"; sourceTree = "<group>"; };
+		D53DD1961A5CE26300E8E59A /* tapSurface-r.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tapSurface-r.png"; sourceTree = "<group>"; };
 		D5C101191A571A1A00580D31 /* ResultsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultsViewController.swift; sourceTree = "<group>"; };
 		D5FD73491A5797210038AAB6 /* cellResults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = cellResults.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -175,12 +187,18 @@
 		D51033221A55BF6800934BB1 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				D51033761A562B7B00934BB1 /* tapSurface-r.png */,
+				D53DD1911A5CDB8A00E8E59A /* button-chart.png */,
+				D53DD1921A5CDB8A00E8E59A /* button-share.png */,
+				D53DD18F1A5C833900E8E59A /* icon-menu-selector.png */,
+				D53DD1951A5CE26300E8E59A /* tapSurface-l.png */,
+				D53DD1961A5CE26300E8E59A /* tapSurface-r.png */,
 				D510336C1A56276500934BB1 /* leftOFF.png */,
+				D53DD18B1A5C7F7B00E8E59A /* icon-notes.png */,
+				D53DD18C1A5C7F7B00E8E59A /* icon-share.png */,
 				D510336D1A56276500934BB1 /* leftON.png */,
+				D53DD1851A5C7C6400E8E59A /* background-history.png */,
 				D510336E1A56276500934BB1 /* rightOFF.png */,
 				D510336F1A56276500934BB1 /* rightON.png */,
-				D51033701A56276500934BB1 /* tapSurface-l.png */,
 				D51033681A55C7EC00934BB1 /* background.png */,
 				D51033231A55BF6800934BB1 /* Info.plist */,
 			);
@@ -285,16 +303,22 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D53DD1981A5CE26300E8E59A /* tapSurface-r.png in Resources */,
+				D53DD1901A5C833900E8E59A /* icon-menu-selector.png in Resources */,
+				D53DD18E1A5C7F7B00E8E59A /* icon-share.png in Resources */,
 				D51033741A56276500934BB1 /* rightON.png in Resources */,
 				D51033731A56276500934BB1 /* rightOFF.png in Resources */,
+				D53DD1881A5C7C6400E8E59A /* background-history.png in Resources */,
 				D510332D1A55BF6900934BB1 /* Main.storyboard in Resources */,
 				D51033721A56276500934BB1 /* leftON.png in Resources */,
 				D51033691A55C7EC00934BB1 /* background.png in Resources */,
-				D51033751A56276500934BB1 /* tapSurface-l.png in Resources */,
-				D51033771A562B7B00934BB1 /* tapSurface-r.png in Resources */,
+				D53DD18D1A5C7F7B00E8E59A /* icon-notes.png in Resources */,
 				D51033321A55BF6900934BB1 /* LaunchScreen.xib in Resources */,
 				D51033711A56276500934BB1 /* leftOFF.png in Resources */,
+				D53DD1971A5CE26300E8E59A /* tapSurface-l.png in Resources */,
+				D53DD1931A5CDB8A00E8E59A /* button-chart.png in Resources */,
 				D510332F1A55BF6900934BB1 /* Images.xcassets in Resources */,
+				D53DD1941A5CDB8A00E8E59A /* button-share.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

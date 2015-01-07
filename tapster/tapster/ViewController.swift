@@ -20,12 +20,21 @@ class ViewController: UIViewController {
     var timeSeconds = 0
     var secondsZero = "0"
     
+    // Main buttons & labels
+    
     @IBOutlet weak var buttonRightSelector: UIButton!
     @IBOutlet weak var buttonLeftSelector: UIButton!
     @IBOutlet weak var labelTapToStart: UILabel!
     @IBOutlet weak var labelTapCounter: UILabel!
     @IBOutlet weak var labelTimer: UILabel!
     @IBOutlet weak var buttonTapSurface: UIButton!
+    
+    // History buttons & labels
+    
+    @IBOutlet weak var labelHistoryDate1: UILabel!
+    @IBOutlet weak var labelHistoryLeftResult1: UILabel!
+    @IBOutlet weak var labelHistoryRightResult1: UILabel!
+    
 
     @IBAction func actionSwitchRight(sender: AnyObject) {
         
@@ -175,9 +184,62 @@ class ViewController: UIViewController {
     }
     
     func resetLabels(){
-        
+
         labelTimer.text = "00:10.0"
         labelTapCounter.text = "0"
+        
+        // Reset history
+        
+        var tapCount: NSInteger
+        var dateString: NSString
+        
+        var resultsByDate: AnyObject = getRecentResultsByDate()
+        
+        if resultsByDate.count > 0 {
+            
+            var date1 = resultsByDate[0].valueForKey("date") as NSDate
+            var date2 = resultsByDate[1].valueForKey("date") as NSDate
+            var date3 = resultsByDate[2].valueForKey("date") as NSDate
+            var date4 = resultsByDate[3].valueForKey("date") as NSDate
+
+            if date1 == date2 {
+
+                dateString = getDateHistoryString(date1)
+                labelHistoryDate1.text = dateString.uppercaseString
+                
+                tapCount = resultsByDate[0].valueForKey("tapCount") as NSInteger
+                labelHistoryLeftResult1.text = "L:\(tapCount)"
+                
+                tapCount = resultsByDate[1].valueForKey("tapCount") as NSInteger
+                labelHistoryRightResult1.text = "R:\(tapCount)"
+            }
+            else {
+                
+                tapCount = resultsByDate[0].valueForKey("tapCount") as NSInteger
+                dateString = getDateHistoryString(date1)
+                labelHistoryDate1.text = dateString.uppercaseString
+                
+                if resultsByDate[0].valueForKey("hand") as NSString == "left" {
+                    
+                    labelHistoryLeftResult1.text = "L:\(tapCount)"
+                    labelHistoryRightResult1.text = "R:"
+                }
+                else {
+                
+                    labelHistoryLeftResult1.text = "L:"
+                    labelHistoryRightResult1.text = "R:\(tapCount)"
+                }
+            }
+        }
+        else {
+            
+            // No results found (must be new user). Clear all history labels
+            
+            labelHistoryDate1.text = ""
+            labelHistoryLeftResult1.font = labelHistoryLeftResult1.font.fontWithSize(20)
+            labelHistoryLeftResult1.text = "No activity yet. Start tapping..."
+            labelHistoryRightResult1.text = ""
+        }
     }
     
     func getUnpairedResult(hand: String) -> (shouldFormPair: Bool, date: NSDate) {
@@ -203,24 +265,20 @@ class ViewController: UIViewController {
         
         let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         let context:NSManagedObjectContext = appDel.managedObjectContext!
-
         var request = NSFetchRequest(entityName: "Results")
         
-        request.returnsObjectsAsFaults = false
-        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
+        //request.returnsObjectsAsFaults = false
+        //request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
         
-        var results = context.executeFetchRequest(request, error: nil)
+        // Get results ordered by descending date
         
-        if results?.count > 0 {
+        var resultsByDate: AnyObject = getRecentResultsByDate()
+
+        if resultsByDate.count > 0 {
             
-            for result: AnyObject in results! {
-                
-                handMostRecent = result.valueForKey("hand") as String!
-                dateMostRecent = result.valueForKey("date") as NSDate
-                
-                break
-            }
-            
+            handMostRecent = resultsByDate[0].valueForKey("hand") as String!
+            dateMostRecent = resultsByDate[0].valueForKey("date") as NSDate
+
             // Checks if most recent result is aleady paired and is for opposite hand
             
             request.predicate = NSPredicate(format: "date = %@ and hand = %@", dateMostRecent, oppositeHand(handMostRecent))
@@ -256,6 +314,29 @@ class ViewController: UIViewController {
         return (responseBool, responseDate)
     }
     
+    func getRecentResultsByDate() -> [AnyObject] {
+       
+        // Initialise core data
+        
+        let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let context:NSManagedObjectContext = appDel.managedObjectContext!
+        
+        var request = NSFetchRequest(entityName: "Results")
+        
+        request.returnsObjectsAsFaults = false
+
+        let sortDescriptor1 = NSSortDescriptor(key: "date", ascending: false)
+        let sortDescriptor2 = NSSortDescriptor(key: "hand", ascending: true)
+        let sortDescriptors = [sortDescriptor1, sortDescriptor2]
+        request.sortDescriptors = sortDescriptors
+        
+        // Get results ordered by descending date
+
+        var results = context.executeFetchRequest(request, error: nil)
+
+        return results!
+    }
+    
     func oppositeHand(hand: String) -> String {
     
         switch hand {
@@ -271,18 +352,69 @@ class ViewController: UIViewController {
         }
     }
     
+    func getDateHistoryString(startDate: NSDate) -> NSString {
+        
+        var response = ""
+        var plural = "s"
+        
+        let calendar = NSCalendar.autoupdatingCurrentCalendar()
+        calendar.timeZone = NSTimeZone.systemTimeZone()
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.timeZone = calendar.timeZone
+        //dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        let components = calendar.components(NSCalendarUnit.CalendarUnitMonth | NSCalendarUnit.CalendarUnitDay | NSCalendarUnit.CalendarUnitMinute,fromDate: startDate, toDate: NSDate(), options: nil)
+        let months = components.month
+        let days = components.day
+        let mins = components.minute
+        
+        if months > 0 {
+            
+            if months == 1 {plural = ""}
+            response = "\(months) month\(plural) ago"
+        } else {
+            
+            if days > 0 {
+                
+                if days == 1 {plural = ""}
+                response = "\(days) day\(plural) ago"
+            } else {
+                
+                if mins > 0 {
+                    
+                    let hours = abs(mins/60)
+                    
+                    if hours > 0 {
+                        
+                        if hours == 1 {plural = ""}
+                        response = "\(hours) hour\(plural) ago"
+                    } else {
+                        
+                        if mins == 1 {plural = ""}
+                        response = "\(mins) min\(plural) ago"
+                    }
+                    
+                } else {
+                    
+                    response = "just now"
+                }
+            }
+        }
+
+        return response
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Reset labels, buttons and background
         
-        resetLabels()
         actionSwitchRight(0)
-        self.view.backgroundColor = UIColor(patternImage: UIImage(named: "background.png")!)
+        self.view.backgroundColor = UIColor(red:51/255, green:58/255, blue:64/255, alpha:1.0)
         
-        tapCount = 45
-        handSetting = "left"
-        saveResult()
+        //tapCount = 45
+        //handSetting = "left"
+        //saveResult()
         
         
         // Do any additional setup after loading the view, typically from a nib.
