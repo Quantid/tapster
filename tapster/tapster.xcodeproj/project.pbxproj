@@ -42,6 +42,11 @@
 		D53DD1941A5CDB8A00E8E59A /* button-share.png in Resources */ = {isa = PBXBuildFile; fileRef = D53DD1921A5CDB8A00E8E59A /* button-share.png */; };
 		D53DD1971A5CE26300E8E59A /* tapSurface-l.png in Resources */ = {isa = PBXBuildFile; fileRef = D53DD1951A5CE26300E8E59A /* tapSurface-l.png */; };
 		D53DD1981A5CE26300E8E59A /* tapSurface-r.png in Resources */ = {isa = PBXBuildFile; fileRef = D53DD1961A5CE26300E8E59A /* tapSurface-r.png */; };
+		D54F4B511A5E0711007024A0 /* NotesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54F4B501A5E0711007024A0 /* NotesViewController.swift */; };
+		D54F4B551A5E0805007024A0 /* textarea-notes.png in Resources */ = {isa = PBXBuildFile; fileRef = D54F4B521A5E0805007024A0 /* textarea-notes.png */; };
+		D54F4B561A5E0805007024A0 /* button-addnote.png in Resources */ = {isa = PBXBuildFile; fileRef = D54F4B531A5E0805007024A0 /* button-addnote.png */; };
+		D54F4B591A5E0C73007024A0 /* bar-top.png in Resources */ = {isa = PBXBuildFile; fileRef = D54F4B581A5E0C73007024A0 /* bar-top.png */; };
+		D54F4B5D1A5E24B0007024A0 /* background-calendar.png in Resources */ = {isa = PBXBuildFile; fileRef = D54F4B5C1A5E24B0007024A0 /* background-calendar.png */; };
 		D5C1011A1A571A1A00580D31 /* ResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5C101191A571A1A00580D31 /* ResultsViewController.swift */; };
 		D5FD734A1A5797210038AAB6 /* cellResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5FD73491A5797210038AAB6 /* cellResults.swift */; };
 /* End PBXBuildFile section */
@@ -97,6 +102,11 @@
 		D53DD1921A5CDB8A00E8E59A /* button-share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-share.png"; sourceTree = "<group>"; };
 		D53DD1951A5CE26300E8E59A /* tapSurface-l.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tapSurface-l.png"; sourceTree = "<group>"; };
 		D53DD1961A5CE26300E8E59A /* tapSurface-r.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tapSurface-r.png"; sourceTree = "<group>"; };
+		D54F4B501A5E0711007024A0 /* NotesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotesViewController.swift; sourceTree = "<group>"; };
+		D54F4B521A5E0805007024A0 /* textarea-notes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "textarea-notes.png"; sourceTree = "<group>"; };
+		D54F4B531A5E0805007024A0 /* button-addnote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-addnote.png"; sourceTree = "<group>"; };
+		D54F4B581A5E0C73007024A0 /* bar-top.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bar-top.png"; sourceTree = "<group>"; };
+		D54F4B5C1A5E24B0007024A0 /* background-calendar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "background-calendar.png"; sourceTree = "<group>"; };
 		D5C101191A571A1A00580D31 /* ResultsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultsViewController.swift; sourceTree = "<group>"; };
 		D5FD73491A5797210038AAB6 /* cellResults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = cellResults.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -174,6 +184,7 @@
 				D51033241A55BF6800934BB1 /* AppDelegate.swift */,
 				D51033291A55BF6900934BB1 /* ViewController.swift */,
 				D5C101191A571A1A00580D31 /* ResultsViewController.swift */,
+				D54F4B501A5E0711007024A0 /* NotesViewController.swift */,
 				D5FD73491A5797210038AAB6 /* cellResults.swift */,
 				D510332B1A55BF6900934BB1 /* Main.storyboard */,
 				D510332E1A55BF6900934BB1 /* Images.xcassets */,
@@ -190,6 +201,10 @@
 				D53DD1911A5CDB8A00E8E59A /* button-chart.png */,
 				D53DD1921A5CDB8A00E8E59A /* button-share.png */,
 				D53DD18F1A5C833900E8E59A /* icon-menu-selector.png */,
+				D54F4B581A5E0C73007024A0 /* bar-top.png */,
+				D54F4B521A5E0805007024A0 /* textarea-notes.png */,
+				D54F4B5C1A5E24B0007024A0 /* background-calendar.png */,
+				D54F4B531A5E0805007024A0 /* button-addnote.png */,
 				D53DD1951A5CE26300E8E59A /* tapSurface-l.png */,
 				D53DD1961A5CE26300E8E59A /* tapSurface-r.png */,
 				D510336C1A56276500934BB1 /* leftOFF.png */,
@@ -308,14 +323,18 @@
 				D53DD18E1A5C7F7B00E8E59A /* icon-share.png in Resources */,
 				D51033741A56276500934BB1 /* rightON.png in Resources */,
 				D51033731A56276500934BB1 /* rightOFF.png in Resources */,
+				D54F4B5D1A5E24B0007024A0 /* background-calendar.png in Resources */,
 				D53DD1881A5C7C6400E8E59A /* background-history.png in Resources */,
 				D510332D1A55BF6900934BB1 /* Main.storyboard in Resources */,
 				D51033721A56276500934BB1 /* leftON.png in Resources */,
+				D54F4B591A5E0C73007024A0 /* bar-top.png in Resources */,
 				D51033691A55C7EC00934BB1 /* background.png in Resources */,
 				D53DD18D1A5C7F7B00E8E59A /* icon-notes.png in Resources */,
 				D51033321A55BF6900934BB1 /* LaunchScreen.xib in Resources */,
+				D54F4B561A5E0805007024A0 /* button-addnote.png in Resources */,
 				D51033711A56276500934BB1 /* leftOFF.png in Resources */,
 				D53DD1971A5CE26300E8E59A /* tapSurface-l.png in Resources */,
+				D54F4B551A5E0805007024A0 /* textarea-notes.png in Resources */,
 				D53DD1931A5CDB8A00E8E59A /* button-chart.png in Resources */,
 				D510332F1A55BF6900934BB1 /* Images.xcassets in Resources */,
 				D53DD1941A5CDB8A00E8E59A /* button-share.png in Resources */,
@@ -338,6 +357,7 @@
 			files = (
 				D5C1011A1A571A1A00580D31 /* ResultsViewController.swift in Sources */,
 				D510332A1A55BF6900934BB1 /* ViewController.swift in Sources */,
+				D54F4B511A5E0711007024A0 /* NotesViewController.swift in Sources */,
 				D51033251A55BF6800934BB1 /* AppDelegate.swift in Sources */,
 				D5FD734A1A5797210038AAB6 /* cellResults.swift in Sources */,
 				D51033281A55BF6900934BB1 /* tapster.xcdatamodeld in Sources */,

@@ -34,7 +34,8 @@ class ResultsViewController: UITableViewController {
         let context:NSManagedObjectContext = appDel.managedObjectContext!
         
         var request = NSFetchRequest(entityName: "Results")
-        
+        println("here...")
+     
         request.propertiesToFetch = NSArray(object: "date")
         request.returnsObjectsAsFaults = false
         request.returnsDistinctResults = true
@@ -53,7 +54,7 @@ class ResultsViewController: UITableViewController {
             request.predicate = NSPredicate(format: "date = %@", dateQuery)
 
             var results = context.executeFetchRequest(request, error: nil)!
-            
+
             if results[0].valueForKey("hand")! as NSString == "right" {
                 
                 rightScore.append(results[0].valueForKey("tapCount") as NSInteger)

@@ -20,6 +20,11 @@ class ViewController: UIViewController {
     var timeSeconds = 0
     var secondsZero = "0"
     
+    // History variables
+    
+    var dateHistoryNote1 = NSDate() // For passing to notes view controller
+    var dateHistoryNote2 = NSDate() // For passing to notes view controller
+    
     // Main buttons & labels
     
     @IBOutlet weak var buttonRightSelector: UIButton!
@@ -32,8 +37,11 @@ class ViewController: UIViewController {
     // History buttons & labels
     
     @IBOutlet weak var labelHistoryDate1: UILabel!
+    @IBOutlet weak var labelHistoryDate2: UILabel!
     @IBOutlet weak var labelHistoryLeftResult1: UILabel!
+    @IBOutlet weak var labelHistoryLeftResult2: UILabel!
     @IBOutlet weak var labelHistoryRightResult1: UILabel!
+    @IBOutlet weak var labelHistoryRightResult2: UILabel!
     
 
     @IBAction func actionSwitchRight(sender: AnyObject) {
@@ -188,57 +196,89 @@ class ViewController: UIViewController {
         labelTimer.text = "00:10.0"
         labelTapCounter.text = "0"
         
-        // Reset history
+        // Generate history
         
+        var dates = [NSDate]()
         var tapCount: NSInteger
         var dateString: NSString
         
         var resultsByDate: AnyObject = getRecentResultsByDate()
         
-        if resultsByDate.count > 0 {
+        for var i = 0; i < resultsByDate.count; i++ {
             
-            var date1 = resultsByDate[0].valueForKey("date") as NSDate
-            var date2 = resultsByDate[1].valueForKey("date") as NSDate
-            var date3 = resultsByDate[2].valueForKey("date") as NSDate
-            var date4 = resultsByDate[3].valueForKey("date") as NSDate
+            dates.append(resultsByDate[i].valueForKey("date") as NSDate)
+        }
+        
+        
+        var i = 1 // label tag counter
+        var j = 0 // result record counter
+        var counter = 1 // loop counter
+        
+        while counter <= 2 && counter < dates.count {
 
-            if date1 == date2 {
+            var isPaired = false
+            var labelHistoryDate = self.view.viewWithTag(i) as UILabel
+            var labelHistoryLeftResult = self.view.viewWithTag(i+1) as UILabel
+            var labelHistoryRightResult = self.view.viewWithTag(i+2) as UILabel
+            
+            // Update variables used for notes segue
+            
+            if counter == 1 {
+                
+                dateHistoryNote1 = dates[j]
+            } else {
+                
+                dateHistoryNote2 = dates[j]
+            }
+            
+            // Check for paired results
+            
+            if j < (dates.count - 1) {
+                
+                if dates[j] == dates[j+1] {
+                    
+                    isPaired = true
+                }
+            }
+            
+            // Update history with paired or unpaired results
 
-                dateString = getDateHistoryString(date1)
-                labelHistoryDate1.text = dateString.uppercaseString
+            if isPaired {
                 
-                tapCount = resultsByDate[0].valueForKey("tapCount") as NSInteger
-                labelHistoryLeftResult1.text = "L:\(tapCount)"
+                dateString = getDateHistoryString(dates[j])
+                labelHistoryDate.text = dateString.uppercaseString
                 
-                tapCount = resultsByDate[1].valueForKey("tapCount") as NSInteger
-                labelHistoryRightResult1.text = "R:\(tapCount)"
+                tapCount = resultsByDate[j].valueForKey("tapCount") as NSInteger
+                labelHistoryLeftResult.text = "L:\(tapCount)"
+                
+                tapCount = resultsByDate[j+1].valueForKey("tapCount") as NSInteger
+                labelHistoryRightResult.text = "R:\(tapCount)"
+                
+                j = j + 2
             }
             else {
                 
-                tapCount = resultsByDate[0].valueForKey("tapCount") as NSInteger
-                dateString = getDateHistoryString(date1)
-                labelHistoryDate1.text = dateString.uppercaseString
+                tapCount = resultsByDate[j].valueForKey("tapCount") as NSInteger
+                dateString = getDateHistoryString(dates[j])
+                labelHistoryDate.text = dateString.uppercaseString
                 
-                if resultsByDate[0].valueForKey("hand") as NSString == "left" {
+                if resultsByDate[j].valueForKey("hand") as NSString == "left" {
                     
-                    labelHistoryLeftResult1.text = "L:\(tapCount)"
-                    labelHistoryRightResult1.text = "R:"
+                    labelHistoryLeftResult.text = "L:\(tapCount)"
+                    labelHistoryRightResult.text = "R:--"
                 }
                 else {
-                
-                    labelHistoryLeftResult1.text = "L:"
-                    labelHistoryRightResult1.text = "R:\(tapCount)"
+                    
+                    labelHistoryLeftResult.text = "L:--"
+                    labelHistoryRightResult.text = "R:\(tapCount)"
                 }
+                
+                j = j + 1
             }
-        }
-        else {
             
-            // No results found (must be new user). Clear all history labels
+            i = i + 3
             
-            labelHistoryDate1.text = ""
-            labelHistoryLeftResult1.font = labelHistoryLeftResult1.font.fontWithSize(20)
-            labelHistoryLeftResult1.text = "No activity yet. Start tapping..."
-            labelHistoryRightResult1.text = ""
+            counter++
         }
     }
     
@@ -330,7 +370,7 @@ class ViewController: UIViewController {
         let sortDescriptors = [sortDescriptor1, sortDescriptor2]
         request.sortDescriptors = sortDescriptors
         
-        // Get results ordered by descending date
+        // Get results ordered by descending date and ascending hand
 
         var results = context.executeFetchRequest(request, error: nil)
 
@@ -406,6 +446,15 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Clear history dates
+        
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "yyyy-mm-dd"
+        let date = dateFormatter.dateFromString("1900-01-01")
+        
+        dateHistoryNote1 = date!
+        dateHistoryNote2 = date!
 
         // Reset labels, buttons and background
         
@@ -415,8 +464,7 @@ class ViewController: UIViewController {
         //tapCount = 45
         //handSetting = "left"
         //saveResult()
-        
-        
+
         // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -424,7 +472,16 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        if segue.identifier == "jumpToNotes" {
+            
+            var secondVC: NotesViewController = segue.destinationViewController as NotesViewController
+            
+            secondVC.dateOfNote = dateHistoryNote1
+        }
+    }
 
 }
 
