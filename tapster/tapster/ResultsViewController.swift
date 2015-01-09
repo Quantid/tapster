@@ -9,18 +9,24 @@
 import UIKit
 import CoreData
 
-class ResultsViewController: UITableViewController {
+class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource  {
 
+    @IBOutlet weak var tableView: UITableView!
+    
     var rightScore = [NSInteger]()
     var leftScore = [NSInteger]()
     var monthString = [NSString]()
     var dayString = [NSString]()
+    var dateResult = [NSDate]()
 
     var ac = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.tableView.dataSource = self
+        self.tableView.delegate = self
+
         var dateMonthFormatter = NSDateFormatter()
         var dateDayFormatter = NSDateFormatter()
         
@@ -34,7 +40,6 @@ class ResultsViewController: UITableViewController {
         let context:NSManagedObjectContext = appDel.managedObjectContext!
         
         var request = NSFetchRequest(entityName: "Results")
-        println("here...")
      
         request.propertiesToFetch = NSArray(object: "date")
         request.returnsObjectsAsFaults = false
@@ -82,11 +87,10 @@ class ResultsViewController: UITableViewController {
                 }
             }
         
+            dateResult.append(results[0].valueForKey("date") as NSDate)
+
             monthString.append(dateMonthFormatter.stringFromDate(dateQuery) as NSString)
             dayString.append(dateDayFormatter.stringFromDate(dateQuery) as NSString)
-            
-            //var tapCount = result.valueForKey("tapCount") as NSInteger
-            //var tapHand = result.valueForKey("hand") as NSString
             
             ac = rightScore.count
             
@@ -95,6 +99,8 @@ class ResultsViewController: UITableViewController {
             println("\(ac):")
           
             println("\(dateString) = [R]\(rightScore[ac-1]) [L]\(leftScore[ac-1])")
+            
+            //tableView?.reloadData()
         }
         
 
@@ -112,31 +118,47 @@ class ResultsViewController: UITableViewController {
 
     // MARK: - Table view data source
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Potentially incomplete method implementation.
         // Return the number of sections.
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete method implementation.
         // Return the number of rows in the section.
         
         return rightScore.count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell: cellResults = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as cellResults
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell: cellResult = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as cellResult
 
         //cell.textLabel?.text = dateString[indexPath.row]
         //cell.textLabel?.text = score[indexPath.row]
         
         cell.labelDay.text = dayString[indexPath.row]
         cell.labelMonth.text = monthString[indexPath.row].uppercaseString
-        cell.labelLeftScore.text = String(leftScore[indexPath.row])
-        cell.labelRightScore.text = String(rightScore[indexPath.row])
+        cell.labelLeftScore.text = "L:" + String(leftScore[indexPath.row])
+        cell.labelRightScore.text = "R:" + String(rightScore[indexPath.row])
         
         return cell
+    }
+
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        if segue.identifier == "jumpToNotes" {
+            
+            if let selectedIndex = self.tableView.indexPathForSelectedRow()?.row {
+                
+                var dateOfSelectedItem = dateResult[selectedIndex] as NSDate
+                
+                var secondVC: NotesViewController = segue.destinationViewController as NotesViewController
+                
+                secondVC.dateOfNote = dateOfSelectedItem
+                secondVC.returnSegue = "jumpToResults"
+            }
+        }
     }
 
     /*

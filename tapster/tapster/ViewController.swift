@@ -482,6 +482,5 @@ class ViewController: UIViewController {
             secondVC.dateOfNote = dateHistoryNote1
         }
     }
-
 }
 

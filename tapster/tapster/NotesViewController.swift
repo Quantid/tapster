@@ -12,15 +12,13 @@ import CoreData
 class NotesViewController: UIViewController {
     
     var dateOfNote: NSDate = NSDate()
+    var returnSegue: String = ""
 
     @IBOutlet weak var labelDay: UILabel!
     @IBOutlet weak var labelMonth: UILabel!
     @IBOutlet weak var labelLeftScore: UILabel!
     @IBOutlet weak var labelRightScore: UILabel!
     @IBOutlet weak var inputNote: UITextView!
-    @IBAction func actionProcessNote(sender: AnyObject) {
-        
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,7 +69,14 @@ class NotesViewController: UIViewController {
                         labelRightScore.text = "R:\(tapCount)"
                         if results.count == 1 {labelLeftScore.text = "L:--"}
                     }
-
+                    
+                    if let note = result.valueForKey("note") as? NSString {
+                        
+                        inputNote.text = note
+                    } else {
+                        
+                        inputNote.text = ""
+                    }
                 }
             }
             else {
@@ -85,6 +90,50 @@ class NotesViewController: UIViewController {
         }
         
         // Do any additional setup after loading the view.
+    }
+
+    @IBAction func actionProcessNote(sender: AnyObject) {
+        
+        // Save or update note
+        
+        // Initiate core data
+        
+        let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let context:NSManagedObjectContext = appDel.managedObjectContext!
+        
+        var request = NSFetchRequest(entityName: "Results")
+        let filterPredicate: NSPredicate = NSPredicate(format: "date = %@", dateOfNote)!
+        request.predicate = filterPredicate
+
+        var error : NSError?
+        
+        if let results = context.executeFetchRequest(request, error: &error) {
+            
+            for result in results {
+                
+                result.setValue(inputNote.text as String, forKey: "note")
+            }
+            
+            context.save(nil)
+            
+            notifyThenReturn()
+        }
+        else {
+            
+            println("Fetch failed: \(error)")
+        }
+        
+    }
+    
+    func notifyThenReturn() {
+        
+        var alert = UIAlertController(title: "Saved!", message: nil, preferredStyle: UIAlertControllerStyle.Alert)
+        self.presentViewController(alert, animated: true, completion: nil)
+        
+        alert.dismissViewControllerAnimated(true, completion: {
+        
+            self.performSegueWithIdentifier(self.returnSegue, sender: nil)
+        })
     }
 
     override func didReceiveMemoryWarning() {
