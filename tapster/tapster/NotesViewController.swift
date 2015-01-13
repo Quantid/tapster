@@ -20,6 +20,11 @@ class NotesViewController: UIViewController {
     @IBOutlet weak var labelRightScore: UILabel!
     @IBOutlet weak var inputNote: UITextView!
     
+    @IBAction func actionGoBack(sender: AnyObject) {
+        
+        self.performSegueWithIdentifier(self.returnSegue, sender: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -112,6 +117,8 @@ class NotesViewController: UIViewController {
             for result in results {
                 
                 result.setValue(inputNote.text as String, forKey: "note")
+                result.setValue(0, forKey: "syncStatusParse")
+                result.setValue(0, forKey: "syncStatusQuantid")
             }
             
             context.save(nil)

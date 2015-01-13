@@ -9,8 +9,10 @@
 import UIKit
 import CoreData
 
-class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource  {
-
+class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, SideBarDelegate  {
+    
+    var sideBar:SideBar = SideBar()
+    
     @IBOutlet weak var tableView: UITableView!
     
     var rightScore = [NSInteger]()
@@ -18,9 +20,16 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
     var monthString = [NSString]()
     var dayString = [NSString]()
     var dateResult = [NSDate]()
+    var hideNoteIcon = [Bool]()
+    var hideSyncIcon = [Bool]()
 
     var ac = 0
     
+    @IBAction func actionMenu(sender: AnyObject) {
+        
+            sideBar.showSideBar(true)
+    }
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -33,7 +42,14 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         dateMonthFormatter.dateFormat = "MMM"
         dateDayFormatter.dateFormat = "dd"
 
-
+        // Establish side bar menu
+        
+        sideBar = SideBar(sourceView: self.view,
+            menuItems: ["Tap Test", "Performance", "Profile", "Settings"],
+            menuIconItems: ["icon-menu-taptest.png", "icon-menu-performance.png", "icon-menu-profile.png", "icon-menu-settings.png"])
+        
+        sideBar.delegate = self
+        
         // Initialise core data
         
         let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
@@ -92,6 +108,40 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
             monthString.append(dateMonthFormatter.stringFromDate(dateQuery) as NSString)
             dayString.append(dateDayFormatter.stringFromDate(dateQuery) as NSString)
             
+            // Handle displaying note icon
+            
+            if let note = results[0].valueForKey("note") as? NSString {
+                
+                if note == "" {
+                    
+                    hideNoteIcon.append(true)
+                } else {
+                    
+                    hideNoteIcon.append(false)
+                }
+                
+            } else {
+                
+                hideNoteIcon.append(true)
+            }
+            
+            // Handle displaying sync icon
+            
+            if let sync = results[0].valueForKey("syncStatusParse") as? NSInteger {
+                
+                if sync > 0 {
+                    
+                    hideSyncIcon.append(true)
+                } else {
+                    
+                    hideSyncIcon.append(false)
+                }
+                
+            } else {
+                
+                hideSyncIcon.append(true)
+            }
+
             ac = rightScore.count
             
             var dateString = dayString[ac-1] + monthString[ac-1]
@@ -133,14 +183,27 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell: cellResult = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as cellResult
+        
+        var leftScoreString = String(leftScore[indexPath.row])
+        var rightScoreString = String(rightScore[indexPath.row])
+        
+        if leftScore[indexPath.row] == 0 {
+            
+            leftScoreString = "--"
+        }
 
-        //cell.textLabel?.text = dateString[indexPath.row]
-        //cell.textLabel?.text = score[indexPath.row]
+        if rightScore[indexPath.row] == 0 {
+            
+            rightScoreString = "--"
+        }
         
         cell.labelDay.text = dayString[indexPath.row]
         cell.labelMonth.text = monthString[indexPath.row].uppercaseString
-        cell.labelLeftScore.text = "L:" + String(leftScore[indexPath.row])
-        cell.labelRightScore.text = "R:" + String(rightScore[indexPath.row])
+        cell.labelLeftScore.text = "L:" + leftScoreString
+        cell.labelRightScore.text = "R:" + rightScoreString
+        cell.imageNote.hidden = hideNoteIcon[indexPath.row]
+        //cell.imageSync.hidden = hideSyncIcon[indexPath.row]
+        cell.imageSync.hidden = true
         
         return cell
     }
@@ -206,4 +269,26 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     */
 
+    func sideBarDidSelectButtonAtIndex(index: Int) {
+        
+        switch index {
+            
+        case 0:
+            
+            let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("MainView") as UIViewController
+            self.presentViewController(vc, animated: true, completion: nil)
+            
+        case 1:
+            
+            let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("PerformanceView") as UIViewController
+            self.presentViewController(vc, animated: true, completion: nil)
+            
+        case 2:
+            println("button2")
+        case 3:
+            println("button3")
+        default:
+            println("default")
+        }
+    }
 }

@@ -14,6 +14,8 @@ class cellResult: UITableViewCell {
     @IBOutlet weak var labelMonth: UILabel!
     @IBOutlet weak var labelLeftScore: UILabel!
     @IBOutlet weak var labelRightScore: UILabel!
+    @IBOutlet weak var imageSync: UIImageView!
+    @IBOutlet weak var imageNote: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()

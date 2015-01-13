@@ -9,12 +9,17 @@
 import UIKit
 import CoreData
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, SideBarDelegate {
+    
+    var sideBar:SideBar = SideBar()
     
     var timer = NSTimer()
     var tappingHasStarted = false
     var tapCount = 0
     var handSetting = ""
+    
+    var lat: Double = 0
+    var long: Double = 0
 
     var timeMilliseconds = 0
     var timeSeconds = 0
@@ -43,6 +48,10 @@ class ViewController: UIViewController {
     @IBOutlet weak var labelHistoryRightResult1: UILabel!
     @IBOutlet weak var labelHistoryRightResult2: UILabel!
     
+    @IBAction func actionMenu(sender: AnyObject) {
+        
+        sideBar.showSideBar(true)
+    }
 
     @IBAction func actionSwitchRight(sender: AnyObject) {
         
@@ -169,6 +178,10 @@ class ViewController: UIViewController {
             result.setValue(date, forKey: "date")
             result.setValue(tapCount, forKey: "tapCount")
             result.setValue(handSetting, forKey: "hand")
+            result.setValue(0, forKey: "syncStatusParse")
+            result.setValue(0, forKey: "syncStatusQuantid")
+            result.setValue(lat, forKey: "lat")
+            result.setValue(long, forKey: "long")
             
             if !context.save(&error) {
                 
@@ -459,15 +472,31 @@ class ViewController: UIViewController {
         // Reset labels, buttons and background
         
         actionSwitchRight(0)
-        self.view.backgroundColor = UIColor(red:51/255, green:58/255, blue:64/255, alpha:1.0)
+        self.view.backgroundColor = UIColor(red:45/255, green:55/255, blue:64/255, alpha:1.0)
         
-        //tapCount = 45
-        //handSetting = "left"
-        //saveResult()
-
-        // Do any additional setup after loading the view, typically from a nib.
+        // Establish side bar menu
+        
+        sideBar = SideBar(sourceView: self.view,
+            menuItems: ["Tap Test", "Performance", "Profile", "Settings"],
+            menuIconItems: ["icon-menu-taptest.png", "icon-menu-performance.png", "icon-menu-profile.png", "icon-menu-settings.png"])
+        
+        sideBar.delegate = self
+        
+        // Get user location
+        PFGeoPoint.geoPointForCurrentLocationInBackground {(geoPoint: PFGeoPoint!, error: NSError!) -> Void in
+            
+            if error == nil {
+                
+                self.lat = geoPoint.latitude
+                self.long = geoPoint.longitude
+            }
+        }
+        
+        //Sync measurements with Parse
+        
+        syncWithParse()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -480,6 +509,153 @@ class ViewController: UIViewController {
             var secondVC: NotesViewController = segue.destinationViewController as NotesViewController
             
             secondVC.dateOfNote = dateHistoryNote1
+            secondVC.returnSegue = "jumpToMain"
+        }
+    }
+    
+    func syncWithParse() {
+        
+        /*
+        Sync local measurement results with Parse
+        Step 1. Upload new local measurements (where syncStatusParse = 0) to Parse
+        Step 2. Remove deleted local measurements (where syncStatusParse = 2) from Parse
+        Step 3. If a local measurement has been updated/edited (where syncStatusParse = 3) then update the matching Parse record
+        */
+        
+        // Initiate core data
+        
+        let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let context:NSManagedObjectContext = appDel.managedObjectContext!
+        
+        // Get unsynced measurements (where syncStatusParse = 0) and upload to Parse
+        
+        var request = NSFetchRequest(entityName: "Results")
+        var filterPredicate: NSPredicate = NSPredicate(format: "syncStatusParse = %@", "0")!
+        request.predicate = filterPredicate
+        
+        var fetchError : NSError?
+        
+        if let results = context.executeFetchRequest(request, error: &fetchError) {
+            
+            if results.count > 0 {
+                
+                println("Syncing...")
+                
+                for result in results {
+                    
+                    var post = PFObject(className: "Results")
+                    
+                    post["username"] = PFUser.currentUser().username
+                    post["date"] = result.valueForKey("date")
+                    post["hand"] = result.valueForKey("hand")
+                    post["tapCount"] = result.valueForKey("tapCount")
+                    post["note"] = result.valueForKey("note")
+                    post["lat"] = result.valueForKey("lat")
+                    post["long"] = result.valueForKey("long")
+                    
+                    post.saveInBackgroundWithBlock {(success: Bool, postError:NSError!) -> Void in
+                        
+                        if success {
+                            
+                            result.setValue(1, forKey: "syncStatusParse")
+                        }
+                        else {
+                            
+                            //TO DO: Handle error...probably update NSlog
+                            println(postError)
+                        }
+                    }
+                    
+                    context.save(nil)
+                }
+            }
+            else {
+                
+                println("Nothing to sync...")
+            }
+        }
+        else {
+            
+            println("Fetch failed: \(fetchError)")
+        }
+        
+        // Remove deleted measurements from Parse
+        
+        filterPredicate = NSPredicate(format: "syncStatusParse = %@", "2")!
+        request.predicate = filterPredicate
+        
+        if let results = context.executeFetchRequest(request, error: &fetchError) {
+            
+            if results.count > 0 {
+                
+                println("Some deleted records found")
+            }
+            else {
+                
+                println("No deleted records found")
+            }
+            
+            for result in results {
+                
+                var post = PFObject(className: "Results")
+                
+                // TO DO: delete records from Parse and the delete from core data
+            }
+        }
+        else {
+            
+            println("Fetch failed: \(fetchError)")
+        }
+        
+        // Finally, update measurements on Parse which haved been updated locally
+        
+        filterPredicate = NSPredicate(format: "syncStatusParse = %@", "3")!
+        request.predicate = filterPredicate
+        
+        if let results = context.executeFetchRequest(request, error: &fetchError) {
+            
+            if results.count > 0 {
+                
+                println("Some updated records found")
+            }
+            else {
+                
+                println("No updated records found")
+            }
+            
+            for result in results {
+                
+                var post = PFObject(className: "Results")
+                
+                // TO DO: delete records from Parse and the delete from core data
+            }
+        }
+        else {
+            
+            println("Fetch failed: \(fetchError)")
+        }
+    }
+    
+    func sideBarDidSelectButtonAtIndex(index: Int) {
+        
+        switch index {
+            
+        case 0:
+            
+            let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("MainView") as UIViewController
+            self.presentViewController(vc, animated: true, completion: nil)
+            
+        case 1:
+
+            let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("PerformanceView") as UIViewController
+            self.presentViewController(vc, animated: true, completion: nil)
+
+        case 2:
+            println("button2")
+        case 3:
+            println("button3")
+        default:
+           println("default")
         }
     }
 }
