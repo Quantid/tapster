@@ -13,6 +13,15 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     var sideBar:SideBar = SideBar()
     
+    let screenSize: CGRect = UIScreen.mainScreen().bounds
+
+    let imageBackground = UIImageView()
+    let labelTitle = UILabel()
+    let labelLeftAverage = UILabel()
+    let labelRightAverage = UILabel()
+    let imageUserPhoto = UIImageView()
+
+    
     @IBOutlet weak var tableView: UITableView!
     
     var rightScore = [NSInteger]()
@@ -41,6 +50,20 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         dateMonthFormatter.dateFormat = "MMM"
         dateDayFormatter.dateFormat = "dd"
+        
+        setupPerformanceView()  // Setup performace view at the top of table
+        
+        // Get week's date for calculating life average
+        let dateToday =  NSDate()
+        let dateLastWeek = dateToday.dateByAddingTimeInterval(-7 * 24 * 60 * 60)
+        
+        // Reset life average variables
+        var leftCounter: NSInteger = 0
+        var rightCounter: NSInteger = 0
+        var leftTotal: NSInteger = 0
+        var rightTotal: NSInteger = 0 as NSInteger
+        var daysInSeconds: Double = 60 * 60 * 24
+        let averagingPeriod: Double = 7
 
         // Establish side bar menu
         
@@ -67,7 +90,7 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         for date in dates {
             
-            let dateQuery = date["date"] as NSDate
+            var dateQuery = date["date"] as NSDate
             
             var request = NSFetchRequest(entityName: "Results")
             
@@ -75,14 +98,31 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
             request.predicate = NSPredicate(format: "date = %@", dateQuery)
 
             var results = context.executeFetchRequest(request, error: nil)!
-
+            
+            var interval = dateQuery.timeIntervalSinceDate(dateLastWeek) / daysInSeconds
+            
             if results[0].valueForKey("hand")! as NSString == "right" {
                 
-                rightScore.append(results[0].valueForKey("tapCount") as NSInteger)
+                var tc = results[0].valueForKey("tapCount") as NSInteger
+                
+                rightScore.append(tc)
+                
+                if interval < averagingPeriod {
+                    rightTotal = rightTotal + tc
+                    rightCounter++
+                }
                 
                 if results.count > 1 {
                     
-                    leftScore.append(results[1].valueForKey("tapCount") as NSInteger)
+                    var tc = results[1].valueForKey("tapCount") as NSInteger
+                    
+                    leftScore.append(tc)
+                    
+                    if interval < averagingPeriod {
+                        
+                        leftTotal = leftTotal + tc
+                        leftCounter++
+                    }
                 }
                 else {
                     
@@ -91,11 +131,27 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
             else {
                 
-                leftScore.append(results[0].valueForKey("tapCount") as NSInteger)
+                var tc = results[0].valueForKey("tapCount") as NSInteger
+                
+                leftScore.append(tc)
+                
+                if interval < averagingPeriod {
+                    
+                    leftTotal = leftTotal + tc
+                    leftCounter++
+                }
                 
                 if results.count > 1 {
                     
-                    rightScore.append(results[1].valueForKey("tapCount") as NSInteger)
+                    var tc = results[1].valueForKey("tapCount") as NSInteger
+                    
+                    rightScore.append(tc)
+                    
+                    if interval < averagingPeriod {
+                        
+                        rightTotal = rightTotal + tc
+                        rightCounter++
+                    }
                 }
                 else {
                     
@@ -107,6 +163,21 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
 
             monthString.append(dateMonthFormatter.stringFromDate(dateQuery) as NSString)
             dayString.append(dateDayFormatter.stringFromDate(dateQuery) as NSString)
+            
+            // Handle displaying life average
+            
+            if leftCounter > 0 && rightCounter > 0 {
+                
+                labelLeftAverage.text = "L:\(Int(leftTotal / leftCounter))"
+                labelRightAverage.text = "R:\(Int(rightTotal / rightCounter))"
+            }
+            else {
+                
+                labelLeftAverage.frame = CGRectMake(72, imageBackground.frame.origin.y + 17, 60, 200)
+                labelLeftAverage.font = UIFont(name: "HelveticaNeue-Light", size: 18)
+                labelLeftAverage.text = "Not enough activity..."
+                labelRightAverage.hidden = true
+            }
             
             // Handle displaying note icon
             
@@ -207,6 +278,56 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         return cell
     }
+    
+    func setupPerformanceView() {
+        
+        // Setup background
+        imageBackground.backgroundColor = UIColor(red: 78/255, green: 88/255, blue: 98/255, alpha: 0.7)
+        imageBackground.frame = CGRectMake(0, 75, screenSize.width, 50)
+        
+        view.addSubview(imageBackground)
+        
+        // Setup labels
+        labelTitle.frame = CGRectMake(72, imageBackground.frame.origin.y + 3, 90, 12)
+        labelTitle.backgroundColor = UIColor.clearColor()
+        labelTitle.textColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
+        labelTitle.font = UIFont(name: "HelveticaNeue-Medium", size: 12)
+        labelTitle.text = "LIFE AVERAGE"
+        
+        view.addSubview(labelTitle)
+        
+        labelLeftAverage.frame = CGRectMake(72, imageBackground.frame.origin.y + 17, 60, 28)
+        labelLeftAverage.backgroundColor = UIColor.clearColor()
+        labelLeftAverage.textColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
+        labelLeftAverage.font = UIFont(name: "HelveticaNeue-Thin", size: 23)
+        
+        view.addSubview(labelLeftAverage)
+        
+        labelRightAverage.frame = CGRectMake(screenSize.width - (screenSize.width / 3), imageBackground.frame.origin.y + 17, 60, 28)
+        labelRightAverage.backgroundColor = UIColor.clearColor()
+        labelRightAverage.textColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
+        labelRightAverage.font = UIFont(name: "HelveticaNeue-Thin", size: 23)
+        
+        view.addSubview(labelRightAverage)
+        
+        // Setup profile photo
+        let imageUserPhotoNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("image")
+        
+        if let imageData: NSData = imageUserPhotoNS as? NSData {
+            
+            imageUserPhoto.image = UIImage (data: imageData)
+            imageUserPhoto.frame = CGRectMake(13, imageBackground.frame.origin.y + 2, 46, 46)
+            imageUserPhoto.contentMode = UIViewContentMode.ScaleAspectFit
+            imageUserPhoto.layer.cornerRadius = imageUserPhoto.frame.size.width/2
+            imageUserPhoto.layer.borderWidth = 2
+            imageUserPhoto.layer.borderColor = UIColor(red: 78/255, green: 88/255, blue: 98/255, alpha: 1.0).CGColor
+            imageUserPhoto.layer.masksToBounds = true
+            
+            view.addSubview(imageUserPhoto)
+        }
+        
+        
+    }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
@@ -223,51 +344,11 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
         }
     }
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return NO if you do not want the specified item to be editable.
-        return true
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        performSegueWithIdentifier("jumpToNotes", sender: self)
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return NO if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
-    }
-    */
 
     func sideBarDidSelectButtonAtIndex(index: Int) {
         
@@ -284,9 +365,15 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
             self.presentViewController(vc, animated: true, completion: nil)
             
         case 2:
-            println("button2")
+            
+            let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("ProfileView") as UIViewController
+            self.presentViewController(vc, animated: true, completion: nil)
+            
         case 3:
-            println("button3")
+            
+            let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("SettingsView") as UIViewController
+            self.presentViewController(vc, animated: true, completion: nil)
+            
         default:
             println("default")
         }

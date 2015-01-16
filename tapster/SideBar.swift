@@ -15,8 +15,8 @@ import UIKit
 }
 
 class SideBar: NSObject, SideBarTableViewControllerDelegate {
-   
-    let barWidth:CGFloat = 220.0
+    
+    let barWidth:CGFloat = 240.0
     let sideBarTableViewTopInset:CGFloat = 200.0
     let sideBarContainerView:UIView = UIView()
     let sideBarTableViewController:SideBarTableViewController = SideBarTableViewController()
@@ -53,13 +53,21 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
     
     func setupSideBar(){
         
-        sideBarContainerView.frame = CGRectMake(-barWidth - 1, originView.frame.origin.y, barWidth, originView.frame.size.height)
+        sideBarContainerView.frame = CGRectMake(-barWidth - 1, originView.frame.origin.y - 3, barWidth, originView.frame.size.height)
         sideBarContainerView.backgroundColor = UIColor.clearColor()
         sideBarContainerView.clipsToBounds = false
         sideBarContainerView.layoutMargins = UIEdgeInsetsZero
         
+        // Add shadow
+        
+        sideBarContainerView.layer.shadowColor = UIColor.blackColor().CGColor
+        sideBarContainerView.layer.shadowOffset = CGSizeMake(2, 0)
+        sideBarContainerView.layer.shadowRadius = 2
+        sideBarContainerView.layer.shadowOpacity = 0.8
         
         originView.addSubview(sideBarContainerView)
+        
+        // Add blur effect
         
         //let blurView:UIVisualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
         //blurView.frame = sideBarContainerView.bounds
@@ -81,6 +89,34 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         sideBarContainerView.addSubview(sideBarTableViewController.tableView)
         
         sideBarTableViewController.tableView.tableFooterView = UIView(frame:CGRectZero)
+        
+        // Add masthead image
+        
+        let image = UIImage(named: "masthead.png")
+        let imageMasthead = UIImageView(image: image)
+        imageMasthead.frame = CGRectMake(sideBarContainerView.bounds.origin.x - 15, 0, sideBarContainerView.bounds.width, 130)
+        imageMasthead.contentMode = UIViewContentMode.ScaleAspectFit
+        
+        sideBarContainerView.addSubview(imageMasthead)
+        
+        // Add user profile image
+        
+        let imageUserPhoto = UIImageView()
+        let imageUserPhotoNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("image")
+
+        if let imageData: NSData = imageUserPhotoNS as? NSData {
+            
+            imageUserPhoto.image = UIImage (data: imageData)
+            imageUserPhoto.frame = CGRectMake(sideBarContainerView.bounds.origin.x - 15 + 68, 70, 105, 105)
+            imageUserPhoto.contentMode = UIViewContentMode.ScaleAspectFit
+            imageUserPhoto.layer.cornerRadius = imageUserPhoto.frame.size.width/2
+            imageUserPhoto.layer.borderWidth = 5
+            imageUserPhoto.layer.borderColor = UIColor(red: 138/255, green: 150/255, blue: 158/255, alpha: 1.0).CGColor
+            imageUserPhoto.layer.masksToBounds = true
+            
+            sideBarContainerView.addSubview(imageUserPhoto)
+        }
+
     }
     
     
@@ -101,7 +137,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         animator.removeAllBehaviors()
         isSideBarOpen = shouldOpen
         
-        let gravityX:CGFloat = (shouldOpen) ? 0.5 : -0.5
+        let gravityX:CGFloat = (shouldOpen) ? 0.7 : -0.7
         let magnitude:CGFloat = (shouldOpen) ? 20 : -20
         let boundaryX:CGFloat = (shouldOpen) ? barWidth : -barWidth - 1
         
@@ -120,7 +156,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         
         
         let sideBarBehavior:UIDynamicItemBehavior = UIDynamicItemBehavior(items: [sideBarContainerView])
-        sideBarBehavior.elasticity = 0.3
+        sideBarBehavior.elasticity = 0.1
         animator.addBehavior(sideBarBehavior)
     
     }

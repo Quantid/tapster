@@ -102,6 +102,11 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Set screen variables. These are needed throughout the app
+        
+        NSUserDefaults.standardUserDefaults().setObject(screenSize.width, forKey: "screenWidth")
+        NSUserDefaults.standardUserDefaults().setObject(screenSize.height, forKey: "screenHeight")
+        
         self.view.hidden = true // hide while checking if user is logged in
         
         // Change backgroundColor

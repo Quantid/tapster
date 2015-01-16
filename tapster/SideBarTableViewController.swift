@@ -41,7 +41,7 @@ class SideBarTableViewController: UITableViewController {
         
         let menuTextView:UILabel = UILabel(frame: CGRect(x: 80, y: 0, width: 120, height: 50))
         menuTextView.textColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
-        menuTextView.font = UIFont(name: "HelveticaNeue-Light", size: 14)
+        menuTextView.font = UIFont(name: "HelveticaNeue-Medium", size: 14)
         menuTextView.contentMode = UIViewContentMode.Center
         
         if cell == nil{

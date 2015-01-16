@@ -13,6 +13,8 @@ class ViewController: UIViewController, SideBarDelegate {
     
     var sideBar:SideBar = SideBar()
     
+    let screenSize: CGRect = UIScreen.mainScreen().bounds
+    
     var timer = NSTimer()
     var tappingHasStarted = false
     var tapCount = 0
@@ -460,6 +462,54 @@ class ViewController: UIViewController, SideBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Setup screen items
+        
+        // Set history background at bottom of screen
+        
+        var historyBackgroundWidth = 375
+        var image = UIImage(named: "background-history-375.png")
+        
+        if screenSize.width == 414 {
+            
+            historyBackgroundWidth = 414
+            var image = UIImage(named: "background-history-414.png")
+        }
+
+        let imageBackgroundHistory = UIImageView(image: image)
+        imageBackgroundHistory.frame = CGRectMake(0, screenSize.height - 115, 375 , 115)
+        imageBackgroundHistory.contentMode = UIViewContentMode.ScaleAspectFill
+        
+        view.addSubview(imageBackgroundHistory)
+        view.sendSubviewToBack(imageBackgroundHistory)
+        
+        // Set the two disclosure symbols
+        
+        image = UIImage(named: "icon-disclosure.png")
+        
+        let imageDisclose1 = UIImageView(image: image)
+        let imageDisclose2 = UIImageView(image: image)
+        
+        imageDisclose1.frame = CGRectMake(screenSize.width - 25, screenSize.height - 78, 13, 14)
+        imageDisclose2.frame = CGRectMake(screenSize.width - 25, screenSize.height - 30, 13, 14)
+        
+        view.addSubview(imageDisclose1)
+        view.addSubview(imageDisclose2)
+        
+        // Set the two history buttons
+
+        let buttonHistory1 = UIButton()
+        buttonHistory1.frame = CGRectMake(0, screenSize.height - 100, screenSize.width, 48)
+        buttonHistory1.tag = 19
+        buttonHistory1.addTarget(self, action: "actionHistoryButtonPress:", forControlEvents: UIControlEvents.TouchUpInside)
+        
+        let buttonHistory2 = UIButton()
+        buttonHistory2.frame = CGRectMake(0, screenSize.height - 50, screenSize.width, 48)
+        buttonHistory2.tag = 29
+        buttonHistory2.addTarget(self, action: "actionHistoryButtonPress:", forControlEvents: UIControlEvents.TouchUpInside)
+
+        view.addSubview(buttonHistory1)
+        view.addSubview(buttonHistory2)
+        
         // Clear history dates
         
         let dateFormatter = NSDateFormatter()
@@ -502,13 +552,27 @@ class ViewController: UIViewController, SideBarDelegate {
         // Dispose of any resources that can be recreated.
     }
     
+    func actionHistoryButtonPress(sender: UIButton!) {
+
+        performSegueWithIdentifier("jumpToNotes", sender: sender)
+    }
+    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        
-        if segue.identifier == "jumpToNotes" {
+
+        if let senderId = sender?.tag {
             
             var secondVC: NotesViewController = segue.destinationViewController as NotesViewController
             
-            secondVC.dateOfNote = dateHistoryNote1
+            switch senderId {
+                
+            case 19:
+                secondVC.dateOfNote = dateHistoryNote1
+            case 29:
+                secondVC.dateOfNote = dateHistoryNote2
+            default:
+                NSLog("Segue to notes view. Should not see this senderId. SenderId = %d", senderId)
+            }
+            
             secondVC.returnSegue = "jumpToMain"
         }
     }
@@ -539,20 +603,32 @@ class ViewController: UIViewController, SideBarDelegate {
             
             if results.count > 0 {
                 
-                println("Syncing...")
-                
                 for result in results {
+                    
+                    println("Syncing...")
                     
                     var post = PFObject(className: "Results")
                     
-                    post["username"] = PFUser.currentUser().username
+                    post["user"] = PFUser.currentUser()
                     post["date"] = result.valueForKey("date")
                     post["hand"] = result.valueForKey("hand")
                     post["tapCount"] = result.valueForKey("tapCount")
-                    post["note"] = result.valueForKey("note")
-                    post["lat"] = result.valueForKey("lat")
-                    post["long"] = result.valueForKey("long")
                     
+                    if let note = result.valueForKey("note") as? String {
+                        
+                        post["note"] = note
+                    }
+                    
+                    if let lat = result.valueForKey("lat") as? Double {
+                        
+                        post["lat"] = lat
+                    }
+                    
+                    if let long = result.valueForKey("long") as? Double {
+                        
+                        post["long"] = long
+                    }
+
                     post.saveInBackgroundWithBlock {(success: Bool, postError:NSError!) -> Void in
                         
                         if success {
@@ -636,6 +712,8 @@ class ViewController: UIViewController, SideBarDelegate {
         }
     }
     
+    // Manage slide-out side bar menu
+    
     func sideBarDidSelectButtonAtIndex(index: Int) {
         
         switch index {
@@ -651,9 +729,15 @@ class ViewController: UIViewController, SideBarDelegate {
             self.presentViewController(vc, animated: true, completion: nil)
 
         case 2:
-            println("button2")
+            
+            let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("ProfileView") as UIViewController
+            self.presentViewController(vc, animated: true, completion: nil)
+
         case 3:
-            println("button3")
+            
+            let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("SettingsView") as UIViewController
+            self.presentViewController(vc, animated: true, completion: nil)
+            
         default:
            println("default")
         }

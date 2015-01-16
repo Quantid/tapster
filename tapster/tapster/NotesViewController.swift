@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class NotesViewController: UIViewController {
+class NotesViewController: UIViewController, UITextViewDelegate {
     
     var dateOfNote: NSDate = NSDate()
     var returnSegue: String = ""
@@ -94,6 +94,8 @@ class NotesViewController: UIViewController {
             println("Fetch failed: \(error)")
         }
         
+        inputNote.delegate = self
+        
         // Do any additional setup after loading the view.
     }
 
@@ -148,15 +150,19 @@ class NotesViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    // Get rid of keyboard when finished entering text
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        
+        textField.resignFirstResponder()
+        
+        return true
     }
-    */
-
+    
+    // Get rid of keyboard if user touches anywhere on the screen
+    
+    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+        
+        self.view.endEditing(true)
+    }
 }
