@@ -13,6 +13,9 @@ class NotesViewController: UIViewController, UITextViewDelegate {
     
     var dateOfNote: NSDate = NSDate()
     var returnSegue: String = ""
+    
+    var currentSyncStatusParse: NSInteger = -1
+    var currentSyncStatusQuantid: NSInteger = -1
 
     @IBOutlet weak var labelDay: UILabel!
     @IBOutlet weak var labelMonth: UILabel!
@@ -62,6 +65,9 @@ class NotesViewController: UIViewController, UITextViewDelegate {
                 
                 for result in results as [NSManagedObject] {
                     
+                    currentSyncStatusParse = result.valueForKey("syncStatusParse") as NSInteger
+                    currentSyncStatusQuantid = result.valueForKey("syncStatusQuantid") as NSInteger
+                    
                     tapCount = result.valueForKey("tapCount") as NSInteger
 
                     if result.valueForKey("hand") as NSString == "left" {
@@ -101,7 +107,18 @@ class NotesViewController: UIViewController, UITextViewDelegate {
 
     @IBAction func actionProcessNote(sender: AnyObject) {
         
-        // Save or update note
+        // Check whether record has already been synced. If not, keep sync status as 0 instead of changing to 2
+        
+        var updatedSyncStatusParse = 2
+        var updatedSyncStatusQuantid = 2
+        
+        if currentSyncStatusParse == 0 {
+            updatedSyncStatusParse = 0
+        }
+        
+        if currentSyncStatusQuantid == 0 {
+            updatedSyncStatusQuantid = 0
+        }
         
         // Initiate core data
         
@@ -119,8 +136,8 @@ class NotesViewController: UIViewController, UITextViewDelegate {
             for result in results {
                 
                 result.setValue(inputNote.text as String, forKey: "note")
-                result.setValue(0, forKey: "syncStatusParse")
-                result.setValue(0, forKey: "syncStatusQuantid")
+                result.setValue(updatedSyncStatusParse, forKey: "syncStatusParse")
+                result.setValue(updatedSyncStatusQuantid, forKey: "syncStatusQuantid")
             }
             
             context.save(nil)

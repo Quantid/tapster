@@ -30,8 +30,12 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         super.init()
     }
     
-    init(sourceView:UIView, menuItems:Array<String>, menuIconItems:Array<String>){
+    init(sourceView:UIView){
         super.init()
+        
+        let menuItems: Array = ["Tap Test", "Performance", "Profile", "Settings"]
+        let menuIconItems: Array = ["icon-menu-taptest.png", "icon-menu-performance.png", "icon-menu-profile.png", "icon-menu-settings.png"]
+        
         originView = sourceView
         sideBarTableViewController.tableData = menuItems
         sideBarTableViewController.menuIconData = menuIconItems
@@ -116,7 +120,6 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
             
             sideBarContainerView.addSubview(imageUserPhoto)
         }
-
     }
     
     
@@ -164,28 +167,5 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
     func sideBarControlDidSelectRow(indexPath: NSIndexPath) {
         delegate?.sideBarDidSelectButtonAtIndex(indexPath.row)
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
 }

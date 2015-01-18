@@ -184,6 +184,8 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         
         if PFUser.currentUser() != nil {
             
+            PFUser.currentUser().fetch()
+            
             performSegueWithIdentifier("jumpToMain", sender: self)
         }
         else {

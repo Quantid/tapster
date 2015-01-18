@@ -8,13 +8,17 @@
 
 import UIKit
 
-class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
+class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, SideBarDelegate {
     
     var sideBar:SideBar = SideBar()
     
     var countryCode: String = ""
     var countryName: String = ""
+
+    let screenSize: CGRect = UIScreen.mainScreen().bounds
     
+    var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
+
     @IBOutlet weak var imageUserPhoto: UIImageView!
     @IBOutlet weak var labelNickname: UILabel!
     @IBOutlet weak var inputCountry: UITextField!
@@ -65,6 +69,11 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Establish side bar menu
+        
+        sideBar = SideBar(sourceView: self.view)
+        sideBar.delegate = self
 
         self.view.backgroundColor = UIColor(red:45/255, green:55/255, blue:64/255, alpha:1.0)
         
@@ -206,16 +215,15 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         if error == "" {
             
+            startActivityIndicator()
+           
             var query = PFQuery(className:"_User")
             let userId = PFUser.currentUser().objectId
 
             query.getObjectInBackgroundWithId(userId) {(user: PFObject!, error: NSError!) -> Void in
                 
-                if error != nil {
-                    NSLog("%@", error)
-                }
-                else {
-                    
+                if error == nil {
+
                     // Success. Now update user details
                     
                     user["nameFirst"] = self.inputNameFirst.text
@@ -229,9 +237,19 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                         user["profileImage"] = imageFile
                     }
                     
-                    user.save() //TO DO: Save in background
+                    user.saveInBackgroundWithBlock {(success: Bool, saveError: NSError!) -> Void in
                     
-                    user.fetch()
+                        if success {
+                            
+                            user.fetch() // Refresh user details
+                        }
+                        
+                        self.stopActivityIndicator()
+                    }
+                }
+                else {
+                    
+                    NSLog("Cannot update user profile information: %@", error)
                 }
             }
         }
@@ -239,6 +257,29 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             labelError.text = error
         }
+    }
+    
+    func startActivityIndicator() {
+        
+        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 75, 75))
+        activityIndicator.center = CGPoint(x: self.view.center.x, y: self.view.center.y)
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.White
+        
+        view.addSubview(activityIndicator)
+        
+        activityIndicator.startAnimating()
+        
+        //Lock display from user interaction
+        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+    }
+    
+    func stopActivityIndicator() {
+        
+        activityIndicator.stopAnimating()
+        
+        //Unlock display for resumption of user interaction
+        UIApplication.sharedApplication().endIgnoringInteractionEvents()
     }
     
     // Get rid of keyboard when finished entering text

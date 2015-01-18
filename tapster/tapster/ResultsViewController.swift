@@ -42,6 +42,11 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Establish side bar menu
+        
+        sideBar = SideBar(sourceView: self.view)
+        sideBar.delegate = self
+        
         self.tableView.dataSource = self
         self.tableView.delegate = self
 
@@ -52,6 +57,8 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         dateDayFormatter.dateFormat = "dd"
         
         setupPerformanceView()  // Setup performace view at the top of table
+        
+        setupChartingButtons()  // Setup charting buttons at bottom of screen
         
         // Get week's date for calculating life average
         let dateToday =  NSDate()
@@ -64,14 +71,9 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         var rightTotal: NSInteger = 0 as NSInteger
         var daysInSeconds: Double = 60 * 60 * 24
         let averagingPeriod: Double = 7
-
-        // Establish side bar menu
         
-        sideBar = SideBar(sourceView: self.view,
-            menuItems: ["Tap Test", "Performance", "Profile", "Settings"],
-            menuIconItems: ["icon-menu-taptest.png", "icon-menu-performance.png", "icon-menu-profile.png", "icon-menu-settings.png"])
-        
-        sideBar.delegate = self
+        var averageOfPairedResults = [NSInteger]() // An array of the averages of all paird results
+        var average: NSInteger = 0
         
         // Initialise core data
         
@@ -86,6 +88,9 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         request.resultType = NSFetchRequestResultType.DictionaryResultType
         request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
 
+        let statusPredicate = NSPredicate(format: "syncStatusParse < 3")
+        request.predicate = statusPredicate
+
         var dates:NSArray = context.executeFetchRequest(request, error: nil)!
         
         for date in dates {
@@ -95,10 +100,12 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
             var request = NSFetchRequest(entityName: "Results")
             
             request.returnsObjectsAsFaults = false
-            request.predicate = NSPredicate(format: "date = %@", dateQuery)
+
+            let datePredicate = NSPredicate(format: "date == %@", dateQuery)
+            request.predicate = datePredicate
 
             var results = context.executeFetchRequest(request, error: nil)!
-            
+
             var interval = dateQuery.timeIntervalSinceDate(dateLastWeek) / daysInSeconds
             
             if results[0].valueForKey("hand")! as NSString == "right" {
@@ -106,6 +113,7 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
                 var tc = results[0].valueForKey("tapCount") as NSInteger
                 
                 rightScore.append(tc)
+                average = tc
                 
                 if interval < averagingPeriod {
                     rightTotal = rightTotal + tc
@@ -117,12 +125,17 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
                     var tc = results[1].valueForKey("tapCount") as NSInteger
                     
                     leftScore.append(tc)
+                    average = average + tc
                     
                     if interval < averagingPeriod {
                         
                         leftTotal = leftTotal + tc
                         leftCounter++
                     }
+                    
+                    // Handle array of averages
+                    
+                    averageOfPairedResults.append(average / 2)
                 }
                 else {
                     
@@ -134,6 +147,7 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
                 var tc = results[0].valueForKey("tapCount") as NSInteger
                 
                 leftScore.append(tc)
+                average = tc
                 
                 if interval < averagingPeriod {
                     
@@ -146,12 +160,17 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
                     var tc = results[1].valueForKey("tapCount") as NSInteger
                     
                     rightScore.append(tc)
+                    average = average + tc
                     
                     if interval < averagingPeriod {
                         
                         rightTotal = rightTotal + tc
                         rightCounter++
                     }
+                    
+                    // Handle array of averages
+                    
+                    averageOfPairedResults.append(average / 2)
                 }
                 else {
                     
@@ -220,16 +239,74 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
             println("\(ac):")
           
             println("\(dateString) = [R]\(rightScore[ac-1]) [L]\(leftScore[ac-1])")
-            
-            //tableView?.reloadData()
         }
         
+        println(averageOfPairedResults)
+        
+        calculatePerformanceThresholds(averageOfPairedResults)
+    }
+    
+    func calculatePerformanceThresholds(arrayOfAverages: [NSInteger]) {
+        
+        println(arrayOfAverages)
+        
+        if arrayOfAverages.count > 4 {
+            
+            // Sorrt array
+            
+            let sortedArrayOfAverages = arrayOfAverages.sorted(>)
+            
+            println(sortedArrayOfAverages)
+            
+            var topTotal: NSInteger = 0
+            var bottomTotal: NSInteger = 0
+            var topAverage: NSInteger = 0
+            var bottomAverage: NSInteger = 0
+            var counter = 0
+            var topThresholdPercent = 0.1
+            var bottomThresholdPercent = 0.9
+            
+            // Adjust threshold levels if there are an insufficient amount of results
+            
+            if sortedArrayOfAverages.count < 100 {
+                
+                topThresholdPercent = 0.2
+                bottomThresholdPercent = 0.8
+            }
+            
+            var topPercent = round(Double(sortedArrayOfAverages.count) * topThresholdPercent)
+            var bottomPercent = round(Double(sortedArrayOfAverages.count) * bottomThresholdPercent)
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+            for var i = 0; i < Int(topPercent); i++ {
 
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+                topTotal = topTotal + sortedArrayOfAverages[i]
+                
+                counter++
+            }
+            
+            let strongThreshold = topTotal / counter
+            
+            counter = 0
+            
+            for var i = Int(bottomPercent); i < sortedArrayOfAverages.count; i++ {
+                println("here...")
+                
+                bottomTotal = bottomTotal + sortedArrayOfAverages[i]
+                
+                counter++
+            }
+            
+            let weakThreshold = bottomTotal / counter
+            
+            NSUserDefaults.standardUserDefaults().setObject(strongThreshold, forKey: "strongThreshold")
+            NSUserDefaults.standardUserDefaults().setObject(weakThreshold, forKey: "weakThreshold")
+            println("Strong threshold = \(strongThreshold) AND weak threshold = \(weakThreshold)")
+        }
+        else {
+            
+            NSUserDefaults.standardUserDefaults().setObject(nil, forKey: "strongThreshold")
+            NSUserDefaults.standardUserDefaults().setObject(nil, forKey: "weakThreshold")
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -279,6 +356,70 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         return cell
     }
     
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        performSegueWithIdentifier("jumpToNotes", sender: self)
+    }
+
+    func tableView(tableView: UITableView!, canEditRowAtIndexPath indexPath: NSIndexPath!) -> Bool {
+        return true
+    }
+    
+    func tableView(tableView: UITableView!, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath!) {
+        if (editingStyle == UITableViewCellEditingStyle.Delete) {
+            
+            // DELETE RECORD. Update record with sync status = 3
+            
+            // Initiate core data
+            
+            let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+            let context:NSManagedObjectContext = appDel.managedObjectContext!
+            
+            var request = NSFetchRequest(entityName: "Results")
+            let filterPredicate: NSPredicate = NSPredicate(format: "date = %@", dateResult[indexPath.row])!
+            request.predicate = filterPredicate
+            
+            var error : NSError?
+            var updateError : NSError?
+            
+            if let results = context.executeFetchRequest(request, error: &error) {
+                
+                for result in results {
+                    
+                    result.setValue(3, forKey: "syncStatusParse")
+                    result.setValue(3, forKey: "syncStatusQuantid")
+                }
+                
+                context.save(&updateError)
+                
+                if updateError == nil {
+                    
+                    // Success
+                }
+                else {
+                    
+                    println("Failed to register deleted record. Error: \(updateError)")
+                }
+            }
+            else {
+                
+                println("Fetch failed: \(error)")
+            }
+            
+            // Remove from array and refresh table
+            
+            dateResult.removeAtIndex(indexPath.row)
+            leftScore.removeAtIndex(indexPath.row)
+            rightScore.removeAtIndex(indexPath.row)
+            monthString.removeAtIndex(indexPath.row)
+            dayString.removeAtIndex(indexPath.row)
+            hideNoteIcon.removeAtIndex(indexPath.row)
+            hideSyncIcon.removeAtIndex(indexPath.row)
+            
+            tableView.reloadData()
+        }
+    }
+
     func setupPerformanceView() {
         
         // Setup background
@@ -325,10 +466,47 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             view.addSubview(imageUserPhoto)
         }
-        
-        
     }
 
+    func setupChartingButtons() {
+        
+        // Set button background
+        let imageButtonBackground: UIImageView = UIImageView()
+        imageButtonBackground.backgroundColor = UIColor(red: 86/255, green: 199/255, blue: 149/255, alpha: 1.0)
+        imageButtonBackground.frame = CGRectMake(0, screenSize.height - 65, screenSize.width, 65)
+        view.addSubview(imageButtonBackground)
+        
+        // Setup the three charting buttons
+        let oneThirdWidth = screenSize.width / 3
+        let halfOneThirdWidth = oneThirdWidth / 2
+        
+        var buttonCharts = [UIButton]()
+        
+        for var i = 0; i < 3; i++ {
+            
+            var j: CGFloat = CGFloat(i)
+            
+            buttonCharts.append(UIButton())
+            
+            buttonCharts[i].frame = CGRectMake(0, 0, 50, 40)
+            //buttonCharts[i].backgroundColor = UIColor(red: 86/255, green: 199/255, blue: 149/255, alpha: 1.0)
+            buttonCharts[i].tag = 19 + i
+            buttonCharts[i].center = CGPoint(x: halfOneThirdWidth + (oneThirdWidth * j), y: screenSize.height - 33)
+            buttonCharts[i].addTarget(self, action: "actionCharting:", forControlEvents: UIControlEvents.TouchUpInside)
+            view.addSubview(buttonCharts[i])
+        }
+        
+        buttonCharts[0].setImage(UIImage(named: "icon-chart-left.png"), forState: UIControlState.Normal)
+        buttonCharts[1].setImage(UIImage(named: "icon-chart-both.png"), forState: UIControlState.Normal)
+        buttonCharts[2].setImage(UIImage(named: "icon-chart-right.png"), forState: UIControlState.Normal)
+    }
+    
+    func actionCharting(sender: UIButton) {
+        
+        
+        println("A button with tag=\(sender.tag) was pressed.")
+    }
+    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
         if segue.identifier == "jumpToNotes" {
@@ -343,11 +521,6 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
                 secondVC.returnSegue = "jumpToResults"
             }
         }
-    }
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
-        performSegueWithIdentifier("jumpToNotes", sender: self)
     }
 
     func sideBarDidSelectButtonAtIndex(index: Int) {

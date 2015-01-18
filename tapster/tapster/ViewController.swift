@@ -9,11 +9,28 @@
 import UIKit
 import CoreData
 
+extension UIColor {
+    
+    class func weakColor() -> UIColor {
+        return UIColor(red: 242.0/255.0, green: 244.0/255.0, blue: 248.0/255.0, alpha: 1.0)
+    }
+    
+    class func goodColor() -> UIColor {
+        return UIColor(red: 194.0/255.0, green: 143.0/255.0, blue: 107.0/255.0, alpha: 1.0)
+    }
+    
+    class func strongColor() -> UIColor {
+        return UIColor(red: 77.0/255.0, green: 107.0/255.0, blue: 191.0/255.0, alpha: 1.0)
+    }
+}
+
+
 class ViewController: UIViewController, SideBarDelegate {
     
     var sideBar:SideBar = SideBar()
     
     let screenSize: CGRect = UIScreen.mainScreen().bounds
+    let dateFormatter = NSDateFormatter()
     
     var timer = NSTimer()
     var tappingHasStarted = false
@@ -98,11 +115,100 @@ class ViewController: UIViewController, SideBarDelegate {
             tapCount++
             timeSeconds = 10
             timeMilliseconds = 0
+            labelTapToStart.hidden = true
             
             timer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("timerCountDown"), userInfo: nil, repeats: true)
         }
         
         labelTapCounter.text = String(tapCount)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // Establish side bar menu
+        
+        sideBar = SideBar(sourceView: self.view)
+        sideBar.delegate = self
+        
+        // Setup screen items
+        
+        // Set history background at bottom of screen
+        
+        var historyBackgroundWidth = 375
+        var image = UIImage(named: "background-history-375.png")
+        
+        if screenSize.width == 414 {
+            
+            historyBackgroundWidth = 414
+            var image = UIImage(named: "background-history-414.png")
+        }
+        
+        let imageBackgroundHistory = UIImageView(image: image)
+        imageBackgroundHistory.frame = CGRectMake(0, screenSize.height - 115, 375 , 115)
+        imageBackgroundHistory.contentMode = UIViewContentMode.ScaleAspectFill
+        
+        view.addSubview(imageBackgroundHistory)
+        view.sendSubviewToBack(imageBackgroundHistory)
+        
+        // Set the two disclosure symbols
+        
+        image = UIImage(named: "icon-disclosure.png")
+        
+        let imageDisclose1 = UIImageView(image: image)
+        let imageDisclose2 = UIImageView(image: image)
+        
+        imageDisclose1.frame = CGRectMake(screenSize.width - 25, screenSize.height - 78, 13, 14)
+        imageDisclose2.frame = CGRectMake(screenSize.width - 25, screenSize.height - 30, 13, 14)
+        
+        view.addSubview(imageDisclose1)
+        view.addSubview(imageDisclose2)
+        
+        // Set the two history buttons
+        
+        let buttonHistory1 = UIButton()
+        buttonHistory1.frame = CGRectMake(0, screenSize.height - 100, screenSize.width, 48)
+        buttonHistory1.tag = 19
+        buttonHistory1.addTarget(self, action: "actionHistoryButtonPress:", forControlEvents: UIControlEvents.TouchUpInside)
+        
+        let buttonHistory2 = UIButton()
+        buttonHistory2.frame = CGRectMake(0, screenSize.height - 50, screenSize.width, 48)
+        buttonHistory2.tag = 29
+        buttonHistory2.addTarget(self, action: "actionHistoryButtonPress:", forControlEvents: UIControlEvents.TouchUpInside)
+        
+        view.addSubview(buttonHistory1)
+        view.addSubview(buttonHistory2)
+        
+        // Clear history dates
+        
+        dateFormatter.dateFormat = "yyyy-mm-dd"
+        let date = dateFormatter.dateFromString("1900-01-01")
+        
+        dateHistoryNote1 = date!
+        dateHistoryNote2 = date!
+        
+        // Reset history, labels, buttons and background
+        
+        refreshHistory()
+        actionSwitchRight(0)
+        self.view.backgroundColor = UIColor(red:45/255, green:55/255, blue:64/255, alpha:1.0)
+        
+        // Get user location
+        PFGeoPoint.geoPointForCurrentLocationInBackground {(geoPoint: PFGeoPoint!, error: NSError!) -> Void in
+            
+            if error == nil {
+                
+                self.lat = geoPoint.latitude
+                self.long = geoPoint.longitude
+            }
+        }
+        
+        syncWithParse() //Sync measurements with Parse
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
     
     func timerCountDown(){
@@ -122,7 +228,11 @@ class ViewController: UIViewController, SideBarDelegate {
 
                 if self.saveResult() {
                     
-                    // saved successfully. Do nothing
+                    // saved successfully
+                    
+                    self.refreshHistory()
+                    
+                    self.labelTapToStart.hidden = false
                 }
                 else {
                     
@@ -195,6 +305,7 @@ class ViewController: UIViewController, SideBarDelegate {
             }
             
             println("Saved!")
+            
             // Save succeeded
             return true
         }
@@ -210,91 +321,115 @@ class ViewController: UIViewController, SideBarDelegate {
 
         labelTimer.text = "00:10.0"
         labelTapCounter.text = "0"
-        
-        // Generate history
-        
+    }
+    
+    func refreshHistory() {
+
         var dates = [NSDate]()
         var tapCount: NSInteger
         var dateString: NSString
         
         var resultsByDate: AnyObject = getRecentResultsByDate()
         
-        for var i = 0; i < resultsByDate.count; i++ {
+        if resultsByDate.count > 0 {
             
-            dates.append(resultsByDate[i].valueForKey("date") as NSDate)
-        }
-        
-        
-        var i = 1 // label tag counter
-        var j = 0 // result record counter
-        var counter = 1 // loop counter
-        
-        while counter <= 2 && counter < dates.count {
-
-            var isPaired = false
-            var labelHistoryDate = self.view.viewWithTag(i) as UILabel
-            var labelHistoryLeftResult = self.view.viewWithTag(i+1) as UILabel
-            var labelHistoryRightResult = self.view.viewWithTag(i+2) as UILabel
-            
-            // Update variables used for notes segue
-            
-            if counter == 1 {
+            for var i = 0; i < resultsByDate.count; i++ {
                 
-                dateHistoryNote1 = dates[j]
-            } else {
-                
-                dateHistoryNote2 = dates[j]
+                dates.append(resultsByDate[i].valueForKey("date") as NSDate)
             }
             
-            // Check for paired results
             
-            if j < (dates.count - 1) {
+            var i = 1 // label tag counter
+            var j = 0 // result record counter
+            var counter = 1 // loop counter
+            
+            while counter <= 2 && counter < dates.count {
                 
-                if dates[j] == dates[j+1] {
+                var isPaired = false
+                var labelHistoryDate = self.view.viewWithTag(i) as UILabel
+                var labelHistoryLeftResult = self.view.viewWithTag(i+1) as UILabel
+                var labelHistoryRightResult = self.view.viewWithTag(i+2) as UILabel
+                
+                // Update variables used for notes segue
+                
+                if counter == 1 {
                     
-                    isPaired = true
+                    dateHistoryNote1 = dates[j]
+                } else {
+                    
+                    dateHistoryNote2 = dates[j]
                 }
-            }
-            
-            // Update history with paired or unpaired results
-
-            if isPaired {
                 
-                dateString = getDateHistoryString(dates[j])
-                labelHistoryDate.text = dateString.uppercaseString
+                // Check for paired results
                 
-                tapCount = resultsByDate[j].valueForKey("tapCount") as NSInteger
-                labelHistoryLeftResult.text = "L:\(tapCount)"
-                
-                tapCount = resultsByDate[j+1].valueForKey("tapCount") as NSInteger
-                labelHistoryRightResult.text = "R:\(tapCount)"
-                
-                j = j + 2
-            }
-            else {
-                
-                tapCount = resultsByDate[j].valueForKey("tapCount") as NSInteger
-                dateString = getDateHistoryString(dates[j])
-                labelHistoryDate.text = dateString.uppercaseString
-                
-                if resultsByDate[j].valueForKey("hand") as NSString == "left" {
+                if j < (dates.count - 1) {
                     
+                    if dates[j] == dates[j+1] {
+                        
+                        isPaired = true
+                    }
+                }
+                
+                // Update history with paired or unpaired results
+                
+                if isPaired {
+                    
+                    dateString = getDateHistoryString(dates[j])
+                    labelHistoryDate.text = dateString.uppercaseString
+                    
+                    tapCount = resultsByDate[j].valueForKey("tapCount") as NSInteger
                     labelHistoryLeftResult.text = "L:\(tapCount)"
-                    labelHistoryRightResult.text = "R:--"
+                    
+                    var average = tapCount
+                    
+                    tapCount = resultsByDate[j+1].valueForKey("tapCount") as NSInteger
+                    labelHistoryRightResult.text = "R:\(tapCount)"
+                    
+                    average = (average + tapCount) / 2
+                    
+                    generatePerformanceMedal(average, slot: i)
+                    
+                    j = j + 2
                 }
                 else {
                     
-                    labelHistoryLeftResult.text = "L:--"
-                    labelHistoryRightResult.text = "R:\(tapCount)"
+                    tapCount = resultsByDate[j].valueForKey("tapCount") as NSInteger
+                    dateString = getDateHistoryString(dates[j])
+                    labelHistoryDate.text = dateString.uppercaseString
+                    
+                    if resultsByDate[j].valueForKey("hand") as NSString == "left" {
+                        
+                        labelHistoryLeftResult.text = "L:\(tapCount)"
+                        labelHistoryRightResult.text = "R:--"
+                    }
+                    else {
+                        
+                        labelHistoryLeftResult.text = "L:--"
+                        labelHistoryRightResult.text = "R:\(tapCount)"
+                    }
+                    
+                    j = j + 1
                 }
                 
-                j = j + 1
+                i = i + 3
+                
+                counter++
             }
-            
-            i = i + 3
-            
-            counter++
         }
+        else {
+            
+            // Clear all unused history labels
+            
+            labelHistoryDate2.text = ""
+            labelHistoryRightResult1.text = ""
+            labelHistoryLeftResult2.text = ""
+            labelHistoryRightResult2.text = ""
+            
+            // Give new users a nudge
+            
+            labelHistoryDate1.text = "JUST NOW"
+            labelHistoryLeftResult1.text = "No tests yet. Let's get tapping..."
+         }
     }
     
     func getUnpairedResult(hand: String) -> (shouldFormPair: Bool, date: NSDate) {
@@ -459,99 +594,6 @@ class ViewController: UIViewController, SideBarDelegate {
         return response
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        // Setup screen items
-        
-        // Set history background at bottom of screen
-        
-        var historyBackgroundWidth = 375
-        var image = UIImage(named: "background-history-375.png")
-        
-        if screenSize.width == 414 {
-            
-            historyBackgroundWidth = 414
-            var image = UIImage(named: "background-history-414.png")
-        }
-
-        let imageBackgroundHistory = UIImageView(image: image)
-        imageBackgroundHistory.frame = CGRectMake(0, screenSize.height - 115, 375 , 115)
-        imageBackgroundHistory.contentMode = UIViewContentMode.ScaleAspectFill
-        
-        view.addSubview(imageBackgroundHistory)
-        view.sendSubviewToBack(imageBackgroundHistory)
-        
-        // Set the two disclosure symbols
-        
-        image = UIImage(named: "icon-disclosure.png")
-        
-        let imageDisclose1 = UIImageView(image: image)
-        let imageDisclose2 = UIImageView(image: image)
-        
-        imageDisclose1.frame = CGRectMake(screenSize.width - 25, screenSize.height - 78, 13, 14)
-        imageDisclose2.frame = CGRectMake(screenSize.width - 25, screenSize.height - 30, 13, 14)
-        
-        view.addSubview(imageDisclose1)
-        view.addSubview(imageDisclose2)
-        
-        // Set the two history buttons
-
-        let buttonHistory1 = UIButton()
-        buttonHistory1.frame = CGRectMake(0, screenSize.height - 100, screenSize.width, 48)
-        buttonHistory1.tag = 19
-        buttonHistory1.addTarget(self, action: "actionHistoryButtonPress:", forControlEvents: UIControlEvents.TouchUpInside)
-        
-        let buttonHistory2 = UIButton()
-        buttonHistory2.frame = CGRectMake(0, screenSize.height - 50, screenSize.width, 48)
-        buttonHistory2.tag = 29
-        buttonHistory2.addTarget(self, action: "actionHistoryButtonPress:", forControlEvents: UIControlEvents.TouchUpInside)
-
-        view.addSubview(buttonHistory1)
-        view.addSubview(buttonHistory2)
-        
-        // Clear history dates
-        
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateFormat = "yyyy-mm-dd"
-        let date = dateFormatter.dateFromString("1900-01-01")
-        
-        dateHistoryNote1 = date!
-        dateHistoryNote2 = date!
-
-        // Reset labels, buttons and background
-        
-        actionSwitchRight(0)
-        self.view.backgroundColor = UIColor(red:45/255, green:55/255, blue:64/255, alpha:1.0)
-        
-        // Establish side bar menu
-        
-        sideBar = SideBar(sourceView: self.view,
-            menuItems: ["Tap Test", "Performance", "Profile", "Settings"],
-            menuIconItems: ["icon-menu-taptest.png", "icon-menu-performance.png", "icon-menu-profile.png", "icon-menu-settings.png"])
-        
-        sideBar.delegate = self
-        
-        // Get user location
-        PFGeoPoint.geoPointForCurrentLocationInBackground {(geoPoint: PFGeoPoint!, error: NSError!) -> Void in
-            
-            if error == nil {
-                
-                self.lat = geoPoint.latitude
-                self.long = geoPoint.longitude
-            }
-        }
-        
-        //Sync measurements with Parse
-        
-        syncWithParse()
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     func actionHistoryButtonPress(sender: UIButton!) {
 
         performSegueWithIdentifier("jumpToNotes", sender: sender)
@@ -580,32 +622,36 @@ class ViewController: UIViewController, SideBarDelegate {
     func syncWithParse() {
         
         /*
-        Sync local measurement results with Parse
+        Sync local results with Parse
         Step 1. Upload new local measurements (where syncStatusParse = 0) to Parse
-        Step 2. Remove deleted local measurements (where syncStatusParse = 2) from Parse
-        Step 3. If a local measurement has been updated/edited (where syncStatusParse = 3) then update the matching Parse record
+        Step 2. Remove deleted local measurements (where syncStatusParse = 3) from Parse
+        Step 3. If a local measurement has been updated/edited (where syncStatusParse = 2) then update the matching Parse record
         */
         
+        dateFormatter.dateFormat = "dd-mm-yyyy HH:mm"
+        let lastSyncDate = dateFormatter.stringFromDate(NSDate())
+
+        NSUserDefaults.standardUserDefaults().setObject(lastSyncDate, forKey: "lastSyncDate")
+
         // Initiate core data
         
         let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         let context:NSManagedObjectContext = appDel.managedObjectContext!
         
-        // Get unsynced measurements (where syncStatusParse = 0) and upload to Parse
+        // STEP 1. Get unsynced measurements (where syncStatusParse = 0) and upload to Parse
         
         var request = NSFetchRequest(entityName: "Results")
         var filterPredicate: NSPredicate = NSPredicate(format: "syncStatusParse = %@", "0")!
         request.predicate = filterPredicate
         
         var fetchError : NSError?
+        var updateError: NSError?
         
         if let results = context.executeFetchRequest(request, error: &fetchError) {
             
             if results.count > 0 {
                 
                 for result in results {
-                    
-                    println("Syncing...")
                     
                     var post = PFObject(className: "Results")
                     
@@ -634,6 +680,17 @@ class ViewController: UIViewController, SideBarDelegate {
                         if success {
                             
                             result.setValue(1, forKey: "syncStatusParse")
+                            
+                            context.save(&updateError)
+                            
+                            if updateError == nil {
+                                
+                                println("Success: synced a core data sync record up to Parse")
+                            }
+                            else {
+                                
+                                println("Error: \(updateError)")
+                            }
                         }
                         else {
                             
@@ -641,21 +698,15 @@ class ViewController: UIViewController, SideBarDelegate {
                             println(postError)
                         }
                     }
-                    
-                    context.save(nil)
                 }
-            }
-            else {
-                
-                println("Nothing to sync...")
             }
         }
         else {
             
-            println("Fetch failed: \(fetchError)")
+            println("Add record fetch failed: \(fetchError)")
         }
         
-        // Remove deleted measurements from Parse
+        // STEP 2. Update measurements on Parse which haved been updated locally
         
         filterPredicate = NSPredicate(format: "syncStatusParse = %@", "2")!
         request.predicate = filterPredicate
@@ -664,26 +715,78 @@ class ViewController: UIViewController, SideBarDelegate {
             
             if results.count > 0 {
                 
-                println("Some deleted records found")
-            }
-            else {
+                println("\(results.count) updated records found")
                 
-                println("No deleted records found")
-            }
-            
-            for result in results {
-                
-                var post = PFObject(className: "Results")
-                
-                // TO DO: delete records from Parse and the delete from core data
+                for result in results {
+                    
+                    var datePredicate = result.valueForKey("date") as NSDate
+                    
+                    let predicate = NSPredicate(format: "date == %@", datePredicate)
+                    
+                    var query = PFQuery(className: "Results", predicate: predicate)
+                    
+                    query.getFirstObjectInBackgroundWithBlock {(record: PFObject!, queryError:NSError!) -> Void in
+                        
+                        if query.countObjects() > 0 {
+                            
+                            if queryError == nil {
+                                
+                                record["note"] = result.valueForKey("note")
+                                
+                                record.saveInBackgroundWithBlock {(success: Bool, saveError: NSError!) -> Void in
+                                    
+                                    if success {
+                                        
+                                        result.setValue(1, forKey: "syncStatusParse")
+                                        
+                                        context.save(&updateError)
+                                        
+                                        if updateError == nil {
+                                            
+                                            println("Success: updated a core data record on Parse")
+                                        }
+                                        else {
+                                            
+                                            println("Error: \(updateError)")
+                                        }
+                                    }
+                                    else {
+                                        
+                                        //TO DO: Handle error...probably update NSlog
+                                        println(saveError)
+                                    }
+                                }
+                            }
+                            
+                        } else {
+                            
+                            // That's odd. No matching records found on Parse to update. Let's reset local record to sync (syncStatus = 0)
+                            
+                            println("No matching record on Parse. Resetting...")
+                            
+                            result.setValue(0, forKey: "syncStatusParse")
+                            
+                            context.save(&updateError)
+                            
+                            if updateError == nil {
+                                
+                                println("Success: updated a core data record on Parse")
+                            }
+                            else {
+                                
+                                println("Error: \(updateError)")
+                            }
+                        }
+                    }
+                }
             }
         }
         else {
             
-            println("Fetch failed: \(fetchError)")
+            // Failed to fetch records for udating
         }
         
-        // Finally, update measurements on Parse which haved been updated locally
+        // STEP 3. Remove deleted measurements from Parse
         
         filterPredicate = NSPredicate(format: "syncStatusParse = %@", "3")!
         request.predicate = filterPredicate
@@ -692,24 +795,133 @@ class ViewController: UIViewController, SideBarDelegate {
             
             if results.count > 0 {
                 
-                println("Some updated records found")
+                println("\(results.count) deleted records found")
+               
+                for result in results {
+                    
+                    var datePredicate = result.valueForKey("date") as NSDate
+                    
+                    let predicate = NSPredicate(format: "date == %@", datePredicate)
+                    
+                    var query = PFQuery(className: "Results", predicate: predicate)
+                    
+                    query.getFirstObjectInBackgroundWithBlock {(record: PFObject!, queryError:NSError!) -> Void in
+
+                        if queryError == nil {
+                            
+                            record.deleteInBackgroundWithBlock{(success: Bool, deleteError: NSError!) -> Void in
+                            
+                                if success {
+                                    
+                                    context.deleteObject(result as NSManagedObject)
+                                    
+                                    if !context.save(&updateError) {
+                                        
+                                        // There was a error saving
+                                    }
+                                    else {
+                                        
+                                        println("Local record deleted.")
+                                    }
+                                }
+                                else {
+                                    
+                                    println(deleteError.valueForKey("Code"))
+                                }
+                            }
+                        }
+                        else {
+                            
+                            // Even if there's a Parse query error, we should still delete the local record(s)
+                            
+                            context.deleteObject(result as NSManagedObject)
+                            
+                            if !context.save(&updateError) {
+                                
+                                // There was a error saving
+                            }
+                            else {
+                                
+                                println("Local record deleted.")
+                            }
+                        }
+                    }
+                }
             }
-            else {
+        }
+    }
+    
+    func generatePerformanceMedal(average: NSInteger, slot: NSInteger){
+
+        var imageMedals:[UIImageView] = []
+        var labelMedals: [UILabel] = []
+        
+        imageMedals.append(UIImageView())
+        imageMedals.append(UIImageView())
+        
+        labelMedals.append(UILabel())
+        labelMedals.append(UILabel())
+        
+        var i = 0
+        var x: CGFloat = (screenSize.width - 55) as CGFloat
+        var y: CGFloat = screenSize.height - 74
+        
+        if slot == 4 {
+
+            var i = 1
+            y = y + 52
+        }
+        
+        imageMedals[i].frame = CGRectMake(-90, -90, 35, 35)
+        imageMedals[i].center = CGPoint(x: x, y: y)
+        imageMedals[i].layer.cornerRadius = imageMedals[i].frame.size.width/2
+        imageMedals[i].layer.masksToBounds = true
+        
+        labelMedals[i].frame = CGRectMake(-90, -90, 35, 35)
+        //labelMedals[i].textAlignment
+        labelMedals[i].font = UIFont(name: "HelveticaNeue-Medium", size: 12)
+        labelMedals[i].textColor = UIColor.whiteColor()
+        labelMedals[i].center = CGPoint(x: x, y: y)
+        
+        var strongThreshold: NSInteger = 0
+        var weakThreshold: NSInteger = 0
+
+        if let strongT: AnyObject = NSUserDefaults.standardUserDefaults().objectForKey("strongThreshold") {
+
+            strongThreshold = strongT as NSInteger
+        }
+        
+        if let weakT: AnyObject = NSUserDefaults.standardUserDefaults().objectForKey("weakThreshold") {
+            
+            weakThreshold = weakT as NSInteger
+        }
+        
+        
+        if strongThreshold > 0 && weakThreshold > 0 {
+            
+            imageMedals[i].backgroundColor = UIColor.weakColor()
+            labelMedals[i].text = "WEAK"
+            
+            if average > weakThreshold {
                 
-                println("No updated records found")
+                imageMedals[i].backgroundColor = UIColor.goodColor()
+                labelMedals[i].text = "GOOD"
             }
             
-            for result in results {
+            if average >= strongThreshold {
                 
-                var post = PFObject(className: "Results")
-                
-                // TO DO: delete records from Parse and the delete from core data
+                imageMedals[i].backgroundColor = UIColor.strongColor()
+                labelMedals[i].text = "STRG"
             }
+
         }
         else {
             
-            println("Fetch failed: \(fetchError)")
+            imageMedals[i].backgroundColor = UIColor.goodColor()
         }
+        
+        view.addSubview(imageMedals[i])
+        view.addSubview(labelMedals[i])
     }
     
     // Manage slide-out side bar menu
