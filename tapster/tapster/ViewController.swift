@@ -9,25 +9,13 @@
 import UIKit
 import CoreData
 
-extension UIColor {
-    
-    class func weakColor() -> UIColor {
-        return UIColor(red: 242.0/255.0, green: 244.0/255.0, blue: 248.0/255.0, alpha: 1.0)
-    }
-    
-    class func goodColor() -> UIColor {
-        return UIColor(red: 194.0/255.0, green: 143.0/255.0, blue: 107.0/255.0, alpha: 1.0)
-    }
-    
-    class func strongColor() -> UIColor {
-        return UIColor(red: 77.0/255.0, green: 107.0/255.0, blue: 191.0/255.0, alpha: 1.0)
-    }
-}
-
-
 class ViewController: UIViewController, SideBarDelegate {
     
     var sideBar:SideBar = SideBar()
+
+    var buttonTapSurface: UIButton = UIButton()
+    let labelTapToStart: UILabel! = UILabel()
+    var imageMedals:[UIImageView] = []
     
     let screenSize: CGRect = UIScreen.mainScreen().bounds
     let dateFormatter = NSDateFormatter()
@@ -36,6 +24,7 @@ class ViewController: UIViewController, SideBarDelegate {
     var tappingHasStarted = false
     var tapCount = 0
     var handSetting = ""
+    var tapsurfaceFileName = ""
     
     var lat: Double = 0
     var long: Double = 0
@@ -53,10 +42,8 @@ class ViewController: UIViewController, SideBarDelegate {
     
     @IBOutlet weak var buttonRightSelector: UIButton!
     @IBOutlet weak var buttonLeftSelector: UIButton!
-    @IBOutlet weak var labelTapToStart: UILabel!
     @IBOutlet weak var labelTapCounter: UILabel!
     @IBOutlet weak var labelTimer: UILabel!
-    @IBOutlet weak var buttonTapSurface: UIButton!
     
     // History buttons & labels
     
@@ -81,8 +68,8 @@ class ViewController: UIViewController, SideBarDelegate {
         buttonRightSelector.setImage(UIImage(named: "rightON.png"), forState:UIControlState.Highlighted)
         buttonLeftSelector.setImage(UIImage(named: "leftOFF.png"), forState:UIControlState.Normal)
         buttonLeftSelector.setImage(UIImage(named: "leftOFF.png"), forState:UIControlState.Highlighted)
-        buttonTapSurface.setImage(UIImage(named: "tapSurface-r.png"), forState:UIControlState.Normal)
-        buttonTapSurface.setImage(UIImage(named: "tapSurface-r.png"), forState:UIControlState.Highlighted)
+        buttonTapSurface.setImage(UIImage(named: tapsurfaceFileName + "-R.png"), forState:UIControlState.Normal)
+        buttonTapSurface.setImage(UIImage(named: tapsurfaceFileName + "-R.png"), forState:UIControlState.Highlighted)
 
         resetLabels()
     }
@@ -96,13 +83,13 @@ class ViewController: UIViewController, SideBarDelegate {
         buttonRightSelector.setImage(UIImage(named: "rightOFF.png"), forState:UIControlState.Highlighted)
         buttonLeftSelector.setImage(UIImage(named: "leftON.png"), forState:UIControlState.Normal)
         buttonLeftSelector.setImage(UIImage(named: "leftON.png"), forState:UIControlState.Highlighted)
-        buttonTapSurface.setImage(UIImage(named: "tapSurface-l.png"), forState:UIControlState.Normal)
-        buttonTapSurface.setImage(UIImage(named: "tapSurface-l.png"), forState:UIControlState.Highlighted)
+        buttonTapSurface.setImage(UIImage(named: tapsurfaceFileName + "-L.png"), forState:UIControlState.Normal)
+        buttonTapSurface.setImage(UIImage(named: tapsurfaceFileName + "-L.png"), forState:UIControlState.Highlighted)
 
         resetLabels()
     }
     
-    @IBAction func actionTapSurface(sender: AnyObject) {
+    func actionTapSurface(sender: AnyObject) {
         
         if tappingHasStarted {
             
@@ -126,12 +113,7 @@ class ViewController: UIViewController, SideBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Establish side bar menu
-        
-        sideBar = SideBar(sourceView: self.view)
-        sideBar.delegate = self
-        
-        // Setup screen items
+        self.view.backgroundColor = UIColor(red:45/255, green:55/255, blue:64/255, alpha:1.0)
         
         // Set history background at bottom of screen
         
@@ -187,11 +169,78 @@ class ViewController: UIViewController, SideBarDelegate {
         dateHistoryNote1 = date!
         dateHistoryNote2 = date!
         
-        // Reset history, labels, buttons and background
+        // Setup medals
         
-        refreshHistory()
-        actionSwitchRight(0)
-        self.view.backgroundColor = UIColor(red:45/255, green:55/255, blue:64/255, alpha:1.0)
+        imageMedals.append(UIImageView())
+        imageMedals.append(UIImageView())
+        
+        var x: CGFloat = (screenSize.width - 60) as CGFloat
+        var y: CGFloat = screenSize.height - 74
+        
+        for var i = 0; i < 2; i++ {
+            
+            if i == 1 {
+                y = y + 48
+            }
+            
+            imageMedals[i].frame = CGRectMake(-90, -90, 35, 35)
+            imageMedals[i].contentMode = UIViewContentMode.ScaleAspectFit
+            imageMedals[i].center = CGPoint(x: x, y: y)
+            
+            view.addSubview(imageMedals[i])
+        }
+
+        // Setup tap surface button depending on device
+        
+        switch screenSize.width {
+            
+        case 320:
+            
+            if screenSize.height == 480 {
+                
+                //iphone4
+                println("this is an iPhone4")
+                tapsurfaceFileName = "tap-surface-iphone4"
+                buttonTapSurface.frame = CGRectMake(25, 85, 270, 225)
+            } else {
+                
+                //iphone5
+                println("this is an iPhone5")
+                tapsurfaceFileName = "tap-surface-iphone5+6"
+                buttonTapSurface.frame = CGRectMake(25, 85, 270, 300)
+            }
+        case 375:
+            //iphone6
+            tapsurfaceFileName = "tap-surface-iphone5+6"
+            buttonTapSurface.frame = CGRectMake(25, 85, 270, 300)
+        case 414:
+            //iphone6plus
+            tapsurfaceFileName = "tap-surface-iphone5+6"
+            buttonTapSurface.frame = CGRectMake(25, 85, 270, 300)
+        default:
+            //iphone5
+            tapsurfaceFileName = "tap-surface-iphone3"
+            buttonTapSurface.frame = CGRectMake(25, 85, 270, 225)
+        }
+        
+        buttonTapSurface.setImage(UIImage(named: tapsurfaceFileName + "-R.png"), forState:UIControlState.Normal)
+        buttonTapSurface.setImage(UIImage(named: tapsurfaceFileName + "-R.png"), forState:UIControlState.Highlighted)
+        buttonTapSurface.addTarget(self, action: "actionTapSurface:", forControlEvents: UIControlEvents.TouchUpInside)
+        
+        view.addSubview(buttonTapSurface)
+        
+        labelTapToStart.frame = CGRectMake(0, 0, 150, 21)
+        labelTapToStart.center = CGPoint(x: buttonTapSurface.center.x, y: buttonTapSurface.frame.height + 65)
+        labelTapToStart.font = UIFont(name: "HelveticaNeue-Light", size: 15)
+        labelTapToStart.textColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
+        labelTapToStart.textAlignment = NSTextAlignment.Center
+        labelTapToStart.text = "Tap to start"
+        
+        view.addSubview(labelTapToStart)
+        
+        refreshHistory() // Reset history
+        
+        actionSwitchRight(0) // Reset labels and buttons
         
         // Get user location
         PFGeoPoint.geoPointForCurrentLocationInBackground {(geoPoint: PFGeoPoint!, error: NSError!) -> Void in
@@ -203,7 +252,14 @@ class ViewController: UIViewController, SideBarDelegate {
             }
         }
         
-        syncWithParse() //Sync measurements with Parse
+        // Establish side bar menu
+        
+        sideBar = SideBar(sourceView: self.view)
+        sideBar.delegate = self
+        
+        //Sync measurements with Parse
+        
+        syncWithParse()
     }
     
     override func didReceiveMemoryWarning() {
@@ -231,8 +287,6 @@ class ViewController: UIViewController, SideBarDelegate {
                     // saved successfully
                     
                     self.refreshHistory()
-                    
-                    self.labelTapToStart.hidden = false
                 }
                 else {
                     
@@ -242,6 +296,8 @@ class ViewController: UIViewController, SideBarDelegate {
             alert.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default, handler: nil))
             
             presentViewController(alert, animated: true, completion: nil)
+            
+            self.labelTapToStart.hidden = false
         }
         else {
             
@@ -341,7 +397,7 @@ class ViewController: UIViewController, SideBarDelegate {
             
             var i = 1 // label tag counter
             var j = 0 // result record counter
-            var counter = 1 // loop counter
+            var counter = 1 // loop counter ensures two loops happen ONLY when there's a sufficient number of results
             
             while counter <= 2 && counter < dates.count {
                 
@@ -387,7 +443,7 @@ class ViewController: UIViewController, SideBarDelegate {
                     
                     average = (average + tapCount) / 2
                     
-                    generatePerformanceMedal(average, slot: i)
+                    awardMedals(average, slot: counter - 1)
                     
                     j = j + 2
                 }
@@ -409,6 +465,8 @@ class ViewController: UIViewController, SideBarDelegate {
                     }
                     
                     j = j + 1
+                    
+                    imageMedals[counter - 1].image = nil // No medal if there's an unpaired result
                 }
                 
                 i = i + 3
@@ -428,7 +486,7 @@ class ViewController: UIViewController, SideBarDelegate {
             // Give new users a nudge
             
             labelHistoryDate1.text = "JUST NOW"
-            labelHistoryLeftResult1.text = "No tests yet. Let's get tapping..."
+            labelHistoryLeftResult1.text = "No results yet. Let's get tapping..."
          }
     }
     
@@ -851,40 +909,20 @@ class ViewController: UIViewController, SideBarDelegate {
         }
     }
     
-    func generatePerformanceMedal(average: NSInteger, slot: NSInteger){
-
-        var imageMedals:[UIImageView] = []
-        var labelMedals: [UILabel] = []
+    func awardMedals(average: NSInteger, slot: NSInteger){
         
-        imageMedals.append(UIImageView())
-        imageMedals.append(UIImageView())
-        
-        labelMedals.append(UILabel())
-        labelMedals.append(UILabel())
-        
-        var i = 0
-        var x: CGFloat = (screenSize.width - 55) as CGFloat
-        var y: CGFloat = screenSize.height - 74
-        
-        if slot == 4 {
-
-            var i = 1
-            y = y + 52
-        }
-        
-        imageMedals[i].frame = CGRectMake(-90, -90, 35, 35)
-        imageMedals[i].center = CGPoint(x: x, y: y)
-        imageMedals[i].layer.cornerRadius = imageMedals[i].frame.size.width/2
-        imageMedals[i].layer.masksToBounds = true
-        
-        labelMedals[i].frame = CGRectMake(-90, -90, 35, 35)
-        //labelMedals[i].textAlignment
-        labelMedals[i].font = UIFont(name: "HelveticaNeue-Medium", size: 12)
-        labelMedals[i].textColor = UIColor.whiteColor()
-        labelMedals[i].center = CGPoint(x: x, y: y)
+        let imageStrong: UIImage = UIImage(named: "medal-strong.png")!
+        let imageGood: UIImage = UIImage(named: "medal-good.png")!
+        let imageWeak: UIImage = UIImage(named: "medal-weak.png")!
         
         var strongThreshold: NSInteger = 0
         var weakThreshold: NSInteger = 0
+        
+        var i = slot
+        
+        if slot == 4 {
+            i = 1
+        }
 
         if let strongT: AnyObject = NSUserDefaults.standardUserDefaults().objectForKey("strongThreshold") {
 
@@ -899,29 +937,23 @@ class ViewController: UIViewController, SideBarDelegate {
         
         if strongThreshold > 0 && weakThreshold > 0 {
             
-            imageMedals[i].backgroundColor = UIColor.weakColor()
-            labelMedals[i].text = "WEAK"
+            imageMedals[i].image = imageWeak
             
             if average > weakThreshold {
                 
-                imageMedals[i].backgroundColor = UIColor.goodColor()
-                labelMedals[i].text = "GOOD"
+                imageMedals[i].image = imageGood
             }
             
             if average >= strongThreshold {
                 
-                imageMedals[i].backgroundColor = UIColor.strongColor()
-                labelMedals[i].text = "STRG"
+                imageMedals[i].image = imageStrong
             }
 
         }
         else {
             
-            imageMedals[i].backgroundColor = UIColor.goodColor()
+            imageMedals[i].image = imageGood
         }
-        
-        view.addSubview(imageMedals[i])
-        view.addSubview(labelMedals[i])
     }
     
     // Manage slide-out side bar menu

@@ -20,8 +20,8 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
     let labelLeftAverage = UILabel()
     let labelRightAverage = UILabel()
     let imageUserPhoto = UIImageView()
+    let imageMedal = UIImageView()
 
-    
     @IBOutlet weak var tableView: UITableView!
     
     var rightScore = [NSInteger]()
@@ -42,6 +42,8 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setupPerformanceView()  // Setup performace view at the top of table
+        
         // Establish side bar menu
         
         sideBar = SideBar(sourceView: self.view)
@@ -55,8 +57,6 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         dateMonthFormatter.dateFormat = "MMM"
         dateDayFormatter.dateFormat = "dd"
-        
-        setupPerformanceView()  // Setup performace view at the top of table
         
         setupChartingButtons()  // Setup charting buttons at bottom of screen
         
@@ -183,18 +183,23 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
             monthString.append(dateMonthFormatter.stringFromDate(dateQuery) as NSString)
             dayString.append(dateDayFormatter.stringFromDate(dateQuery) as NSString)
             
-            // Handle displaying life average
+            // Display performance life average
             
             if leftCounter > 0 && rightCounter > 0 {
                 
-                labelLeftAverage.text = "L:\(Int(leftTotal / leftCounter))"
-                labelRightAverage.text = "R:\(Int(rightTotal / rightCounter))"
+                var leftLifeAverage = Int(leftTotal / leftCounter)
+                var rightLifeAverage = Int(rightTotal / rightCounter)
+                
+                labelLeftAverage.text = "L:\(leftLifeAverage)"
+                labelRightAverage.text = "R:\(rightLifeAverage)"
+                
+                awardMedal((leftLifeAverage + rightLifeAverage)/2)
             }
             else {
                 
                 labelLeftAverage.frame = CGRectMake(72, imageBackground.frame.origin.y + 17, 60, 200)
                 labelLeftAverage.font = UIFont(name: "HelveticaNeue-Light", size: 18)
-                labelLeftAverage.text = "Not enough activity..."
+                labelLeftAverage.text = "Not enough activity...."
                 labelRightAverage.hidden = true
             }
             
@@ -424,7 +429,7 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         // Setup background
         imageBackground.backgroundColor = UIColor(red: 78/255, green: 88/255, blue: 98/255, alpha: 0.7)
-        imageBackground.frame = CGRectMake(0, 75, screenSize.width, 50)
+        imageBackground.frame = CGRectMake(0, 60, screenSize.width, 58)
         
         view.addSubview(imageBackground)
         
@@ -440,31 +445,86 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         labelLeftAverage.frame = CGRectMake(72, imageBackground.frame.origin.y + 17, 60, 28)
         labelLeftAverage.backgroundColor = UIColor.clearColor()
         labelLeftAverage.textColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
-        labelLeftAverage.font = UIFont(name: "HelveticaNeue-Thin", size: 23)
+        labelLeftAverage.font = UIFont(name: "HelveticaNeue-Medium", size: 28)
         
         view.addSubview(labelLeftAverage)
         
-        labelRightAverage.frame = CGRectMake(screenSize.width - (screenSize.width / 3), imageBackground.frame.origin.y + 17, 60, 28)
+        labelRightAverage.frame = CGRectMake(screenSize.width - (screenSize.width / 2), imageBackground.frame.origin.y + 17, 60, 28)
         labelRightAverage.backgroundColor = UIColor.clearColor()
         labelRightAverage.textColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
-        labelRightAverage.font = UIFont(name: "HelveticaNeue-Thin", size: 23)
+        labelRightAverage.font = UIFont(name: "HelveticaNeue-Medium", size: 28)
         
         view.addSubview(labelRightAverage)
         
         // Setup profile photo
+        
+        let imageUserPhoto = UIImageView()
         let imageUserPhotoNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("image")
         
         if let imageData: NSData = imageUserPhotoNS as? NSData {
             
             imageUserPhoto.image = UIImage (data: imageData)
-            imageUserPhoto.frame = CGRectMake(13, imageBackground.frame.origin.y + 2, 46, 46)
-            imageUserPhoto.contentMode = UIViewContentMode.ScaleAspectFit
-            imageUserPhoto.layer.cornerRadius = imageUserPhoto.frame.size.width/2
-            imageUserPhoto.layer.borderWidth = 2
-            imageUserPhoto.layer.borderColor = UIColor(red: 78/255, green: 88/255, blue: 98/255, alpha: 1.0).CGColor
-            imageUserPhoto.layer.masksToBounds = true
+        } else {
             
-            view.addSubview(imageUserPhoto)
+            imageUserPhoto.image = UIImage(named: "profile-silhuette.png")
+        }
+
+        imageUserPhoto.frame = CGRectMake(0, 0, 52, 52)
+        imageUserPhoto.center = CGPoint(x: 39, y: imageBackground.center.y)
+        imageUserPhoto.contentMode = UIViewContentMode.ScaleAspectFit
+        imageUserPhoto.layer.cornerRadius = imageUserPhoto.frame.size.width/2
+        imageUserPhoto.layer.borderWidth = 2
+        imageUserPhoto.layer.borderColor = UIColor(red: 78/255, green: 88/255, blue: 98/255, alpha: 1.0).CGColor
+        imageUserPhoto.layer.masksToBounds = true
+        
+        view.addSubview(imageUserPhoto)
+        
+        //Setup medal
+        
+        imageMedal.frame = CGRectMake(0, 0, 30, 30)
+        imageMedal.center = CGPoint(x: screenSize.width - 40, y: imageBackground.center.y)
+        
+        view.addSubview(imageMedal)
+    }
+    
+    func awardMedal(average: NSInteger){
+        
+        let imageStrong: UIImage = UIImage(named: "medal-strong.png")!
+        let imageGood: UIImage = UIImage(named: "medal-good.png")!
+        let imageWeak: UIImage = UIImage(named: "medal-weak.png")!
+        
+        var strongThreshold: NSInteger = 0
+        var weakThreshold: NSInteger = 0
+        
+        if let strongT: AnyObject = NSUserDefaults.standardUserDefaults().objectForKey("strongThreshold") {
+            
+            strongThreshold = strongT as NSInteger
+        }
+        
+        if let weakT: AnyObject = NSUserDefaults.standardUserDefaults().objectForKey("weakThreshold") {
+            
+            weakThreshold = weakT as NSInteger
+        }
+        
+        
+        if strongThreshold > 0 && weakThreshold > 0 {
+            
+            imageMedal.image = imageWeak
+            
+            if average > weakThreshold {
+                
+                imageMedal.image = imageGood
+            }
+            
+            if average >= strongThreshold {
+                
+                imageMedal.image = imageStrong
+            }
+            
+        }
+        else {
+            
+            imageMedal.image = imageGood
         }
     }
 

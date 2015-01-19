@@ -141,16 +141,14 @@ class ChartViewController: UIViewController, JBBarChartViewDelegate, JBBarChartV
         
         // Setup chart title
         
-        labelTitle.frame = CGRectMake(0, 0, 200, 21)
+        labelTitle.frame = CGRectMake(0, 0, 300, 21)
         labelTitle.center = CGPointMake(screenSize.width / 2, barChartView.frame.origin.y - 20)
         labelTitle.textAlignment = NSTextAlignment.Center
         labelTitle.textColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
-        labelTitle.font = UIFont(name: "HelveticaNeue-Light", size: 16)
+        labelTitle.font = UIFont(name: "HelveticaNeue-Regular", size: 16)
         labelTitle.text = chartTitle
         
         self.view.addSubview(labelTitle)
-        
-        println("Launched");
     }
     
     override func didReceiveMemoryWarning() {

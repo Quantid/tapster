@@ -111,15 +111,19 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         if let imageData: NSData = imageUserPhotoNS as? NSData {
             
             imageUserPhoto.image = UIImage (data: imageData)
-            imageUserPhoto.frame = CGRectMake(sideBarContainerView.bounds.origin.x - 15 + 68, 70, 105, 105)
-            imageUserPhoto.contentMode = UIViewContentMode.ScaleAspectFit
-            imageUserPhoto.layer.cornerRadius = imageUserPhoto.frame.size.width/2
-            imageUserPhoto.layer.borderWidth = 5
-            imageUserPhoto.layer.borderColor = UIColor(red: 138/255, green: 150/255, blue: 158/255, alpha: 1.0).CGColor
-            imageUserPhoto.layer.masksToBounds = true
+        } else {
             
-            sideBarContainerView.addSubview(imageUserPhoto)
+            imageUserPhoto.image = UIImage(named: "profile-silhuette.png")
         }
+
+        imageUserPhoto.frame = CGRectMake(sideBarContainerView.bounds.origin.x - 15 + 68, 70, 105, 105)
+        imageUserPhoto.contentMode = UIViewContentMode.ScaleAspectFit
+        imageUserPhoto.layer.cornerRadius = imageUserPhoto.frame.size.width/2
+        imageUserPhoto.layer.borderWidth = 5
+        imageUserPhoto.layer.borderColor = UIColor(red: 138/255, green: 150/255, blue: 158/255, alpha: 1.0).CGColor
+        imageUserPhoto.layer.masksToBounds = true
+        
+        sideBarContainerView.addSubview(imageUserPhoto)
     }
     
     

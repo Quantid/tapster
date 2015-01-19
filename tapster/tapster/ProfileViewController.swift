@@ -81,8 +81,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         let user = PFUser.currentUser()
         
-        println(user)
-        
         let nameFirstNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("nameFirst")
         let nameLastNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("nameLast")
         let imageUserPhotoNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("image")
@@ -110,13 +108,13 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
             
             inputCountry.text = user["country"] as String
-            
         }
         else {
             
             if let nf = nameFirstNS as? String {
                 
                 inputNameFirst.text = nf
+                labelNickname.text = nf
             }
             
             if let nl = nameLastNS as? String {
@@ -136,9 +134,12 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         else {
             
             if let imageData = user["profileImage"] as? NSData {
-                println("here...")
                 
                 imageUserPhoto.image = UIImage (data: imageData)
+            }
+            else {
+                
+                imageUserPhoto.image = UIImage(named: "profile-silhuette.png")
             }
         }
 
@@ -214,8 +215,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
         
         if error == "" {
-            
-            startActivityIndicator()
            
             var query = PFQuery(className:"_User")
             let userId = PFUser.currentUser().objectId
@@ -237,11 +236,23 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                         user["profileImage"] = imageFile
                     }
                     
+                    self.startActivityIndicator()
+                    
                     user.saveInBackgroundWithBlock {(success: Bool, saveError: NSError!) -> Void in
                     
                         if success {
                             
-                            user.fetch() // Refresh user details
+                            // Refresh user data
+                            
+                            user.fetchInBackgroundWithBlock({(userData: PFObject!, fetchError: NSError!) -> Void in
+                                
+                                if fetchError != nil {
+                                    
+                                    NSLog("Cannot refresh user's data. Error:@", fetchError)
+                                }
+                                
+                                println(userData)
+                            })
                         }
                         
                         self.stopActivityIndicator()
@@ -261,6 +272,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func startActivityIndicator() {
         
+        // Setup activity indicator
         activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 75, 75))
         activityIndicator.center = CGPoint(x: self.view.center.x, y: self.view.center.y)
         activityIndicator.hidesWhenStopped = true
@@ -280,12 +292,16 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         //Unlock display for resumption of user interaction
         UIApplication.sharedApplication().endIgnoringInteractionEvents()
+        
+        // Show alert box message
+        let alert = UIAlertView(title: "Updated", message: "", delegate: self, cancelButtonTitle: "OK")
+        alert.alertViewStyle = .Default
+        alert.show()
     }
-    
-    // Get rid of keyboard when finished entering text
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         
+        // Get rid of keyboard when finished entering text
         textField.resignFirstResponder()
         
         return true
