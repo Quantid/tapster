@@ -11,18 +11,26 @@ import CoreData
 
 class SettingsTableViewController: UITableViewController, UITableViewDelegate {
     
+    var sideBar:SideBar = SideBar()
+    
     let timePickerView  : UIDatePicker = UIDatePicker()
     let buttonCancel: UIButton = UIButton()
     let screenSize: CGRect = UIScreen.mainScreen().bounds
     let dateFormatter = NSDateFormatter()
     var timer = NSTimer()
     
+    @IBAction func actionMenu(sender: AnyObject) {
+        
+        sideBar.showSideBar(true)
+    }
+
     var alert: UIAlertController = UIAlertController()
     var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
 
     @IBOutlet weak var labelLastSyncDate: UILabel!
     @IBOutlet weak var switchAlert: UISwitch!
     @IBOutlet weak var labelAlertTime: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

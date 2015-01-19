@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8827301D4B837CEF8B223D73 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4093294EFB60F6161AF5B58 /* libPods.a */; };
 		D51033251A55BF6800934BB1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D51033241A55BF6800934BB1 /* AppDelegate.swift */; };
 		D51033281A55BF6900934BB1 /* tapster.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D51033261A55BF6900934BB1 /* tapster.xcdatamodeld */; };
 		D510332A1A55BF6900934BB1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D51033291A55BF6900934BB1 /* ViewController.swift */; };
@@ -16,7 +17,6 @@
 		D510333E1A55BF6900934BB1 /* tapsterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D510333D1A55BF6900934BB1 /* tapsterTests.swift */; };
 		D510334A1A55C01500934BB1 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033471A55C01500934BB1 /* Bolts.framework */; };
 		D510334B1A55C01600934BB1 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033481A55C01500934BB1 /* Parse.framework */; };
-		D510334C1A55C01600934BB1 /* ParseCrashReporting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033491A55C01500934BB1 /* ParseCrashReporting.framework */; };
 		D510334E1A55C11500934BB1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D510334D1A55C11500934BB1 /* AudioToolbox.framework */; };
 		D51033501A55C11B00934BB1 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D510334F1A55C11B00934BB1 /* CFNetwork.framework */; };
 		D51033521A55C12900934BB1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033511A55C12900934BB1 /* CoreGraphics.framework */; };
@@ -83,6 +83,9 @@
 		D5BA95051A6B0DE3001F89BB /* icon-chart-right@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5BA94FF1A6B0DE3001F89BB /* icon-chart-right@1x.png */; };
 		D5BA95061A6B0DE3001F89BB /* icon-chart-right@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5BA95001A6B0DE3001F89BB /* icon-chart-right@2x.png */; };
 		D5C1011A1A571A1A00580D31 /* ResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5C101191A571A1A00580D31 /* ResultsViewController.swift */; };
+		D5DE0A581A6C2D3B00CF248D /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5DE0A571A6C2D3B00CF248D /* Social.framework */; };
+		D5DE0A5A1A6C2DB800CF248D /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5DE0A591A6C2DB800CF248D /* Accounts.framework */; };
+		D5DE0A5E1A6C347C00CF248D /* ChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DE0A5D1A6C347C00CF248D /* ChartViewController.swift */; };
 		D5E2D7441A69E15500FC0C25 /* icon-export-settings@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5E2D7401A69E15500FC0C25 /* icon-export-settings@1x.png */; };
 		D5E2D7451A69E15500FC0C25 /* icon-export-settings@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5E2D7411A69E15500FC0C25 /* icon-export-settings@2x.png */; };
 		D5E2D7461A69E15500FC0C25 /* icon-sync-settings@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5E2D7421A69E15500FC0C25 /* icon-sync-settings@1x.png */; };
@@ -103,6 +106,9 @@
 		D5E30DF41A64E523003C7E40 /* inputbox-small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5E30DF21A64E523003C7E40 /* inputbox-small@2x.png */; };
 		D5E30DF71A64E666003C7E40 /* button-update@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5E30DF51A64E666003C7E40 /* button-update@1x.png */; };
 		D5E30DF81A64E666003C7E40 /* button-update@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5E30DF61A64E666003C7E40 /* button-update@2x.png */; };
+		D5F04A3B1A6C7E9D00763A78 /* logo-large@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5F04A381A6C7E9C00763A78 /* logo-large@1x.png */; };
+		D5F04A3C1A6C7E9D00763A78 /* logo-large@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5F04A391A6C7E9D00763A78 /* logo-large@2x.png */; };
+		D5F04A3D1A6C7E9D00763A78 /* logo-large@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5F04A3A1A6C7E9D00763A78 /* logo-large@3x.png */; };
 		D5F69C351A5F41F600C2E201 /* cellResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F69C341A5F41F600C2E201 /* cellResult.swift */; };
 		D5F69C371A5FA84A00C2E201 /* icon-disclosure@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5F69C361A5FA84A00C2E201 /* icon-disclosure@2x.png */; };
 /* End PBXBuildFile section */
@@ -118,6 +124,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4BCD5448F44EF83F26DD656B /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		A16ACDFA078953676C3B499C /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		B4093294EFB60F6161AF5B58 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D510331F1A55BF6800934BB1 /* tapster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tapster.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D51033231A55BF6800934BB1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D51033241A55BF6800934BB1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -131,7 +140,6 @@
 		D510333D1A55BF6900934BB1 /* tapsterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tapsterTests.swift; sourceTree = "<group>"; };
 		D51033471A55C01500934BB1 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bolts.framework; path = tapster/Bolts.framework; sourceTree = "<group>"; };
 		D51033481A55C01500934BB1 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = tapster/Parse.framework; sourceTree = "<group>"; };
-		D51033491A55C01500934BB1 /* ParseCrashReporting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ParseCrashReporting.framework; path = tapster/ParseCrashReporting.framework; sourceTree = "<group>"; };
 		D510334D1A55C11500934BB1 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		D510334F1A55C11B00934BB1 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D51033511A55C12900934BB1 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -199,6 +207,9 @@
 		D5BA94FF1A6B0DE3001F89BB /* icon-chart-right@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-chart-right@1x.png"; sourceTree = "<group>"; };
 		D5BA95001A6B0DE3001F89BB /* icon-chart-right@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-chart-right@2x.png"; sourceTree = "<group>"; };
 		D5C101191A571A1A00580D31 /* ResultsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultsViewController.swift; sourceTree = "<group>"; };
+		D5DE0A571A6C2D3B00CF248D /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		D5DE0A591A6C2DB800CF248D /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
+		D5DE0A5D1A6C347C00CF248D /* ChartViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartViewController.swift; sourceTree = "<group>"; };
 		D5E2D7401A69E15500FC0C25 /* icon-export-settings@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-export-settings@1x.png"; sourceTree = "<group>"; };
 		D5E2D7411A69E15500FC0C25 /* icon-export-settings@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-export-settings@2x.png"; sourceTree = "<group>"; };
 		D5E2D7421A69E15500FC0C25 /* icon-sync-settings@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-sync-settings@1x.png"; sourceTree = "<group>"; };
@@ -219,6 +230,9 @@
 		D5E30DF21A64E523003C7E40 /* inputbox-small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "inputbox-small@2x.png"; sourceTree = "<group>"; };
 		D5E30DF51A64E666003C7E40 /* button-update@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-update@1x.png"; sourceTree = "<group>"; };
 		D5E30DF61A64E666003C7E40 /* button-update@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-update@2x.png"; sourceTree = "<group>"; };
+		D5F04A381A6C7E9C00763A78 /* logo-large@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-large@1x.png"; sourceTree = "<group>"; };
+		D5F04A391A6C7E9D00763A78 /* logo-large@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-large@2x.png"; sourceTree = "<group>"; };
+		D5F04A3A1A6C7E9D00763A78 /* logo-large@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-large@3x.png"; sourceTree = "<group>"; };
 		D5F69C341A5F41F600C2E201 /* cellResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = cellResult.swift; sourceTree = "<group>"; };
 		D5F69C361A5FA84A00C2E201 /* icon-disclosure@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-disclosure@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -228,6 +242,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5DE0A5A1A6C2DB800CF248D /* Accounts.framework in Frameworks */,
+				D5DE0A581A6C2D3B00CF248D /* Social.framework in Frameworks */,
 				D51033641A55C19500934BB1 /* CoreData.framework in Frameworks */,
 				D51033621A55C18800934BB1 /* libsqlite3.dylib in Frameworks */,
 				D51033601A55C17F00934BB1 /* libz.dylib in Frameworks */,
@@ -241,8 +257,8 @@
 				D51033501A55C11B00934BB1 /* CFNetwork.framework in Frameworks */,
 				D510334E1A55C11500934BB1 /* AudioToolbox.framework in Frameworks */,
 				D510334B1A55C01600934BB1 /* Parse.framework in Frameworks */,
-				D510334C1A55C01600934BB1 /* ParseCrashReporting.framework in Frameworks */,
 				D510334A1A55C01500934BB1 /* Bolts.framework in Frameworks */,
+				8827301D4B837CEF8B223D73 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,6 +272,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9FB2E82086ADCBD2A4E43C59 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D5DE0A591A6C2DB800CF248D /* Accounts.framework */,
+				D5DE0A571A6C2D3B00CF248D /* Social.framework */,
+				B4093294EFB60F6161AF5B58 /* libPods.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D29B015FFCCED1F6696ABF24 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4BCD5448F44EF83F26DD656B /* Pods.debug.xcconfig */,
+				A16ACDFA078953676C3B499C /* Pods.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		D51033161A55BF6800934BB1 = {
 			isa = PBXGroup;
 			children = (
@@ -273,11 +308,12 @@
 				D510334D1A55C11500934BB1 /* AudioToolbox.framework */,
 				D51033471A55C01500934BB1 /* Bolts.framework */,
 				D51033481A55C01500934BB1 /* Parse.framework */,
-				D51033491A55C01500934BB1 /* ParseCrashReporting.framework */,
 				D51033211A55BF6800934BB1 /* tapster */,
 				D510333A1A55BF6900934BB1 /* tapsterTests */,
 				D51033201A55BF6800934BB1 /* Products */,
 				D51033651A55C1EF00934BB1 /* tapster-Bridging-Header.h */,
+				D29B015FFCCED1F6696ABF24 /* Pods */,
+				9FB2E82086ADCBD2A4E43C59 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -298,6 +334,7 @@
 				D51033291A55BF6900934BB1 /* ViewController.swift */,
 				D5C101191A571A1A00580D31 /* ResultsViewController.swift */,
 				D5E30DEF1A64E13D003C7E40 /* ProfileViewController.swift */,
+				D5DE0A5D1A6C347C00CF248D /* ChartViewController.swift */,
 				D54F4B501A5E0711007024A0 /* NotesViewController.swift */,
 				D58F20581A6A6CF200F4139B /* SettingsTableViewController.swift */,
 				D56400651A60DC3400F09A18 /* SideBar.swift */,
@@ -316,6 +353,9 @@
 		D51033221A55BF6800934BB1 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				D5F04A381A6C7E9C00763A78 /* logo-large@1x.png */,
+				D5F04A391A6C7E9D00763A78 /* logo-large@2x.png */,
+				D5F04A3A1A6C7E9D00763A78 /* logo-large@3x.png */,
 				D5BA94FB1A6B0DE3001F89BB /* icon-chart-both@1x.png */,
 				D5BA94FC1A6B0DE3001F89BB /* icon-chart-both@2x.png */,
 				D5BA94FD1A6B0DE3001F89BB /* icon-chart-left@1x.png */,
@@ -412,9 +452,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D51033411A55BF6900934BB1 /* Build configuration list for PBXNativeTarget "tapster" */;
 			buildPhases = (
+				600ADF12FC6994EFCC87D84D /* Check Pods Manifest.lock */,
 				D510331B1A55BF6800934BB1 /* Sources */,
 				D510331C1A55BF6800934BB1 /* Frameworks */,
 				D510331D1A55BF6800934BB1 /* Resources */,
+				E9A21A0F3CDABA630B8DCE0B /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -521,9 +563,11 @@
 				D5E30DDD1A6493C1003C7E40 /* icon-note@1x.png in Resources */,
 				D5E30DEB1A64E021003C7E40 /* frame-border-avatar@1x.png in Resources */,
 				D5E30DED1A64E021003C7E40 /* frame-avatar@1x.png in Resources */,
+				D5F04A3B1A6C7E9D00763A78 /* logo-large@1x.png in Resources */,
 				D56400621A60DBE400F09A18 /* icon-menu-profile@2x.png in Resources */,
 				D510332D1A55BF6900934BB1 /* Main.storyboard in Resources */,
 				D5E30DEE1A64E021003C7E40 /* frame-avatar@2x.png in Resources */,
+				D5F04A3C1A6C7E9D00763A78 /* logo-large@2x.png in Resources */,
 				D56400BA1A61ECA700F09A18 /* slider-female@1x.png in Resources */,
 				D5E30DDC1A6493C1003C7E40 /* icon-sync@2x.png in Resources */,
 				D5BA95021A6B0DE3001F89BB /* icon-chart-both@2x.png in Resources */,
@@ -545,6 +589,7 @@
 				D5E30DD61A6490E1003C7E40 /* icon-menu-selector@1x.png in Resources */,
 				D51033711A56276500934BB1 /* leftOFF@2x.png in Resources */,
 				D53DD1971A5CE26300E8E59A /* tapSurface-l.png in Resources */,
+				D5F04A3D1A6C7E9D00763A78 /* logo-large@3x.png in Resources */,
 				D5E30DDB1A6493C1003C7E40 /* icon-sync@1x.png in Resources */,
 				D5883BDA1A68666100DB1C55 /* background-history-375@2x.png in Resources */,
 				D54F4B551A5E0805007024A0 /* textarea-notes@2x.png in Resources */,
@@ -568,6 +613,39 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		600ADF12FC6994EFCC87D84D /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		E9A21A0F3CDABA630B8DCE0B /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		D510331B1A55BF6800934BB1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -577,6 +655,7 @@
 				D56400681A60DC3400F09A18 /* SideBarTableViewController.swift in Sources */,
 				D54FB56C1A6719E30042DCAC /* CountryTableViewController.swift in Sources */,
 				D5E30DF01A64E13D003C7E40 /* ProfileViewController.swift in Sources */,
+				D5DE0A5E1A6C347C00CF248D /* ChartViewController.swift in Sources */,
 				D5C1011A1A571A1A00580D31 /* ResultsViewController.swift in Sources */,
 				D510332A1A55BF6900934BB1 /* ViewController.swift in Sources */,
 				D56400671A60DC3400F09A18 /* SideBar.swift in Sources */,
@@ -705,6 +784,7 @@
 		};
 		D51033421A55BF6900934BB1 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4BCD5448F44EF83F26DD656B /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -726,6 +806,7 @@
 		};
 		D51033431A55BF6900934BB1 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A16ACDFA078953676C3B499C /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;

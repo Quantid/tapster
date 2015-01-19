@@ -502,13 +502,12 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func actionCharting(sender: UIButton) {
-        
-        
-        println("A button with tag=\(sender.tag) was pressed.")
+
+        performSegueWithIdentifier("jumpToCharts", sender: sender)
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        
+
         if segue.identifier == "jumpToNotes" {
             
             if let selectedIndex = self.tableView.indexPathForSelectedRow()?.row {
@@ -519,6 +518,30 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
                 
                 secondVC.dateOfNote = dateOfSelectedItem
                 secondVC.returnSegue = "jumpToResults"
+            }
+        }
+        else {
+            
+            if let senderId = sender?.tag {
+                println("Chart button segue tag working")
+                
+                var chartVC: ChartViewController = segue.destinationViewController as ChartViewController
+                
+                chartVC.chartLeftData = leftScore
+                chartVC.chartRightData = rightScore
+                chartVC.chartDateData = dateResult
+                
+                switch senderId {
+                    
+                case 19:
+                    chartVC.chartType = "left"
+                case 20:
+                    chartVC.chartType = "left+right"
+                case 21:
+                    chartVC.chartType = "right"
+                default:
+                    break
+                }
             }
         }
     }
