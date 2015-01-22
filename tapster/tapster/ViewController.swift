@@ -16,6 +16,8 @@ class ViewController: UIViewController, SideBarDelegate {
     var buttonTapSurface: UIButton = UIButton()
     let labelTapToStart: UILabel! = UILabel()
     var imageMedals:[UIImageView] = []
+    let buttonHistory1 = UIButton()
+    let buttonHistory2 = UIButton()
     
     let screenSize: CGRect = UIScreen.mainScreen().bounds
     let dateFormatter = NSDateFormatter()
@@ -148,12 +150,10 @@ class ViewController: UIViewController, SideBarDelegate {
         
         // Set the two history buttons
         
-        let buttonHistory1 = UIButton()
         buttonHistory1.frame = CGRectMake(0, screenSize.height - 100, screenSize.width, 48)
         buttonHistory1.tag = 19
         buttonHistory1.addTarget(self, action: "actionHistoryButtonPress:", forControlEvents: UIControlEvents.TouchUpInside)
         
-        let buttonHistory2 = UIButton()
         buttonHistory2.frame = CGRectMake(0, screenSize.height - 50, screenSize.width, 48)
         buttonHistory2.tag = 29
         buttonHistory2.addTarget(self, action: "actionHistoryButtonPress:", forControlEvents: UIControlEvents.TouchUpInside)
@@ -206,17 +206,17 @@ class ViewController: UIViewController, SideBarDelegate {
                 
                 //iphone5
                 println("this is an iPhone5")
-                tapsurfaceFileName = "tap-surface-iphone5+6"
+                tapsurfaceFileName = "tap-surface-iphone5"
                 buttonTapSurface.frame = CGRectMake(25, 85, 270, 300)
             }
         case 375:
             //iphone6
-            tapsurfaceFileName = "tap-surface-iphone5+6"
-            buttonTapSurface.frame = CGRectMake(25, 85, 270, 300)
+            tapsurfaceFileName = "tap-surface-iphone6"
+            buttonTapSurface.frame = CGRectMake(25, 85, 325, 400)
         case 414:
             //iphone6plus
-            tapsurfaceFileName = "tap-surface-iphone5+6"
-            buttonTapSurface.frame = CGRectMake(25, 85, 270, 300)
+            tapsurfaceFileName = "tap-surface-iphone6"
+            buttonTapSurface.frame = CGRectMake(45, 85, 325, 400)
         default:
             //iphone5
             tapsurfaceFileName = "tap-surface-iphone3"
@@ -258,7 +258,7 @@ class ViewController: UIViewController, SideBarDelegate {
         sideBar.delegate = self
         
         //Sync measurements with Parse
-        
+
         syncWithParse()
     }
     
@@ -385,6 +385,11 @@ class ViewController: UIViewController, SideBarDelegate {
         var tapCount: NSInteger
         var dateString: NSString
         
+        // Enable history buttons
+        
+        buttonHistory1.enabled = true
+        buttonHistory2.enabled = true
+        
         var resultsByDate: AnyObject = getRecentResultsByDate()
         
         if resultsByDate.count > 0 {
@@ -434,12 +439,12 @@ class ViewController: UIViewController, SideBarDelegate {
                     labelHistoryDate.text = dateString.uppercaseString
                     
                     tapCount = resultsByDate[j].valueForKey("tapCount") as NSInteger
-                    labelHistoryLeftResult.text = "L:\(tapCount)"
+                    labelHistoryLeftResult.text = "L\(tapCount)"
                     
                     var average = tapCount
                     
                     tapCount = resultsByDate[j+1].valueForKey("tapCount") as NSInteger
-                    labelHistoryRightResult.text = "R:\(tapCount)"
+                    labelHistoryRightResult.text = "R\(tapCount)"
                     
                     average = (average + tapCount) / 2
                     
@@ -455,13 +460,13 @@ class ViewController: UIViewController, SideBarDelegate {
                     
                     if resultsByDate[j].valueForKey("hand") as NSString == "left" {
                         
-                        labelHistoryLeftResult.text = "L:\(tapCount)"
-                        labelHistoryRightResult.text = "R:--"
+                        labelHistoryLeftResult.text = "L\(tapCount)"
+                        labelHistoryRightResult.text = "R--"
                     }
                     else {
                         
-                        labelHistoryLeftResult.text = "L:--"
-                        labelHistoryRightResult.text = "R:\(tapCount)"
+                        labelHistoryLeftResult.text = "L--"
+                        labelHistoryRightResult.text = "R\(tapCount)"
                     }
                     
                     j = j + 1
@@ -479,14 +484,27 @@ class ViewController: UIViewController, SideBarDelegate {
             // Clear all unused history labels
             
             labelHistoryDate2.text = ""
+            labelHistoryLeftResult1.text = ""
             labelHistoryRightResult1.text = ""
             labelHistoryLeftResult2.text = ""
             labelHistoryRightResult2.text = ""
             
-            // Give new users a nudge
+            // Give new users a nudge message
             
+            let labelGetTapping: UILabel = UILabel(frame: CGRect(x: 0, y: 0, width: 300, height: 18))
+            labelGetTapping.textColor = UIColor(red: 50/255, green: 50/255, blue: 50/255, alpha: 1.0)
+            labelGetTapping.font = UIFont(name: "HelveticaNeue", size: 14)
+            labelGetTapping.textAlignment = NSTextAlignment.Center
+            labelGetTapping.center = CGPoint(x: screenSize.width / 2, y: screenSize.height - 70)
+            labelGetTapping.text = "No results yet. Let's get tapping..."
             labelHistoryDate1.text = "JUST NOW"
-            labelHistoryLeftResult1.text = "No results yet. Let's get tapping..."
+
+            view.addSubview(labelGetTapping)
+            
+            // Disable history buttons
+            
+            buttonHistory1.enabled = false
+            buttonHistory2.enabled = false
          }
     }
     
@@ -686,7 +704,7 @@ class ViewController: UIViewController, SideBarDelegate {
         Step 3. If a local measurement has been updated/edited (where syncStatusParse = 2) then update the matching Parse record
         */
         
-        dateFormatter.dateFormat = "dd-mm-yyyy HH:mm"
+        dateFormatter.dateFormat = "dd-MM-yyyy HH:mm"
         let lastSyncDate = dateFormatter.stringFromDate(NSDate())
 
         NSUserDefaults.standardUserDefaults().setObject(lastSyncDate, forKey: "lastSyncDate")

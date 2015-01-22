@@ -102,16 +102,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Set screen variables. These are needed throughout the app
-        
-        NSUserDefaults.standardUserDefaults().setObject(screenSize.width, forKey: "screenWidth")
-        NSUserDefaults.standardUserDefaults().setObject(screenSize.height, forKey: "screenHeight")
-        
         self.view.hidden = true // hide while checking if user is logged in
-        
-        // Change backgroundColor
-
-        //self.view.backgroundColor = UIColor(red:45/255, green:55/255, blue:64/255, alpha:1.0)
         
         // Set up variables
         
@@ -170,7 +161,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
                 buttonLogin.center = CGPoint(x: (screenSize.width/2) , y: screenSize.height - (buttonHeight/2) - screenSize.height/10)
 
             case "register":
-                buttonGender.center = CGPoint(x: (screenSize.width/2) , y: (screenSize.height/2) + (buttonHeight/2) + 5)
+                buttonGender.center = CGPoint(x: (screenSize.width/2) , y: imageInputboxes[3].center.y + buttonHeight + 10)
                 buttonRegister.center = CGPoint(x: (screenSize.width/2) , y: screenSize.height - (buttonHeight/2) - screenSize.height/10)
 
         default:
@@ -183,8 +174,6 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         // Checks user is logged in. If yes, jump to main screen.
         
         if PFUser.currentUser() != nil {
-            
-            PFUser.currentUser().fetch()
             
             performSegueWithIdentifier("jumpToMain", sender: self)
         }
@@ -346,6 +335,25 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
             error = "Email and password cannot be the same"
         }
         
+        // Validate DOB
+        
+        if DOB == "" || DOB.utf16Count != 11 {
+            
+            error = "Enter a valid date of birth"
+        }
+        
+        // Convert DOB from string to date
+        
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "dd MMM yyyy"
+        if let validateDOB: NSDate = dateFormatter.dateFromString(DOB) {
+            
+        }
+        else {
+            
+            error = "Enter a valid date of birth"
+        }
+        
         // Register with Parse
         
         if error == "" {
@@ -384,12 +392,10 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
                         self.errorMessage.text = error
                     }
             case "register":
-                    // Convert DOB from string to date
-                    
-                    let dateFormatter = NSDateFormatter()
+                
                     dateFormatter.dateFormat = "dd MMM yyyy"
                     let dateDOB = dateFormatter.dateFromString(DOB)
-                    
+
                     startActivityIndicator()
                     
                     var user = PFUser()

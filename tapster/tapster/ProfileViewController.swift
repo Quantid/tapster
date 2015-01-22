@@ -98,7 +98,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                     
                     inputNameLast.text = nameArray[1]
                 }
-                labelNickname.text = user["nameFirst"] as? String
+                labelNickname.text = user["name"] as? String
             }
             else {
                 
@@ -107,7 +107,10 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                 inputNameLast.text = user["nameLast"] as String
             }
             
-            inputCountry.text = user["country"] as String
+            if let country = user["country"] as? String {
+                
+                inputCountry.text = country
+            }
         }
         else {
             

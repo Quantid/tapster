@@ -190,8 +190,8 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
                 var leftLifeAverage = Int(leftTotal / leftCounter)
                 var rightLifeAverage = Int(rightTotal / rightCounter)
                 
-                labelLeftAverage.text = "L:\(leftLifeAverage)"
-                labelRightAverage.text = "R:\(rightLifeAverage)"
+                labelLeftAverage.text = "L\(leftLifeAverage)"
+                labelRightAverage.text = "R\(rightLifeAverage)"
                 
                 awardMedal((leftLifeAverage + rightLifeAverage)/2)
             }
@@ -223,7 +223,7 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
             // Handle displaying sync icon
             
             if let sync = results[0].valueForKey("syncStatusParse") as? NSInteger {
-                
+
                 if sync > 0 {
                     
                     hideSyncIcon.append(true)
@@ -352,12 +352,11 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         cell.labelDay.text = dayString[indexPath.row]
         cell.labelMonth.text = monthString[indexPath.row].uppercaseString
-        cell.labelLeftScore.text = "L:" + leftScoreString
-        cell.labelRightScore.text = "R:" + rightScoreString
+        cell.labelLeftScore.text = "L" + leftScoreString
+        cell.labelRightScore.text = "R" + rightScoreString
         cell.imageNote.hidden = hideNoteIcon[indexPath.row]
-        //cell.imageSync.hidden = hideSyncIcon[indexPath.row]
-        cell.imageSync.hidden = true
-        
+        cell.imageSync.hidden = hideSyncIcon[indexPath.row]
+
         return cell
     }
     
