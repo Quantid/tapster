@@ -15,6 +15,7 @@ class ViewController: UIViewController, SideBarDelegate {
 
     var buttonTapSurface: UIButton = UIButton()
     let labelTapToStart: UILabel! = UILabel()
+    let labelGetTapping: UILabel = UILabel()
     var imageMedals:[UIImageView] = []
     let buttonHistory1 = UIButton()
     let buttonHistory2 = UIButton()
@@ -287,6 +288,17 @@ class ViewController: UIViewController, SideBarDelegate {
                     // saved successfully
                     
                     self.refreshHistory()
+                    
+                    // Now switch over to the other hand
+                    
+                    if self.handSetting == "left" {
+                        
+                        self.actionSwitchRight(self)
+                        
+                    } else {
+                        
+                        self.actionSwitchLeft(self)
+                    }
                 }
                 else {
                     
@@ -384,11 +396,14 @@ class ViewController: UIViewController, SideBarDelegate {
         var dates = [NSDate]()
         var tapCount: NSInteger
         var dateString: NSString
+        var isPaired = false
         
         // Enable history buttons
         
         buttonHistory1.enabled = true
         buttonHistory2.enabled = true
+        
+        labelGetTapping.text = "" // Clear get tapping message (if it's there)
         
         var resultsByDate: AnyObject = getRecentResultsByDate()
         
@@ -402,22 +417,22 @@ class ViewController: UIViewController, SideBarDelegate {
             
             var i = 1 // label tag counter
             var j = 0 // result record counter
-            var counter = 1 // loop counter ensures two loops happen ONLY when there's a sufficient number of results
+            var counter = 0 // loop counter ensures two loops happen ONLY when there's a sufficient number of results
             
-            while counter <= 2 && counter < dates.count {
-                
-                var isPaired = false
+            while (counter < 2 && counter < dates.count) || (counter == 2 && isPaired && counter < dates.count) {
+
+                isPaired = false
                 var labelHistoryDate = self.view.viewWithTag(i) as UILabel
                 var labelHistoryLeftResult = self.view.viewWithTag(i+1) as UILabel
                 var labelHistoryRightResult = self.view.viewWithTag(i+2) as UILabel
                 
                 // Update variables used for notes segue
                 
-                if counter == 1 {
+                if counter == 0 {
                     
                     dateHistoryNote1 = dates[j]
                 } else {
-                    
+
                     dateHistoryNote2 = dates[j]
                 }
                 
@@ -448,9 +463,11 @@ class ViewController: UIViewController, SideBarDelegate {
                     
                     average = (average + tapCount) / 2
                     
-                    awardMedals(average, slot: counter - 1)
+                    awardMedals(average, slot: i)
                     
                     j = j + 2
+                    
+                    counter++
                 }
                 else {
                     
@@ -471,15 +488,28 @@ class ViewController: UIViewController, SideBarDelegate {
                     
                     j = j + 1
                     
-                    imageMedals[counter - 1].image = nil // No medal if there's an unpaired result
+                    imageMedals[i].image = nil // No medal if there's an unpaired result
                 }
                 
                 i = i + 3
                 
                 counter++
             }
+            
+            // Check if there's only results for the first row of the history. If so, erase second row labels
+            
+            if counter == 1 || (dates.count == 2 && isPaired){
+                
+                // Clear all unused history labels
+                
+                labelHistoryDate2.text = ""
+                labelHistoryLeftResult2.text = ""
+                labelHistoryRightResult2.text = ""
+            }
         }
         else {
+            
+            // This must be a new user
             
             // Clear all unused history labels
             
@@ -489,9 +519,9 @@ class ViewController: UIViewController, SideBarDelegate {
             labelHistoryLeftResult2.text = ""
             labelHistoryRightResult2.text = ""
             
-            // Give new users a nudge message
+            // Give new users a motivational message to appear in the history
             
-            let labelGetTapping: UILabel = UILabel(frame: CGRect(x: 0, y: 0, width: 300, height: 18))
+            labelGetTapping.frame = CGRectMake(0, 0, 300, 18)
             labelGetTapping.textColor = UIColor(red: 50/255, green: 50/255, blue: 50/255, alpha: 1.0)
             labelGetTapping.font = UIFont(name: "HelveticaNeue", size: 14)
             labelGetTapping.textAlignment = NSTextAlignment.Center
@@ -940,6 +970,8 @@ class ViewController: UIViewController, SideBarDelegate {
         
         if slot == 4 {
             i = 1
+        } else {
+            i = 0
         }
 
         if let strongT: AnyObject = NSUserDefaults.standardUserDefaults().objectForKey("strongThreshold") {

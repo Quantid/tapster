@@ -251,6 +251,14 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         calculatePerformanceThresholds(averageOfPairedResults)
     }
     
+    override func viewDidAppear(animated: Bool) {
+    }
+
+    override func viewDidLayoutSubviews() {
+        
+        tableView.frame = CGRectMake(0, 120, screenSize.width, screenSize.height - 140)
+    }
+    
     func calculatePerformanceThresholds(arrayOfAverages: [NSInteger]) {
         
         println(arrayOfAverages)

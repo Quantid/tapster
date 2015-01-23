@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="9hg-8h-z6G">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="LnP-Kq-f0w">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -8,7 +8,7 @@
         <!--RegisterViewController-->
         <scene sceneID="Sfd-R3-hfo">
             <objects>
-                <viewController storyboardIdentifier="RegisterView" title="RegisterViewController" id="9hg-8h-z6G" customClass="RegisterViewController" customModule="tapster" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="RegisterView" title="RegisterViewController" id="9hg-8h-z6G" customClass="RegisterViewController" customModule="Taptimal" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="7Tc-CN-LMh"/>
                         <viewControllerLayoutGuide type="bottom" id="CqP-jg-Hbj"/>
@@ -108,6 +108,7 @@
                         <outlet property="labelAnchorCenter" destination="mKD-b8-gpE" id="PRE-NL-lu4"/>
                         <outlet property="labelOr" destination="mKD-b8-gpE" id="v5L-HC-gJv"/>
                         <segue destination="vXZ-lx-hvc" kind="presentation" identifier="jumpToMain" animates="NO" id="hOk-Z5-OyS"/>
+                        <segue destination="RkM-Ue-d0G" kind="show" identifier="jumpToWalkthrough" id="f95-L4-QWF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Df-o1-jcN" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -117,7 +118,7 @@
         <!--View Controller-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController storyboardIdentifier="MainView" id="vXZ-lx-hvc" customClass="ViewController" customModule="tapster" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MainView" id="vXZ-lx-hvc" customClass="ViewController" customModule="Taptimal" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
@@ -326,10 +327,87 @@
             </objects>
             <point key="canvasLocation" x="-42" y="550"/>
         </scene>
+        <!--Walkthrough View Controller-->
+        <scene sceneID="RIa-Ux-VPg">
+            <objects>
+                <viewController id="RkM-Ue-d0G" customClass="WalkthroughViewController" customModule="Taptimal" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="pPA-Nb-KIA"/>
+                        <viewControllerLayoutGuide type="bottom" id="4Zm-Pm-Irm"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="1gQ-1s-vXT">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="P7u-5f-iVU" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-909" y="1227"/>
+        </scene>
+        <!--Page Content View Controller-->
+        <scene sceneID="45f-dB-j9j">
+            <objects>
+                <viewController storyboardIdentifier="PageContentViewController" id="djZ-wh-jdf" customClass="PageContentViewController" customModule="Taptimal" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="wK1-WD-mJA"/>
+                        <viewControllerLayoutGuide type="bottom" id="7u9-Eu-qO2"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="L3m-q6-rGw">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FHY-AN-OE3">
+                                <rect key="frame" x="272" y="530" width="33" height="30"/>
+                                <state key="normal" title="Start">
+                                    <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="actionStartWalkthrough:" destination="djZ-wh-jdf" eventType="touchUpInside" id="3jo-st-OfY"/>
+                                    <segue destination="vXZ-lx-hvc" kind="show" id="qeW-PY-0Pd"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Taptimal keeps you at the peak of your game, helping you work harder, play better and train stronger." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="10" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="avX-Jd-YaE">
+                                <rect key="frame" x="50" y="355" width="220" height="180"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="220" id="yLc-84-zBz"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="0.33725490200000002" green="0.78039215689999997" blue="0.58431372550000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="FHY-AN-OE3" secondAttribute="trailing" constant="15" id="BU3-He-c42"/>
+                            <constraint firstAttribute="centerX" secondItem="avX-Jd-YaE" secondAttribute="centerX" id="KNF-1n-zvH"/>
+                            <constraint firstAttribute="centerX" secondItem="FHY-AN-OE3" secondAttribute="centerX" id="dCn-GB-i9V"/>
+                            <constraint firstAttribute="bottom" secondItem="avX-Jd-YaE" secondAttribute="bottom" constant="100" id="xFq-90-aFo"/>
+                            <constraint firstAttribute="bottom" secondItem="FHY-AN-OE3" secondAttribute="bottom" constant="8" id="zy3-1Z-eoJ"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="dCn-GB-i9V"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                    <connections>
+                        <outlet property="labelBlurb" destination="avX-Jd-YaE" id="E9f-i3-eJX"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ekF-Q0-bZV" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-506" y="1227"/>
+        </scene>
         <!--Profile View Controller-->
         <scene sceneID="8XU-1D-BHU">
             <objects>
-                <viewController storyboardIdentifier="ProfileView" id="o79-AK-KTg" customClass="ProfileViewController" customModule="tapster" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ProfileView" id="o79-AK-KTg" customClass="ProfileViewController" customModule="Taptimal" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="IjV-Vx-vBs"/>
                         <viewControllerLayoutGuide type="bottom" id="lX0-Mg-sb9"/>
@@ -610,7 +688,7 @@
         <!--Country Table View Controller-->
         <scene sceneID="op7-1L-Dpy">
             <objects>
-                <tableViewController id="oan-CT-qRX" customClass="CountryTableViewController" customModule="tapster" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="oan-CT-qRX" customClass="CountryTableViewController" customModule="Taptimal" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="TcK-dv-bv6">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -641,7 +719,7 @@
         <!--Settings View Controller-->
         <scene sceneID="8I6-hH-RTv">
             <objects>
-                <viewController storyboardIdentifier="SettingsView" id="LnP-Kq-f0w" customClass="SettingsViewController" customModule="tapster" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SettingsView" id="LnP-Kq-f0w" customClass="SettingsViewController" customModule="Taptimal" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="YNe-Ni-2Dk"/>
                         <viewControllerLayoutGuide type="bottom" id="cMf-ii-GaX"/>
@@ -694,7 +772,7 @@
         <!--Notes View Controller-->
         <scene sceneID="Kza-bu-rRM">
             <objects>
-                <viewController id="efI-9d-aYh" customClass="NotesViewController" customModule="tapster" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="efI-9d-aYh" customClass="NotesViewController" customModule="Taptimal" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Pyq-fe-jXz"/>
                         <viewControllerLayoutGuide type="bottom" id="eyO-Q0-DEc"/>
@@ -796,6 +874,16 @@
                                     <action selector="actionGoBack:" destination="efI-9d-aYh" eventType="touchUpInside" id="BIP-JV-k8W"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7yE-k9-0qV">
+                                <rect key="frame" x="35" y="348" width="250" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="3X0-AX-dZk"/>
+                                    <constraint firstAttribute="width" constant="250" id="7YE-CP-K9U"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-LightItalic" family="Helvetica Neue" pointSize="14"/>
+                                <color key="textColor" red="0.78281763979999996" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -811,6 +899,7 @@
                             <constraint firstAttribute="centerX" secondItem="q8O-2k-4Uq" secondAttribute="centerX" id="YbU-9X-KcD"/>
                             <constraint firstAttribute="centerX" secondItem="2D7-gX-BT2" secondAttribute="centerX" id="aEV-RD-Ceb"/>
                             <constraint firstAttribute="centerY" secondItem="2D7-gX-BT2" secondAttribute="centerY" constant="-8" id="aOf-7c-Qd6"/>
+                            <constraint firstAttribute="centerX" secondItem="7yE-k9-0qV" secondAttribute="centerX" id="bn2-wH-LdH"/>
                             <constraint firstItem="Ghy-U9-oeg" firstAttribute="top" secondItem="Pyq-fe-jXz" secondAttribute="bottom" constant="7" id="eGy-fy-t70"/>
                             <constraint firstItem="Q7k-L2-4ug" firstAttribute="leading" secondItem="1FL-0F-H1a" secondAttribute="leadingMargin" constant="-16" id="fd8-gE-HQq"/>
                             <constraint firstAttribute="centerX" secondItem="Q7k-L2-4ug" secondAttribute="centerX" id="ftB-0h-5YB"/>
@@ -818,6 +907,7 @@
                             <constraint firstItem="mUp-lT-PTm" firstAttribute="top" secondItem="Pyq-fe-jXz" secondAttribute="bottom" constant="8" id="oIk-fy-8Jr"/>
                             <constraint firstAttribute="centerX" secondItem="mUp-lT-PTm" secondAttribute="centerX" id="pUL-mJ-nfo"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Q7k-L2-4ug" secondAttribute="trailing" constant="-16" id="sYe-eq-i3g"/>
+                            <constraint firstItem="7yE-k9-0qV" firstAttribute="top" secondItem="2D7-gX-BT2" secondAttribute="bottom" constant="6" id="wOa-kE-GjU"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
@@ -835,6 +925,7 @@
                     <connections>
                         <outlet property="inputNote" destination="2D7-gX-BT2" id="3wn-h1-TAG"/>
                         <outlet property="labelDay" destination="MGb-Sy-0K8" id="dZJ-Fc-3pk"/>
+                        <outlet property="labelError" destination="7yE-k9-0qV" id="aMg-8L-CH4"/>
                         <outlet property="labelLeftScore" destination="Xef-G3-5fm" id="qUd-rs-Q4l"/>
                         <outlet property="labelMonth" destination="FP5-gG-iph" id="CIg-cR-3RP"/>
                         <outlet property="labelRightScore" destination="ZxA-k0-wY5" id="goL-yw-DcA"/>
@@ -849,7 +940,7 @@
         <!--Chart View Controller-->
         <scene sceneID="yb5-8T-ohg">
             <objects>
-                <viewController id="tcb-8s-7HQ" customClass="ChartViewController" customModule="tapster" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="tcb-8s-7HQ" customClass="ChartViewController" customModule="Taptimal" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="eiG-PC-JPU"/>
                         <viewControllerLayoutGuide type="bottom" id="Fa3-pv-c9C"/>
@@ -859,7 +950,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="DUr-dR-xXQ">
-                                <rect key="frame" x="50" y="58" width="220" height="29"/>
+                                <rect key="frame" x="50" y="35" width="220" height="29"/>
                                 <color key="backgroundColor" red="0.1764705882352941" green="0.21568627450980393" blue="0.25098039215686274" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <segments>
                                     <segment title="1 M"/>
@@ -886,7 +977,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="centerX" secondItem="DUr-dR-xXQ" secondAttribute="centerX" id="4Ad-GH-PUI"/>
-                            <constraint firstItem="DUr-dR-xXQ" firstAttribute="top" secondItem="eiG-PC-JPU" secondAttribute="bottom" constant="38" id="Ifa-xS-U8a"/>
+                            <constraint firstItem="DUr-dR-xXQ" firstAttribute="top" secondItem="eiG-PC-JPU" secondAttribute="bottom" constant="15" id="Ifa-xS-U8a"/>
                         </constraints>
                     </view>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
@@ -902,7 +993,7 @@
         <!--Results-->
         <scene sceneID="hid-8a-68i">
             <objects>
-                <viewController storyboardIdentifier="PerformanceView" title="Results" id="0Zl-WK-XKn" customClass="ResultsViewController" customModule="tapster" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PerformanceView" title="Results" id="0Zl-WK-XKn" customClass="ResultsViewController" customModule="Taptimal" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="29Y-O3-r46"/>
                         <viewControllerLayoutGuide type="bottom" id="fJC-XE-aJ6"/>
@@ -966,7 +1057,7 @@
                                 <rect key="frame" x="0.0" y="120" width="320" height="400"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cell" id="9b0-YX-qHD" customClass="cellResult" customModule="tapster" customModuleProvider="target">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cell" id="9b0-YX-qHD" customClass="cellResult" customModule="Taptimal" customModuleProvider="target">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="9b0-YX-qHD" id="ECV-iu-vf4">
                                             <autoresizingMask key="autoresizingMask"/>
@@ -1138,9 +1229,9 @@
         <image name="textarea-notes.png" width="270" height="200"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="8br-dI-jxC"/>
-        <segue reference="hOk-Z5-OyS"/>
+        <segue reference="fBX-57-EC5"/>
+        <segue reference="R1f-4c-z3A"/>
         <segue reference="Jw6-2H-gp6"/>
-        <segue reference="YuF-XP-dV4"/>
+        <segue reference="bAp-rd-ydI"/>
     </inferredMetricsTieBreakers>
 </document>

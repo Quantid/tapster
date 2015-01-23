@@ -30,7 +30,7 @@ extension String {
 }
 
 class RegisterViewController: UIViewController, UITextFieldDelegate {
-    
+
     let screenSize: CGRect = UIScreen.mainScreen().bounds
     var buttonWidth: CGFloat = 0
     var buttonHeight: CGFloat = 0
@@ -249,9 +249,17 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
             inputFields[i].placeholder = textfieldNames[i]
             inputFields[i].center = CGPoint(x: (screenSize.width/2), y: inputItemSpacing[i])
             
+            if textfieldNames[i] == "Email" {
+                
+                inputFields[i].autocapitalizationType = UITextAutocapitalizationType.None
+                inputFields[i].autocorrectionType = UITextAutocorrectionType.No
+            }
+            
             if textfieldNames[i] == "Password" {
                 
                 inputFields[i].secureTextEntry = true
+                inputFields[i].autocapitalizationType = UITextAutocapitalizationType.None
+                inputFields[i].autocorrectionType = UITextAutocorrectionType.No
             }
             
             view.addSubview(inputFields[i])
@@ -281,30 +289,44 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
 
         var error = ""
         var maximumTextLength: [NSInteger] = []
-        
+        let dateFormatter = NSDateFormatter()
         var email = inputFields[find(textfieldNames, "Email")!].text
         var password = inputFields[find(textfieldNames, "Password")!].text
-        
         var name = ""
         var DOB = ""
-        
+
         switch screen {
             
-            case "login":
+        case "login":
                 maximumTextLength = [50, 35]
 
         case "register":
                 maximumTextLength = [35, 50, 35, 14]
                 
                 name = inputFields[find(textfieldNames, "Name")!].text
-                DOB = inputFields[find(textfieldNames, "Date of birth")!].text
-
+                let DOB = inputFields[find(textfieldNames, "Date of birth")!].text
+                
+                // Validate DOB
+                
+                if DOB == "" || DOB.utf16Count != 11 {
+                    
+                    error = "Enter a valid date of birth"
+                }
+                
+                // Convert DOB from string to date
+                
+                dateFormatter.dateFormat = "dd MMM yyyy"
+                if let validateDOB: NSDate = dateFormatter.dateFromString(DOB) {
+                    
+                }
+                else {
+                    
+                    error = "Enter a valid date of birth"
+            }
         default:
             println("something...")
         }
-        
-        // Validate user input
-        
+
         // Validate text length
         
         for var i = 0; i < maximumTextLength.count; i++ {
@@ -333,25 +355,6 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         if email.lowercaseString == password.lowercaseString {
             
             error = "Email and password cannot be the same"
-        }
-        
-        // Validate DOB
-        
-        if DOB == "" || DOB.utf16Count != 11 {
-            
-            error = "Enter a valid date of birth"
-        }
-        
-        // Convert DOB from string to date
-        
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateFormat = "dd MMM yyyy"
-        if let validateDOB: NSDate = dateFormatter.dateFromString(DOB) {
-            
-        }
-        else {
-            
-            error = "Enter a valid date of birth"
         }
         
         // Register with Parse
@@ -412,7 +415,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
                         if signUpError == nil {
                             // Hooray! Let them use the app now.
                             
-                            self.performSegueWithIdentifier("jumpToMain", sender: self)
+                            self.performSegueWithIdentifier("jumpToWalkthrough", sender: self)
                         }
                         else {
                             

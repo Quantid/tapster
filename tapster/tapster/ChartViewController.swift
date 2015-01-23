@@ -23,6 +23,7 @@ extension UIColor {
 class ChartViewController: UIViewController, JBBarChartViewDelegate, JBBarChartViewDataSource {
     
     let barChartView = JBBarChartView()
+    let barChartView2 = JBBarChartView()
     let headerHeight:CGFloat = 15
     let footerHeight:CGFloat = 15
     let headerView = UIView()
@@ -30,7 +31,7 @@ class ChartViewController: UIViewController, JBBarChartViewDelegate, JBBarChartV
     let padding:CGFloat = 10
     
     var chartDataX = [NSInteger]()
-    var chartDataX1 = [NSInteger]()
+    var chartDataX2 = [NSInteger]()
     var chartDataY = [NSInteger]()
     var chartLeftData = [NSInteger]()
     var chartRightData = [NSInteger]()
@@ -75,20 +76,20 @@ class ChartViewController: UIViewController, JBBarChartViewDelegate, JBBarChartV
             
             case "left":
                 chartDataX = chartLeftData
-                chartTitle = "Left hand taps"
+                chartTitle = "Left taps"
             
             case "right":
                 chartDataX = chartRightData
-                chartTitle = "Right hand taps"
+                chartTitle = "Right taps"
             
             case "left+right":
                 chartDataX = chartLeftData
-                chartDataX1 = chartRightData
-                chartTitle = "Left and Right hand taps"
+                chartDataX2 = chartRightData
+                chartTitle = "Left and Right taps"
 
         default:
             chartDataX = chartLeftData
-            chartTitle = "Left hand taps"
+            chartTitle = "Left taps"
         }
         
         // Remove 0 from results array
@@ -101,11 +102,11 @@ class ChartViewController: UIViewController, JBBarChartViewDelegate, JBBarChartV
             chartDataX.removeAtIndex(indx!)
         }
         
-        while (find(chartDataX1, 0) != nil) {
+        while (find(chartDataX2, 0) != nil) {
             
-            var indx = find(chartDataX1, 0)
+            var indx = find(chartDataX2, 0)
             
-            chartDataX1.removeAtIndex(indx!)
+            chartDataX2.removeAtIndex(indx!)
         }
 
         // Get max and min values
@@ -119,7 +120,7 @@ class ChartViewController: UIViewController, JBBarChartViewDelegate, JBBarChartV
         selectorChartPeriod.setEnabled(true, forSegmentAtIndex: 3)  // Set segment selector to default
         
         // Setup bar chart
-        
+        barChartView.tag = 19
         barChartView.dataSource = self;
         barChartView.delegate = self;
         barChartView.backgroundColor = UIColor(red:1.0, green:1.0, blue:1.0, alpha:0.2)
@@ -129,23 +130,64 @@ class ChartViewController: UIViewController, JBBarChartViewDelegate, JBBarChartV
         
         // Header
         headerView.frame = CGRectMake(padding, ceil(self.view.bounds.size.height * 0.5) - ceil(headerHeight * 0.5),self.view.bounds.width - padding*2, headerHeight)
-        barChartView.headerView = headerView
         
         // Footer
         footerView.frame = CGRectMake(padding, ceil(self.view.bounds.size.height * 0.5) - ceil(footerHeight * 0.5),self.view.bounds.width - padding*2, footerHeight)
-        barChartView.footerView = footerView
         
-        barChartView.reloadData()
-        
-        self.view.addSubview(barChartView)
+        if chartType == "left" || chartType == "right" {
+         
+            // Establish chart
+            
+            barChartView.headerView = headerView
+            barChartView.footerView = footerView
+            
+            barChartView.reloadData()
+            
+            self.view.addSubview(barChartView)
+        }
+        else {
+            
+            // Establish top (lefthand) chart
+            barChartView.frame = CGRectMake(0, 0, screenSize.width, screenSize.height / 3)
+            barChartView.center = CGPoint(x: screenSize.width / 2, y: screenSize.height / 3)
+            barChartView.headerView = headerView
+            
+            barChartView.reloadData()
+            
+            self.view.addSubview(barChartView)
+            
+            // Establish bottom (righthand) chart
+            // Get max and min values
+            
+            let dataMax2 = chartDataX2.reduce(Int.min, { max($0, $1) })
+            let dataMin2 = chartDataX2.reduce(Int.max, { min($0, $1) })
+            let dataMinFl2 = CGFloat(dataMin2)
+            let chartDataMin2: CGFloat = dataMinFl2 - (dataMinFl2 * 0.2)
+            let chartDataMax2 = CGFloat(dataMax2)
+            
+            // Setup bottom chart
+            
+            barChartView2.tag = 29
+            barChartView2.dataSource = self;
+            barChartView2.delegate = self;
+            barChartView2.backgroundColor = UIColor(red:1.0, green:1.0, blue:1.0, alpha:0.2)
+            barChartView2.frame = CGRectMake(0, 0, screenSize.width, screenSize.height / 3)
+            barChartView2.center = CGPoint(x: screenSize.width / 2, y: (barChartView.center.y + screenSize.height / 3))
+            barChartView2.minimumValue = chartDataMin2
+            
+            barChartView2.inverted = true
+            
+            barChartView2.reloadData()
+            
+            self.view.addSubview(barChartView2)
+        }
         
         // Setup chart title
-        
         labelTitle.frame = CGRectMake(0, 0, 300, 21)
-        labelTitle.center = CGPointMake(screenSize.width / 2, barChartView.frame.origin.y - 20)
+        labelTitle.center = CGPointMake(screenSize.width / 2, barChartView.frame.origin.y - 18)
         labelTitle.textAlignment = NSTextAlignment.Center
         labelTitle.textColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
-        labelTitle.font = UIFont(name: "HelveticaNeue-Regular", size: 16)
+        labelTitle.font = UIFont(name: "HelveticaNeue-Regular", size: 14)
         labelTitle.text = chartTitle
         
         self.view.addSubview(labelTitle)
@@ -162,22 +204,34 @@ class ChartViewController: UIViewController, JBBarChartViewDelegate, JBBarChartV
     }
     
     func barChartView(barChartView: JBBarChartView, heightForBarViewAtIndex index: UInt) -> CGFloat {
-        println("barChartView", index)
+        
         var i = Int(index)
-        var plotValue = CGFloat(chartDataX[i])
-        return plotValue
+        
+        if barChartView.tag == 19 {
+            var plotValue = CGFloat(chartDataX[i])
+            return plotValue
+        }
+        else {
+            var plotValue = CGFloat(chartDataX2[i])
+            return plotValue
+        }
     }
 
     func barChartView(barChartView: JBBarChartView, colorForBarViewAtIndex index: UInt) -> UIColor {
         
-        if chartType == "left" {
+        switch chartType {
             
-            return (UIColor.leftPlotColor());
-        }
-        else {
-            
-            return (UIColor.rightPlotColor());
+        case "left":
+                return (UIColor.leftPlotColor());
+        case "right":
+                return (UIColor.rightPlotColor());
+        default:
+            if barChartView.tag == 19 {
+                return (UIColor.leftPlotColor());
+            }
+            else {
+                return (UIColor.rightPlotColor());
+            }
         }
     }
-    
 }

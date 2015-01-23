@@ -8,8 +8,9 @@
 
 import UIKit
 import CoreData
+import MessageUI
 
-class SettingsViewController: UIViewController, SideBarDelegate {
+class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeViewControllerDelegate {
     
     var sideBar:SideBar = SideBar()
     
@@ -175,7 +176,7 @@ class SettingsViewController: UIViewController, SideBarDelegate {
         let buttonExport: UIButton = UIButton(frame: CGRectMake(0, 0, 50, 30))
         buttonExport.center = CGPoint(x: screenSize.width - 32, y: imageLabelBackgrounds[5].center.y)
         buttonExport.setImage(UIImage(named: "button-export.png"), forState: UIControlState.Normal)
-        buttonExport.addTarget(self, action: "actoinExport", forControlEvents: UIControlEvents.TouchUpInside)
+        buttonExport.addTarget(self, action: "actionExport", forControlEvents: UIControlEvents.TouchUpInside)
         
         // Set up LOGOUT button
         
@@ -217,6 +218,16 @@ class SettingsViewController: UIViewController, SideBarDelegate {
         
         sideBar = SideBar(sourceView: self.view)
         sideBar.delegate = self
+        
+        // Register app to receive notifications
+        
+        if(UIApplication.instancesRespondToSelector(Selector("registerUserNotificationSettings:"))) {
+            UIApplication.sharedApplication().registerUserNotificationSettings(UIUserNotificationSettings(forTypes: .Alert | .Sound, categories: nil))
+        }
+        else {
+            
+            // User hasn't enabled notification (I think)
+        }
 }
 
     override func didReceiveMemoryWarning() {
@@ -228,25 +239,36 @@ class SettingsViewController: UIViewController, SideBarDelegate {
         
         if switchReminder.on {
             
-            let dateToday =  NSDate()
-            let dateTomorrow = dateToday.dateByAddingTimeInterval(24 * 60 * 60)
-            dateFormatter.dateFormat = "yyyy-mm-dd"
-            let dateNotification = dateFormatter.stringFromDate(dateTomorrow) + " " + labelReminderTime.text!
-            println(dateNotification)
+            let grantedSettings: UIUserNotificationSettings = UIApplication.sharedApplication().currentUserNotificationSettings()
             
-            var notify: UILocalNotification = UILocalNotification()
-            notify.fireDate = dateFormatter.dateFromString(dateNotification)
-            notify.timeZone = NSTimeZone.defaultTimeZone()
-            notify.alertBody = "It's time for your tapping test."
-            notify.alertAction = "Go for it"
-            notify.soundName = UILocalNotificationDefaultSoundName
-            //notify.applicationIconBadgeNumber = 1
-            notify.repeatInterval = NSCalendarUnit.DayCalendarUnit
-            UIApplication.sharedApplication().scheduleLocalNotification(notify)
-            
-            NSUserDefaults.standardUserDefaults().setObject("true", forKey: "isReminderSet")
-            
-            println("Nofication Activated for time: \(dateNotification)")
+            if grantedSettings.types == UIUserNotificationType.None {
+                
+                alert = UIAlertController(title: "Enable Notifications", message: "Sorry, we can't activate reminders. Go to your iPhone Settings and allow Taptimal to send notifications.", preferredStyle: UIAlertControllerStyle.Alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+                self.presentViewController(alert, animated: true, completion: nil)
+                
+                switchReminder.on = false
+            }
+            else {
+                
+                let dateToday =  NSDate()
+                let dateTomorrow = dateToday.dateByAddingTimeInterval(24 * 60 * 60)
+                dateFormatter.dateFormat = "yyyy-MM-dd"
+                let dateNotification = dateFormatter.stringFromDate(dateTomorrow) + " " + labelReminderTime.text!
+                
+                var notify: UILocalNotification = UILocalNotification()
+                notify.fireDate = dateFormatter.dateFromString(dateNotification)
+                notify.timeZone = NSTimeZone.defaultTimeZone()
+                notify.alertBody = "It's time for your tapping test."
+                notify.alertAction = "Go for it"
+                notify.soundName = UILocalNotificationDefaultSoundName
+                //notify.applicationIconBadgeNumber = 1
+                notify.repeatInterval = NSCalendarUnit.DayCalendarUnit
+                
+                UIApplication.sharedApplication().scheduleLocalNotification(notify)
+                
+                NSUserDefaults.standardUserDefaults().setObject("true", forKey: "isReminderSet")
+            }
         }
         else {
             
@@ -267,8 +289,10 @@ class SettingsViewController: UIViewController, SideBarDelegate {
         var tapCountCSV: NSInteger = 0
         var noteCSV: NSString = ""
         var resultLine: NSString = ""
+        var fileCSV: NSString = ""
+        var messageText: NSString = ""
         
-        dateFormatter.dateFormat = "dd-mm-yyyy HH:mm" // Set csv date format
+        dateFormatter.dateFormat = "dd-MM-yyyy HH:mm" // Set csv date format
         
         // Initiate core data
         
@@ -285,12 +309,12 @@ class SettingsViewController: UIViewController, SideBarDelegate {
                 // Set up file
                 let fileManager = NSFileManager.defaultManager()
                 let documentsPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] as NSString
-                let fileCSV = documentsPath.stringByAppendingPathComponent("taptimal-results.csv")
+                fileCSV = documentsPath.stringByAppendingPathComponent("taptimal-results.csv")
                 
-                if !fileManager.fileExistsAtPath(documentsPath) {
+                //if !fileManager.fileExistsAtPath(documentsPath) {
                     
                     fileManager.createFileAtPath(fileCSV, contents: nil, attributes: nil)
-                }
+                //}
                 
                 let fileHandle: NSFileHandle? = NSFileHandle(forUpdatingAtPath: fileCSV)
                 
@@ -300,7 +324,7 @@ class SettingsViewController: UIViewController, SideBarDelegate {
                 }
                 else {
                     
-                    //fileHandle?.seekToEndOfFile()
+                    fileHandle?.seekToEndOfFile()
                     
                     for result in results {
                         
@@ -311,28 +335,73 @@ class SettingsViewController: UIViewController, SideBarDelegate {
                         if let noteCSV = result.valueForKey("note") as? NSString {
                             
                             resultLine = ("\(dateCSV), \(handCSV), \(tapCountCSV), \(noteCSV) \n")
-                            
-                            fileHandle?.writeData(resultLine.dataUsingEncoding(NSUTF8StringEncoding)!)
-                            
-                            println(resultLine)
                         }
+                        else {
+                            
+                            resultLine = ("\(dateCSV), \(handCSV), \(tapCountCSV), \n")
+                        }
+                        
+                        fileHandle?.writeData(resultLine.dataUsingEncoding(NSUTF8StringEncoding)!)
                     }
                     
                     fileHandle?.closeFile()
-                    
-                    // Generate email
-                    let url = NSURL(string: "mailto:?Subject=Taptimal+CSV+data&attachment=\(fileCSV)")
-                    
-                    UIApplication.sharedApplication().openURL(url!)
                 }
             }
             else {
                 
                 // There are no results to export
             }
+            
+            // EMAIL
+            
+            if MFMailComposeViewController.canSendMail() {
+                
+                let mailComposer: MFMailComposeViewController = MFMailComposeViewController()
+                
+                mailComposer.mailComposeDelegate = self
+                mailComposer.setSubject("Taptimal CSV file")
+                
+                if let dataCSV = NSData(contentsOfFile: fileCSV) {
+                    
+                    messageText = "Taptimal data in CSV format is attached, exported on: \(NSDate())."
+                    mailComposer.addAttachmentData(dataCSV, mimeType: "text/csv", fileName: "taptimal-results.csv")
+                }
+                else {
+                    
+                    messageText = "[Sorry, there was an error with your attachment]"
+                }
+                
+                mailComposer.setMessageBody(messageText, isHTML: false)
+                
+                self.presentViewController(mailComposer, animated: true, completion: nil)
+            }
+            else {
+                
+                alert = UIAlertController(title: "Alert", message: "Your device cannot send emails", preferredStyle: UIAlertControllerStyle.Alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+                self.presentViewController(alert, animated: true, completion: nil)
+            }
         }
     }
     
+    func mailComposeController(controller:MFMailComposeViewController, didFinishWithResult result:MFMailComposeResult, error:NSError) {
+        
+        switch result.value {
+        case MFMailComposeResultCancelled.value:
+            println("Mail cancelled")
+        case MFMailComposeResultSaved.value:
+            println("Mail saved")
+        case MFMailComposeResultSent.value:
+            println("Mail sent")
+        case MFMailComposeResultFailed.value:
+            println("Mail sent failure: %@", [error.localizedDescription])
+        default:
+            break
+        }
+        
+        self.dismissViewControllerAnimated(false, completion: nil)
+    }
+
     func actionMenu() {
         
         sideBar.showSideBar(true)

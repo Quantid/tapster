@@ -22,6 +22,7 @@ class NotesViewController: UIViewController, UITextViewDelegate {
     @IBOutlet weak var labelLeftScore: UILabel!
     @IBOutlet weak var labelRightScore: UILabel!
     @IBOutlet weak var inputNote: UITextView!
+    @IBOutlet weak var labelError: UILabel!
     
     @IBAction func actionGoBack(sender: AnyObject) {
         
@@ -34,9 +35,10 @@ class NotesViewController: UIViewController, UITextViewDelegate {
         // Set up
         
         self.view.backgroundColor = UIColor(red:242/255, green:244/255, blue:245/255, alpha:1.0)
-        inputNote.text = ""
+
         labelLeftScore.text = ""
         labelRightScore.text = ""
+        labelError.text = ""
         
         var tapCount: NSInteger
         var dateDayFormatter = NSDateFormatter()
@@ -86,7 +88,7 @@ class NotesViewController: UIViewController, UITextViewDelegate {
                         inputNote.text = note
                     } else {
                         
-                        inputNote.text = ""
+                        inputNote.text = "Enter a note..."
                     }
                 }
             }
@@ -107,48 +109,64 @@ class NotesViewController: UIViewController, UITextViewDelegate {
 
     @IBAction func actionProcessNote(sender: AnyObject) {
         
-        // Check whether record has already been synced. If not, keep sync status as 0 instead of changing to 2
+        let noteText = inputNote.text
+        var error = ""
         
-        var updatedSyncStatusParse = 2
-        var updatedSyncStatusQuantid = 2
+        // Validate note
         
-        if currentSyncStatusParse == 0 {
-            updatedSyncStatusParse = 0
-        }
-        
-        if currentSyncStatusQuantid == 0 {
-            updatedSyncStatusQuantid = 0
-        }
-        
-        // Initiate core data
-        
-        let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        let context:NSManagedObjectContext = appDel.managedObjectContext!
-        
-        var request = NSFetchRequest(entityName: "Results")
-        let filterPredicate: NSPredicate = NSPredicate(format: "date = %@", dateOfNote)!
-        request.predicate = filterPredicate
-
-        var error : NSError?
-        
-        if let results = context.executeFetchRequest(request, error: &error) {
+        if noteText.utf16Count > 255 {
             
-            for result in results {
-                
-                result.setValue(inputNote.text as String, forKey: "note")
-                result.setValue(updatedSyncStatusParse, forKey: "syncStatusParse")
-                result.setValue(updatedSyncStatusQuantid, forKey: "syncStatusQuantid")
+            error = "Your note is too long (Max. 255 chars)"
+        }
+        
+        if error == "" {
+            
+            // Check whether record has already been synced. If not, keep sync status as 0 instead of changing to 2
+            
+            var updatedSyncStatusParse = 2
+            var updatedSyncStatusQuantid = 2
+            
+            if currentSyncStatusParse == 0 {
+                updatedSyncStatusParse = 0
             }
             
-            context.save(nil)
+            if currentSyncStatusQuantid == 0 {
+                updatedSyncStatusQuantid = 0
+            }
             
-            notifyThenReturn()
+            // Initiate core data
+            
+            let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+            let context:NSManagedObjectContext = appDel.managedObjectContext!
+            
+            var request = NSFetchRequest(entityName: "Results")
+            let filterPredicate: NSPredicate = NSPredicate(format: "date = %@", dateOfNote)!
+            request.predicate = filterPredicate
+            
+            var errorResults : NSError?
+            
+            if let results = context.executeFetchRequest(request, error: &errorResults) {
+                
+                for result in results {
+                    
+                    result.setValue(noteText as String, forKey: "note")
+                    result.setValue(updatedSyncStatusParse, forKey: "syncStatusParse")
+                    result.setValue(updatedSyncStatusQuantid, forKey: "syncStatusQuantid")
+                }
+                
+                context.save(nil)
+                
+                notifyThenReturn()
+            }
+            else {
+                
+                println("Fetch failed: \(errorResults)")
+            }
         }
         else {
             
-            println("Fetch failed: \(error)")
+            labelError.text = error
         }
-        
     }
     
     func notifyThenReturn() {
@@ -165,6 +183,20 @@ class NotesViewController: UIViewController, UITextViewDelegate {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    // Clear the textview when user start editing
+    
+    func textViewShouldBeginEditing(textView: UITextView) -> Bool {
+        
+        if textView.text == "Enter a note..." {
+            
+            textView.text = ""
+        }
+
+        labelError.text = ""
+        
+        return true
     }
     
     // Get rid of keyboard when finished entering text
