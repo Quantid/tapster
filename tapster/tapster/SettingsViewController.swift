@@ -198,7 +198,7 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
         // Set up time picker for alert time setting
         
         timePickerView.datePickerMode = UIDatePickerMode.Time
-        timePickerView.addTarget(self, action: Selector("handleTimePicker:"), forControlEvents: UIControlEvents.ValueChanged)
+        //timePickerView.addTarget(self, action: Selector("handleTimePicker:"), forControlEvents: UIControlEvents.ValueChanged)
         timePickerView.backgroundColor = UIColor(red: 250/255, green: 250/255, blue: 250/255, alpha: 1.0)
         timePickerView.center = CGPoint(x: screenSize.width/2, y: 252)
         timePickerView.layer.borderWidth = 1.0
@@ -209,7 +209,7 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
         
         buttonCancel.setImage(UIImage(named: "icon-cancel.png"), forState: UIControlState.Normal)
         buttonCancel.frame = CGRectMake(screenSize.width - 40, timePickerView.frame.origin.y + 10, 30, 30)
-        buttonCancel.addTarget(self, action: "removeTimePicker", forControlEvents: UIControlEvents.TouchUpInside)
+        buttonCancel.addTarget(self, action: "handleTimePicker:", forControlEvents: UIControlEvents.TouchUpInside)
         buttonCancel.hidden = true
         
         view.addSubview(buttonCancel)
@@ -251,12 +251,23 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
             }
             else {
                 
+                // Remove all existing notifications
+                
+                UIApplication.sharedApplication().cancelAllLocalNotifications()
+                
+                NSUserDefaults.standardUserDefaults().setObject("false", forKey: "isReminderSet")
+                
+                // Calculate new notification date, starting tomorrow
+
                 let dateToday =  NSDate()
                 let dateTomorrow = dateToday.dateByAddingTimeInterval(24 * 60 * 60)
                 dateFormatter.dateFormat = "yyyy-MM-dd"
                 let dateNotification = dateFormatter.stringFromDate(dateTomorrow) + " " + labelReminderTime.text!
                 
+                // Setup new notification
+                
                 var notify: UILocalNotification = UILocalNotification()
+                dateFormatter.dateFormat = "yyyy-MM-dd hh:mm"
                 notify.fireDate = dateFormatter.dateFromString(dateNotification)
                 notify.timeZone = NSTimeZone.defaultTimeZone()
                 notify.alertBody = "It's time for your tapping test."
@@ -265,9 +276,13 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
                 //notify.applicationIconBadgeNumber = 1
                 notify.repeatInterval = NSCalendarUnit.DayCalendarUnit
                 
+                // Lock in new notification
+                
                 UIApplication.sharedApplication().scheduleLocalNotification(notify)
                 
                 NSUserDefaults.standardUserDefaults().setObject("true", forKey: "isReminderSet")
+                
+                println("Notification set for: \(dateFormatter.dateFromString(dateNotification))")
             }
         }
         else {
@@ -430,24 +445,23 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
         buttonCancel.hidden = false
     }
     
-    func handleTimePicker(sender: UIDatePicker) {
+    func handleTimePicker(sender: AnyObject) {
         
         dateFormatter.dateFormat = "HH:mm"
-        let selectedTime = dateFormatter.stringFromDate(sender.date)
+        let selectedTime = dateFormatter.stringFromDate(timePickerView.date)
         labelReminderTime.text = selectedTime
         NSUserDefaults.standardUserDefaults().setObject(selectedTime, forKey: "ReminderTime")
         
-        // Turn on switch for reminder
+        switchReminder.on = true    // Turn on switch for reminder (if it's not already on)
         
-        switchReminder.on = true
+        timePickerView.hidden = true    // Remove time picker from screen
+        buttonCancel.hidden = true
         
-        actionSetReminderNotification()
+        actionSetReminderNotification() // Set new notification time
     }
     
     func removeTimePicker() {
-        
-        timePickerView.hidden = true
-        buttonCancel.hidden = true
+        println("I should not be here.")
     }
     
     func startLogoutAlert() {

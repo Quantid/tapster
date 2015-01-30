@@ -952,7 +952,7 @@
 				INFOPLIST_FILE = tapsterTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = TaptimalTests;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/tapster.app/tapster";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Taptimal.app/Taptimal";
 			};
 			name = Debug;
 		};
@@ -967,7 +967,7 @@
 				INFOPLIST_FILE = tapsterTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = TaptimalTests;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/tapster.app/tapster";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Taptimal.app/Taptimal";
 			};
 			name = Release;
 		};
