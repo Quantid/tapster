@@ -380,12 +380,15 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
                             
                             // The login failed. Check error to see why.
                             
-                            if let errorString = signInError.userInfo?["error"] as? NSString {
-                                
-                                error = errorString
+                            if let errorString = signInError.userInfo?["error"] as? String {
+                                if errorString.rangeOfString("Internet connection") != nil {
+                                    error = "Your Internet connection appears to be offline"
+                                }
+                                else {
+                                    error = errorString
+                                }
                             }
                             else {
-                                
                                 error = "Please try again later"
                             }
                         }
@@ -418,15 +421,11 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
                             self.performSegueWithIdentifier("jumpToWalkthrough", sender: self)
                         }
                         else {
-                            
-                            println(signUpError)
                             //Sign up failed
                             if let errorString = signUpError.userInfo?["error"] as? NSString {
-                                
                                 error = errorString
                             }
                             else {
-                                
                                 error = "Please try again later"
                             }
                         }

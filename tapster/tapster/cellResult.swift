@@ -29,3 +29,13 @@ class cellResult: UITableViewCell {
     }
 
 }
+
+class cellRanking: UITableViewCell {
+    
+    @IBOutlet weak var labelRank: UILabel!
+    @IBOutlet weak var imageProfilePhoto: UIImageView!
+    @IBOutlet weak var labelName: UILabel!
+    @IBOutlet weak var labelScore: UILabel!
+    @IBOutlet weak var labelTimeSince: UILabel!
+    @IBOutlet weak var labelLeftRight: UILabel!
+}

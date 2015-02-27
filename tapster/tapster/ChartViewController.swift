@@ -75,20 +75,20 @@ class ChartViewController: UIViewController, JBBarChartViewDelegate, JBBarChartV
         switch chartType {
             
             case "left":
-                chartDataX = chartLeftData
+                chartDataX = chartLeftData.reverse()
                 chartTitle = "Left taps"
             
             case "right":
-                chartDataX = chartRightData
+                chartDataX = chartRightData.reverse()
                 chartTitle = "Right taps"
             
             case "left+right":
-                chartDataX = chartLeftData
-                chartDataX2 = chartRightData
+                chartDataX = chartLeftData.reverse()
+                chartDataX2 = chartRightData.reverse()
                 chartTitle = "Left and Right taps"
 
         default:
-            chartDataX = chartLeftData
+            chartDataX = chartLeftData.reverse()
             chartTitle = "Left taps"
         }
         

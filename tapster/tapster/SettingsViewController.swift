@@ -10,7 +10,9 @@ import UIKit
 import CoreData
 import MessageUI
 
-class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeViewControllerDelegate {
+class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeViewControllerDelegate, UIAlertViewDelegate {
+    
+    let delegate = UIApplication.sharedApplication().delegate as AppDelegate
     
     var sideBar:SideBar = SideBar()
     
@@ -24,6 +26,7 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
     let screenSize: CGRect = UIScreen.mainScreen().bounds
     let dateFormatter = NSDateFormatter()
     var alert: UIAlertController = UIAlertController()
+    let message: UIAlertView = UIAlertView()
     var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
     
     var imageLabelBackgrounds: [UIImageView] = []
@@ -35,9 +38,10 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
         
         // Menu selector button
         
-        let buttonMenuSelector: UIButton = UIButton(frame: CGRectMake(20, 24, 19, 17))
+        let buttonMenuSelector: UIButton = UIButton(frame: CGRectMake(10, 14, 40, 40))
         buttonMenuSelector.setImage(UIImage(named: "icon-menu-selector.png"), forState: UIControlState.Normal)
-        buttonMenuSelector.addTarget(self, action: "actionMenu", forControlEvents: UIControlEvents.TouchUpOutside)
+        buttonMenuSelector.contentMode = UIViewContentMode.ScaleAspectFit
+        buttonMenuSelector.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 0, right: 0)
         buttonMenuSelector.addTarget(self, action: "actionMenu", forControlEvents: UIControlEvents.TouchUpInside)
         view.addSubview(buttonMenuSelector)
         
@@ -48,8 +52,8 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
         scrollView.scrollEnabled = true
         view.addSubview(scrollView)
         
-        var labelBackgroundPositionY = [30, 5, 30, 30, 5, 30, 30]
-        var labelTitleText = ["Morning Reminder", "Reminder Time", "Sharing", "Sync Status", "Force Sync", "Export Data", "Log Out of Taptimal"]
+        var labelBackgroundPositionY = [30, 5, 30, 30, 5, 30, 30, 30, 30]
+        var labelTitleText = ["Morning Reminder", "Reminder Time", "Sharing", "Sync Status", "Force Sync", "Export Data", "Your Feedback", "Log Out of Taptimal", "Version:"]
         var labelSubText = [
             "Receive a reminder every morning to do test",
             "Set the time you want to receive the alert",
@@ -57,7 +61,9 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
             "Last sync conducted at:",
             "Manually force synchronisation process",
             "Export your results as a CSV file",
-            ""
+            "Tell us what you think about Taptimal",
+            "Logging out will not remove your data",
+            "Current version"
         ]
         
         var spacingY = 0
@@ -94,17 +100,15 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
         switchReminder.center = CGPoint(x: screenSize.width - 32, y: imageLabelBackgrounds[0].center.y)
         switchReminder.addTarget(self, action: "actionSetReminderNotification", forControlEvents: UIControlEvents.ValueChanged)
         if let reminderStatus = NSUserDefaults.standardUserDefaults().objectForKey("isReminderSet") as? NSString {
+            
             if reminderStatus == "true" {
-                
                 switchReminder.on = true
             }
             else {
-                
                 switchReminder.on = false
             }
         }
         else {
-            
             switchReminder.on = false
         }
         
@@ -133,8 +137,8 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
         switchSharing.onTintColor = UIColor(red: 86/255, green: 199/255, blue: 149/255, alpha: 1.0)
         switchSharing.center = CGPoint(x: screenSize.width - 32, y: imageLabelBackgrounds[2].center.y)
         switchSharing.addTarget(self, action: "actionSetSharing", forControlEvents: UIControlEvents.ValueChanged)
-        if let reminderStatus = NSUserDefaults.standardUserDefaults().objectForKey("isSharingSet") as? NSString {
-            if reminderStatus == "true" {
+        if let sharingStatus = NSUserDefaults.standardUserDefaults().objectForKey("isSharing") as? NSString {
+            if sharingStatus == "true" {
                 
                 switchSharing.on = true
             }
@@ -166,25 +170,43 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
         
         // Setup the button which forces a SYNC
         
-        let buttonSync: UIButton = UIButton(frame: CGRectMake(0, 0, 50, 30))
-        buttonSync.center = CGPoint(x: screenSize.width - 32, y: imageLabelBackgrounds[4].center.y)
-        buttonSync.setImage(UIImage(named: "button-sync.png"), forState: UIControlState.Normal)
-        buttonSync.addTarget(self, action: "actionSync", forControlEvents: UIControlEvents.TouchUpInside)
+        let buttonSync: UIButton = UIButton(frame: CGRectMake(0, 0, screenSize.width, 45))
+        buttonSync.setImage(UIImage(named: "icon-disclosure.png"), forState: UIControlState.Normal)
+        buttonSync.imageEdgeInsets = UIEdgeInsetsMake(0, buttonSync.frame.width-15, 0, 0)
+        buttonSync.center = CGPoint(x: imageLabelBackgrounds[4].center.x, y: imageLabelBackgrounds[4].center.y)
+        buttonSync.addTarget(self, action: "actionForceSync", forControlEvents: UIControlEvents.TouchUpInside)
         
         // Set up EXPORT button
         
-        let buttonExport: UIButton = UIButton(frame: CGRectMake(0, 0, 50, 30))
-        buttonExport.center = CGPoint(x: screenSize.width - 32, y: imageLabelBackgrounds[5].center.y)
-        buttonExport.setImage(UIImage(named: "button-export.png"), forState: UIControlState.Normal)
+        let buttonExport: UIButton = UIButton(frame: CGRectMake(0, 0, screenSize.width, 45))
+        buttonExport.setImage(UIImage(named: "icon-disclosure.png"), forState: UIControlState.Normal)
+        buttonExport.imageEdgeInsets = UIEdgeInsetsMake(0, buttonExport.frame.width-15, 0, 0)
+        buttonExport.center = CGPoint(x: imageLabelBackgrounds[5].center.x, y: imageLabelBackgrounds[5].center.y)
         buttonExport.addTarget(self, action: "actionExport", forControlEvents: UIControlEvents.TouchUpInside)
+        
+        // Set up FEEDBACK button
+        
+        let buttonFeedback: UIButton = UIButton(frame: CGRectMake(0, 0, screenSize.width, 45))
+        buttonFeedback.setImage(UIImage(named: "icon-disclosure.png"), forState: UIControlState.Normal)
+        buttonFeedback.imageEdgeInsets = UIEdgeInsetsMake(0, buttonExport.frame.width-15, 0, 0)
+        buttonFeedback.center = CGPoint(x: imageLabelBackgrounds[6].center.x, y: imageLabelBackgrounds[6].center.y)
+        buttonFeedback.addTarget(self, action: "actionFeedback", forControlEvents: UIControlEvents.TouchUpInside)
         
         // Set up LOGOUT button
         
         let buttonLogout: UIButton = UIButton(frame: CGRectMake(0, 0, screenSize.width, 45))
         buttonLogout.setImage(UIImage(named: "icon-disclosure.png"), forState: UIControlState.Normal)
         buttonLogout.imageEdgeInsets = UIEdgeInsetsMake(0, buttonLogout.frame.width-15, 0, 0)
-        buttonLogout.center = CGPoint(x: imageLabelBackgrounds[6].center.x, y: imageLabelBackgrounds[6].center.y)
+        buttonLogout.center = CGPoint(x: imageLabelBackgrounds[7].center.x, y: imageLabelBackgrounds[7].center.y)
         buttonLogout.addTarget(self, action: "actionLogout", forControlEvents: UIControlEvents.TouchUpInside)
+        
+        // Set up version number label
+        
+        let labelVersion: UILabel = UILabel(frame: CGRectMake(0, 0, 50, 24))
+        labelVersion.center = CGPoint(x: screenSize.width - 32, y: imageLabelBackgrounds[8].center.y)
+        labelVersion.textColor = UIColor(red: 20/255, green: 20/255, blue: 20/255, alpha: 1.0)
+        labelVersion.font = UIFont(name: "HelveticaNeue-Regular", size: 24)
+        labelVersion.text = delegate.versionNumber
         
         scrollView.addSubview(switchReminder)
         scrollView.addSubview(labelReminderTime)
@@ -192,8 +214,10 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
         scrollView.addSubview(switchSharing)
         scrollView.addSubview(buttonSync)
         scrollView.addSubview(buttonExport)
+        scrollView.addSubview(buttonFeedback)
         scrollView.addSubview(buttonSetTime)
         scrollView.addSubview(buttonLogout)
+        scrollView.addSubview(labelVersion)
         
         // Set up time picker for alert time setting
         
@@ -277,21 +301,374 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
                 notify.repeatInterval = NSCalendarUnit.DayCalendarUnit
                 
                 // Lock in new notification
-                
                 UIApplication.sharedApplication().scheduleLocalNotification(notify)
-                
                 NSUserDefaults.standardUserDefaults().setObject("true", forKey: "isReminderSet")
-                
                 println("Notification set for: \(dateFormatter.dateFromString(dateNotification))")
             }
         }
         else {
-            
             UIApplication.sharedApplication().cancelAllLocalNotifications()
-            
             NSUserDefaults.standardUserDefaults().setObject("false", forKey: "isReminderSet")
-            
             println("Nofication Deactivated")
+        }
+    }
+    
+    func syncWithParse() {
+        
+        /*
+        Sync local results with Parse
+        Step 1. Upload new local measurements (where syncStatusParse = 0) to Parse
+        Step 2. Remove deleted local measurements (where syncStatusParse = 3) from Parse
+        Step 3. If a local measurement has been updated/edited (where syncStatusParse = 2) then update the matching Parse record
+        */
+        
+        dateFormatter.dateFormat = "dd-MMM-yyyy HH:mm"
+        let lastSyncDate = dateFormatter.stringFromDate(NSDate())
+        
+        NSUserDefaults.standardUserDefaults().setObject(lastSyncDate, forKey: "lastSyncDate")
+        
+        // Initiate core data
+        
+        let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let context:NSManagedObjectContext = appDel.managedObjectContext!
+        
+        // STEP 1. Get unsynced measurements (where syncStatusParse = 0) and upload to Parse
+        
+        var request = NSFetchRequest(entityName: "Results")
+        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
+        request.predicate = NSPredicate(format: "syncStatusParse = %@", "0")!
+        var fetchError : NSError?
+        var updateError: NSError?
+        
+        if let results = context.executeFetchRequest(request, error: &fetchError) {
+            
+            if results.count > 0 {
+                
+                for result in results {
+
+                    var post = PFObject(className: "Results")
+                    
+                    post["user"] = PFUser.currentUser()
+                    post["date"] = result.valueForKey("date")
+                    post["hand"] = result.valueForKey("hand")
+                    post["tapCount"] = result.valueForKey("tapCount")
+                    
+                    if let note = result.valueForKey("note") as? String {
+                        post["note"] = note
+                    }
+                    
+                    if let lat = result.valueForKey("lat") as? Double {
+                        post["lat"] = lat
+                    }
+                    
+                    if let long = result.valueForKey("long") as? Double {
+                        post["long"] = long
+                    }
+                    
+                    post.saveInBackgroundWithBlock {(success: Bool, postError:NSError!) -> Void in
+                        if success {
+                            result.setValue(1, forKey: "syncStatusParse")
+                            context.save(&updateError)
+                            
+                            if updateError == nil {
+                                println("Success: synced a core data sync record up to Parse")
+                            }
+                            else {
+                                self.showAlert("Error:", msg: "There was a problem updating core data.")
+                            }
+                        }
+                        else {
+                            if let errorString = postError.userInfo?["error"] as? NSString {
+                                self.showAlert("Error:", msg: errorString)
+                            }
+                        }
+                    }
+                }
+                // Calculate and update life average results
+                
+                let lifeAverageResults = Calculations().lifeAverage()
+                
+                if lifeAverageResults.count > 1 {
+                    self.updateLifeAverage(lifeAverageResults)
+                }
+            }
+        }
+        else {
+            println("Add record fetch failed: \(fetchError)")
+        }
+        
+        // STEP 2. Update measurements on Parse which haved been updated locally
+        
+        request.predicate = NSPredicate(format: "syncStatusParse = %@", "2")!
+        
+        if let results = context.executeFetchRequest(request, error: &fetchError) {
+            
+            if results.count > 0 {
+                
+                println("\(results.count) updated records found")
+                
+                for result in results {
+                    
+                    var datePredicate = result.valueForKey("date") as NSDate
+                    
+                    let predicate = NSPredicate(format: "date == %@", datePredicate)
+                    
+                    var query = PFQuery(className: "Results", predicate: predicate)
+                    
+                    query.getFirstObjectInBackgroundWithBlock {(record: PFObject!, queryError:NSError!) -> Void in
+                        
+                        if query.countObjects() > 0 {
+                            
+                            if queryError == nil {
+                                
+                                record["note"] = result.valueForKey("note")
+                                
+                                record.saveInBackgroundWithBlock {(success: Bool, saveError: NSError!) -> Void in
+                                    
+                                    if success {
+                                        
+                                        result.setValue(1, forKey: "syncStatusParse")
+                                        
+                                        context.save(&updateError)
+                                        
+                                        if updateError == nil {
+                                            
+                                            println("Success: updated a core data record on Parse")
+                                        }
+                                        else {
+                                            
+                                            self.showAlert("Error:", msg: "There was a problem updating core data.")
+                                        }
+                                    }
+                                    else {
+                                        
+                                        if let errorString = saveError.userInfo?["error"] as? NSString {
+                                            
+                                            self.showAlert("Error:", msg: errorString)
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        } else {
+                            
+                            // That's odd. No matching records found on Parse to update. Let's reset local record to sync (syncStatus = 0)
+                            
+                            println("No matching record on Parse. Resetting...")
+                            
+                            result.setValue(0, forKey: "syncStatusParse")
+                            
+                            context.save(&updateError)
+                            
+                            if updateError == nil {
+                                
+                                println("Success: updated a core data record on Parse")
+                            }
+                            else {
+                                
+                                self.showAlert("Error:", msg: "There was a problem updating core data.")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            
+            // Failed to fetch records for udating
+        }
+        
+        // STEP 3. Remove deleted measurements from Parse
+        
+        request.predicate = NSPredicate(format: "syncStatusParse = %@", "3")!
+        
+        if let results = context.executeFetchRequest(request, error: &fetchError) {
+            
+            if results.count > 0 {
+                
+                println("\(results.count) deleted records found")
+                
+                for result in results {
+                    
+                    var datePredicate = result.valueForKey("date") as NSDate
+                    
+                    let predicate = NSPredicate(format: "date == %@", datePredicate)
+                    
+                    var query = PFQuery(className: "Results", predicate: predicate)
+                    
+                    query.getFirstObjectInBackgroundWithBlock {(record: PFObject!, queryError:NSError!) -> Void in
+                        
+                        if queryError == nil {
+                            
+                            record.deleteInBackgroundWithBlock{(success: Bool, deleteError: NSError!) -> Void in
+                                
+                                if success {
+                                    
+                                    context.deleteObject(result as NSManagedObject)
+                                    
+                                    if !context.save(&updateError) {
+                                        
+                                        self.showAlert("Error:", msg: "There was a problem updating core data.")
+                                    }
+                                    else {
+                                        
+                                        println("Local record deleted.")
+                                    }
+                                }
+                                else {
+                                    
+                                    if let errorString = deleteError.userInfo?["error"] as? NSString {
+                                        
+                                        self.showAlert("Error:", msg: errorString)
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            
+                            // Even if there's a Parse query error, we should still delete the local record(s)
+                            
+                            context.deleteObject(result as NSManagedObject)
+                            
+                            if !context.save(&updateError) {
+                                self.showAlert("Error:", msg: "There was a problem updating core data.")
+                            }
+                            else {
+                                println("Local record deleted.")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func updateLifeAverage(lifeAverageData: [NSInteger]) {
+        
+        var query = PFQuery(className:"_User")
+        let userId = PFUser.currentUser().objectId
+        
+        query.getObjectInBackgroundWithId(userId) {
+            (user: PFObject!, error: NSError!) -> Void in
+            
+            if error == nil {
+                user["lifeAverage"] = lifeAverageData[2]
+                user["lifeAverageLR"] = "\(lifeAverageData[0])#\(lifeAverageData[1])"
+                user["dateLifeAverage"] = NSDate()
+
+                user.saveInBackgroundWithBlock {
+                    (success: Bool, saveError: NSError!) -> Void in
+                    
+                    if success {
+                        NSLog("Life average saved")
+                    }
+                    else {
+                        NSLog("Cannot save life average data: %@", saveError)
+                    }
+                }
+            }
+            else {
+                NSLog("Cannot get user data: %@", error)
+            }
+        }
+    }
+    
+    func actionForceSync() {
+        
+        if Reachability.isConnectedToNetwork() {
+            
+            message.title = "Syncing..."
+            message.message = ""
+            message.delegate = self
+            message.cancelButtonIndex = 0
+            message.show()
+            //message.addSubview(self.view)
+            
+            launchActivityIndicator()
+            
+            timer = NSTimer.scheduledTimerWithTimeInterval(3.0, target: self, selector: Selector("stopActivityIndicator"), userInfo: nil, repeats: false)
+            
+            syncWithParse()
+        }
+        else {
+            showAlert("No Internet", msg: "Your phone seems to have lost it's data connection. Try again later.")
+        }
+    }
+    
+    func actionMenu() {
+        sideBar.showSideBar(true)
+    }
+    
+    func actionLogout() {
+        
+        // Log out user
+        
+        PFUser.logOut()
+        
+        alert = UIAlertController(title: "Logging out...", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+        self.presentViewController(alert, animated: true, completion: nil)
+        
+        launchActivityIndicator()
+        
+        timer = NSTimer.scheduledTimerWithTimeInterval(3.0, target: self, selector: Selector("timerLogoutCompleted"), userInfo: nil, repeats: false)
+    }
+    
+    func actionSetReminderTime() {
+        
+        // Show time picker
+        timePickerView.hidden = false
+        buttonCancel.hidden = false
+    }
+    
+    func actionSetSharing() {
+        
+        if switchSharing.on {
+            updateSharing("true")
+        }
+        else {
+            updateSharing("false")
+        }
+    }
+    
+    func updateSharing(status: NSString) {
+        
+        if status != "true" && status != "false" {
+            return
+        }
+        
+        var query = PFQuery(className:"_User")
+        let userId = PFUser.currentUser().objectId
+        
+        query.getObjectInBackgroundWithId(userId) {(user: PFObject!, error: NSError!) -> Void in
+            
+            if error == nil {
+                
+                // Success. Now update user details
+                
+                user["isSharing"] = status.boolValue
+                
+                user.saveInBackgroundWithBlock {(success: Bool, saveError: NSError!) -> Void in
+                    
+                    if success {
+                        NSUserDefaults.standardUserDefaults().setObject(status, forKey: "isSharing")
+                        
+                        // Refresh user data
+                        
+                        user.fetchInBackgroundWithBlock({
+                            (userData: PFObject!, fetchError: NSError!) -> Void in
+                            
+                            if fetchError != nil {
+                                if let errorString = fetchError.userInfo?["error"] as? NSString {
+                                    self.showAlert("Error:", msg: errorString)
+                                }
+                            }
+                        })
+                    }
+                }
+            }
+            else {
+                NSLog("Cannot update user profile information: %@", error)
+            }
         }
     }
     
@@ -348,23 +725,20 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
                         tapCountCSV = result.valueForKey("tapCount") as NSInteger
                         
                         if let noteCSV = result.valueForKey("note") as? NSString {
-                            
                             resultLine = ("\(dateCSV), \(handCSV), \(tapCountCSV), \(noteCSV) \n")
                         }
                         else {
-                            
                             resultLine = ("\(dateCSV), \(handCSV), \(tapCountCSV), \n")
                         }
-                        
                         fileHandle?.writeData(resultLine.dataUsingEncoding(NSUTF8StringEncoding)!)
                     }
-                    
                     fileHandle?.closeFile()
                 }
             }
             else {
+                showAlert("No Data", msg:"Sorry, you don't have any results data to export.")
                 
-                // There are no results to export
+                return
             }
             
             // EMAIL
@@ -377,28 +751,40 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
                 mailComposer.setSubject("Taptimal CSV file")
                 
                 if let dataCSV = NSData(contentsOfFile: fileCSV) {
-                    
                     messageText = "Taptimal data in CSV format is attached, exported on: \(NSDate())."
                     mailComposer.addAttachmentData(dataCSV, mimeType: "text/csv", fileName: "taptimal-results.csv")
                 }
                 else {
-                    
                     messageText = "[Sorry, there was an error with your attachment]"
                 }
-                
                 mailComposer.setMessageBody(messageText, isHTML: false)
-                
                 self.presentViewController(mailComposer, animated: true, completion: nil)
             }
             else {
-                
-                alert = UIAlertController(title: "Alert", message: "Your device cannot send emails", preferredStyle: UIAlertControllerStyle.Alert)
-                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
-                self.presentViewController(alert, animated: true, completion: nil)
+                showAlert("Alert", msg:"Sorry, there's a problem sending emails from this device.")
             }
         }
     }
     
+    func actionFeedback() {
+        
+        if MFMailComposeViewController.canSendMail() {
+            
+            let mailComposer: MFMailComposeViewController = MFMailComposeViewController()
+            let messageText = "Here's what I think about Taptimal, and the features I'd like to see you add in future versions:\n\n"
+            
+            mailComposer.mailComposeDelegate = self
+            mailComposer.setSubject("Taptimal feedback")
+            mailComposer.setToRecipients(["hello@taptimal.co"])
+            mailComposer.setMessageBody(messageText, isHTML: false)
+            
+            self.presentViewController(mailComposer, animated: true, completion: nil)
+        }
+        else {
+            showAlert("Alert", msg:"Sorry, there's a problem sending emails from this device.")
+        }
+    }
+
     func mailComposeController(controller:MFMailComposeViewController, didFinishWithResult result:MFMailComposeResult, error:NSError) {
         
         switch result.value {
@@ -413,36 +799,16 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
         default:
             break
         }
-        
         self.dismissViewControllerAnimated(false, completion: nil)
     }
-
-    func actionMenu() {
-        
-        sideBar.showSideBar(true)
-    }
     
-    func actionLogout() {
+    func timerLogoutCompleted() {
         
-        // Log out user
-        
-        PFUser.logOut()
-        
-        startLogoutAlert()
-        
-        timer = NSTimer.scheduledTimerWithTimeInterval(3.0, target: self, selector: Selector("timerCompleted"), userInfo: nil, repeats: false)
-    }
-    
-    func timerCompleted() {
-        
-        stopLogoutAlert()
-    }
+        stopActivityIndicator()
+        alert.dismissViewControllerAnimated(true, completion: {
+            self.performSegueWithIdentifier("jumpToRegister", sender: nil)
+        })
 
-    func actionSetReminderTime() {
-        
-        // Show time picker
-        timePickerView.hidden = false
-        buttonCancel.hidden = false
     }
     
     func handleTimePicker(sender: AnyObject) {
@@ -464,14 +830,14 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
         println("I should not be here.")
     }
     
-    func startLogoutAlert() {
-        
-        // Set up alert box
-        
-        alert = UIAlertController(title: "Loging Out...", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+    
+    func showAlert(title: NSString, msg: NSString) {
+        alert = UIAlertController(title: title, message: msg, preferredStyle: UIAlertControllerStyle.Alert)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
         self.presentViewController(alert, animated: true, completion: nil)
-        
-        // Set up activity indicator
+    }
+    
+    func launchActivityIndicator() {
         
         activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 75, 75))
         activityIndicator.center = CGPoint(x: self.view.center.x, y: screenSize.height / 2)
@@ -482,47 +848,34 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
         
         activityIndicator.startAnimating()
         
-        //Lock display from user interaction
-        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+        UIApplication.sharedApplication().beginIgnoringInteractionEvents()  //Lock display
     }
     
-    func stopLogoutAlert() {
+    func stopActivityIndicator() {
         
+        message.dismissWithClickedButtonIndex(0, animated: true)
         activityIndicator.stopAnimating()
-        
-        //Unlock display for resumption of user interaction
-        UIApplication.sharedApplication().endIgnoringInteractionEvents()
-        
-        alert.dismissViewControllerAnimated(true, completion: {
-            
-            self.performSegueWithIdentifier("jumpToRegister", sender: nil)
-        })
+        UIApplication.sharedApplication().endIgnoringInteractionEvents()    // Unlock display
     }
-
+    
     func sideBarDidSelectButtonAtIndex(index: Int) {
-        
+        // Managed slide-out side bar menu
         switch index {
-            
         case 0:
-            
             let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("MainView") as UIViewController
             self.presentViewController(vc, animated: true, completion: nil)
-            
         case 1:
-            
             let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("PerformanceView") as UIViewController
             self.presentViewController(vc, animated: true, completion: nil)
-            
         case 2:
-            
+            let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("RankingView") as UIViewController
+            self.presentViewController(vc, animated: true, completion: nil)
+        case 3:
             let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("ProfileView") as UIViewController
             self.presentViewController(vc, animated: true, completion: nil)
-            
-        case 3:
-            
+        case 4:
             let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("SettingsView") as UIViewController
             self.presentViewController(vc, animated: true, completion: nil)
-            
         default:
             println("default")
         }

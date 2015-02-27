@@ -204,7 +204,6 @@ class ViewController: UIViewController, SideBarDelegate {
                 tapsurfaceFileName = "tap-surface-iphone4"
                 buttonTapSurface.frame = CGRectMake(25, 85, 270, 225)
             } else {
-                
                 //iphone5
                 println("this is an iPhone5")
                 tapsurfaceFileName = "tap-surface-iphone5"
@@ -258,9 +257,7 @@ class ViewController: UIViewController, SideBarDelegate {
         sideBar = SideBar(sourceView: self.view)
         sideBar.delegate = self
         
-        //Sync measurements with Parse
-
-        syncWithParse()
+        SettingsViewController().syncWithParse()    // Sync core data records with Parse
     }
     
     override func didReceiveMemoryWarning() {
@@ -278,61 +275,49 @@ class ViewController: UIViewController, SideBarDelegate {
             tappingHasStarted = false
             
             // Generate alert to save result of test
-            
             var alert = UIAlertController(title: "", message: "Do you want to save this test?", preferredStyle: .ActionSheet)
-            
             alert.addAction(UIAlertAction(title: "Save", style: UIAlertActionStyle.Default, handler: {action in
 
                 if self.saveResult() {
                     
                     // saved successfully
                     
+                    SettingsViewController().syncWithParse()    // Sync core data records with Parse
+                    
                     self.refreshHistory()
                     
                     // Now switch over to the other hand
                     
                     if self.handSetting == "left" {
-                        
                         self.actionSwitchRight(self)
-                        
                     } else {
-                        
                         self.actionSwitchLeft(self)
                     }
                 }
                 else {
-                    
                     // save failed. Present user with an error
                 }
             }))
-            alert.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default, handler: nil))
-            
+            alert.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Destructive, handler: nil))
             presentViewController(alert, animated: true, completion: nil)
-            
             self.labelTapToStart.hidden = false
         }
         else {
             
             // Perform countdown
-            
             if (timeMilliseconds == 0){
-                
                 timeSeconds--
                 timeMilliseconds = 10
                 
                 if (timeSeconds > 9){
-                    
                     secondsZero = ""
                 }
                 else {
-                    
                     secondsZero = "0"
                 }
             }
-            
             timeMilliseconds--
         }
-        
         labelTimer.text = "00:\(secondsZero)\(timeSeconds).\(timeMilliseconds)"
     }
     
@@ -372,9 +357,8 @@ class ViewController: UIViewController, SideBarDelegate {
                 return false
             }
             
-            println("Saved!")
+            println("Success - saved!")
             
-            // Save succeeded
             return true
         }
         else {
@@ -476,21 +460,15 @@ class ViewController: UIViewController, SideBarDelegate {
                     labelHistoryDate.text = dateString.uppercaseString
                     
                     if resultsByDate[j].valueForKey("hand") as NSString == "left" {
-                        
                         labelHistoryLeftResult.text = "L\(tapCount)"
                         labelHistoryRightResult.text = "R--"
                     }
                     else {
-                        
                         labelHistoryLeftResult.text = "L--"
                         labelHistoryRightResult.text = "R\(tapCount)"
                     }
-                    
                     j = j + 1
-                    
-                    imageMedals[i].image = nil // No medal if there's an unpaired result
                 }
-                
                 i = i + 3
                 
                 counter++
@@ -505,6 +483,7 @@ class ViewController: UIViewController, SideBarDelegate {
                 labelHistoryDate2.text = ""
                 labelHistoryLeftResult2.text = ""
                 labelHistoryRightResult2.text = ""
+                buttonHistory2.hidden = true
             }
         }
         else {
@@ -618,7 +597,7 @@ class ViewController: UIViewController, SideBarDelegate {
         let context:NSManagedObjectContext = appDel.managedObjectContext!
         
         var request = NSFetchRequest(entityName: "Results")
-        
+        request.predicate = NSPredicate(format: "syncStatusParse < %@", "3")!
         request.returnsObjectsAsFaults = false
 
         let sortDescriptor1 = NSSortDescriptor(key: "date", ascending: false)
@@ -701,259 +680,42 @@ class ViewController: UIViewController, SideBarDelegate {
     }
     
     func actionHistoryButtonPress(sender: UIButton!) {
-
-        performSegueWithIdentifier("jumpToNotes", sender: sender)
+        
+        // Alert to select notes or sharing
+        var alert = UIAlertController(title: "", message: "Share with your friends or add note..", preferredStyle: .ActionSheet)
+        alert.addAction(UIAlertAction(title: "Share", style: UIAlertActionStyle.Default, handler: {action in
+            self.performSegueWithIdentifier("jumpToSharing", sender: sender)
+        }))
+        alert.addAction(UIAlertAction(title: "Add a Note", style: UIAlertActionStyle.Default, handler: {action in
+            self.performSegueWithIdentifier("jumpToNotes", sender: sender)
+        }))
+        presentViewController(alert, animated: true, completion: nil)
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        var isForSharing: Bool = false
+        
+        let segueIdentifier = segue.identifier!
+        if segueIdentifier == "jumpToSharing" {
+            isForSharing = true
+        }
 
         if let senderId = sender?.tag {
             
             var secondVC: NotesViewController = segue.destinationViewController as NotesViewController
             
             switch senderId {
-                
-            case 19:
-                secondVC.dateOfNote = dateHistoryNote1
-            case 29:
-                secondVC.dateOfNote = dateHistoryNote2
-            default:
-                NSLog("Segue to notes view. Should not see this senderId. SenderId = %d", senderId)
+                case 19:
+                    secondVC.dateOfNote = dateHistoryNote1
+                    secondVC.isForSharing = isForSharing
+                case 29:
+                    secondVC.dateOfNote = dateHistoryNote2
+                    secondVC.isForSharing = isForSharing
+                default:
+                    NSLog("Segue to notes view. Should not see this senderId. SenderId = %d", senderId)
             }
-            
             secondVC.returnSegue = "jumpToMain"
-        }
-    }
-    
-    func syncWithParse() {
-        
-        /*
-        Sync local results with Parse
-        Step 1. Upload new local measurements (where syncStatusParse = 0) to Parse
-        Step 2. Remove deleted local measurements (where syncStatusParse = 3) from Parse
-        Step 3. If a local measurement has been updated/edited (where syncStatusParse = 2) then update the matching Parse record
-        */
-        
-        dateFormatter.dateFormat = "dd-MM-yyyy HH:mm"
-        let lastSyncDate = dateFormatter.stringFromDate(NSDate())
-
-        NSUserDefaults.standardUserDefaults().setObject(lastSyncDate, forKey: "lastSyncDate")
-
-        // Initiate core data
-        
-        let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        let context:NSManagedObjectContext = appDel.managedObjectContext!
-        
-        // STEP 1. Get unsynced measurements (where syncStatusParse = 0) and upload to Parse
-        
-        var request = NSFetchRequest(entityName: "Results")
-        var filterPredicate: NSPredicate = NSPredicate(format: "syncStatusParse = %@", "0")!
-        request.predicate = filterPredicate
-        
-        var fetchError : NSError?
-        var updateError: NSError?
-        
-        if let results = context.executeFetchRequest(request, error: &fetchError) {
-            
-            if results.count > 0 {
-                
-                for result in results {
-                    
-                    var post = PFObject(className: "Results")
-                    
-                    post["user"] = PFUser.currentUser()
-                    post["date"] = result.valueForKey("date")
-                    post["hand"] = result.valueForKey("hand")
-                    post["tapCount"] = result.valueForKey("tapCount")
-                    
-                    if let note = result.valueForKey("note") as? String {
-                        
-                        post["note"] = note
-                    }
-                    
-                    if let lat = result.valueForKey("lat") as? Double {
-                        
-                        post["lat"] = lat
-                    }
-                    
-                    if let long = result.valueForKey("long") as? Double {
-                        
-                        post["long"] = long
-                    }
-
-                    post.saveInBackgroundWithBlock {(success: Bool, postError:NSError!) -> Void in
-                        
-                        if success {
-                            
-                            result.setValue(1, forKey: "syncStatusParse")
-                            
-                            context.save(&updateError)
-                            
-                            if updateError == nil {
-                                
-                                println("Success: synced a core data sync record up to Parse")
-                            }
-                            else {
-                                
-                                println("Error: \(updateError)")
-                            }
-                        }
-                        else {
-                            
-                            //TO DO: Handle error...probably update NSlog
-                            println(postError)
-                        }
-                    }
-                }
-            }
-        }
-        else {
-            
-            println("Add record fetch failed: \(fetchError)")
-        }
-        
-        // STEP 2. Update measurements on Parse which haved been updated locally
-        
-        filterPredicate = NSPredicate(format: "syncStatusParse = %@", "2")!
-        request.predicate = filterPredicate
-        
-        if let results = context.executeFetchRequest(request, error: &fetchError) {
-            
-            if results.count > 0 {
-                
-                println("\(results.count) updated records found")
-                
-                for result in results {
-                    
-                    var datePredicate = result.valueForKey("date") as NSDate
-                    
-                    let predicate = NSPredicate(format: "date == %@", datePredicate)
-                    
-                    var query = PFQuery(className: "Results", predicate: predicate)
-                    
-                    query.getFirstObjectInBackgroundWithBlock {(record: PFObject!, queryError:NSError!) -> Void in
-                        
-                        if query.countObjects() > 0 {
-                            
-                            if queryError == nil {
-                                
-                                record["note"] = result.valueForKey("note")
-                                
-                                record.saveInBackgroundWithBlock {(success: Bool, saveError: NSError!) -> Void in
-                                    
-                                    if success {
-                                        
-                                        result.setValue(1, forKey: "syncStatusParse")
-                                        
-                                        context.save(&updateError)
-                                        
-                                        if updateError == nil {
-                                            
-                                            println("Success: updated a core data record on Parse")
-                                        }
-                                        else {
-                                            
-                                            println("Error: \(updateError)")
-                                        }
-                                    }
-                                    else {
-                                        
-                                        //TO DO: Handle error...probably update NSlog
-                                        println(saveError)
-                                    }
-                                }
-                            }
-                            
-                        } else {
-                            
-                            // That's odd. No matching records found on Parse to update. Let's reset local record to sync (syncStatus = 0)
-                            
-                            println("No matching record on Parse. Resetting...")
-                            
-                            result.setValue(0, forKey: "syncStatusParse")
-                            
-                            context.save(&updateError)
-                            
-                            if updateError == nil {
-                                
-                                println("Success: updated a core data record on Parse")
-                            }
-                            else {
-                                
-                                println("Error: \(updateError)")
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        else {
-            
-            // Failed to fetch records for udating
-        }
-        
-        // STEP 3. Remove deleted measurements from Parse
-        
-        filterPredicate = NSPredicate(format: "syncStatusParse = %@", "3")!
-        request.predicate = filterPredicate
-        
-        if let results = context.executeFetchRequest(request, error: &fetchError) {
-            
-            if results.count > 0 {
-                
-                println("\(results.count) deleted records found")
-               
-                for result in results {
-                    
-                    var datePredicate = result.valueForKey("date") as NSDate
-                    
-                    let predicate = NSPredicate(format: "date == %@", datePredicate)
-                    
-                    var query = PFQuery(className: "Results", predicate: predicate)
-                    
-                    query.getFirstObjectInBackgroundWithBlock {(record: PFObject!, queryError:NSError!) -> Void in
-
-                        if queryError == nil {
-                            
-                            record.deleteInBackgroundWithBlock{(success: Bool, deleteError: NSError!) -> Void in
-                            
-                                if success {
-                                    
-                                    context.deleteObject(result as NSManagedObject)
-                                    
-                                    if !context.save(&updateError) {
-                                        
-                                        // There was a error saving
-                                    }
-                                    else {
-                                        
-                                        println("Local record deleted.")
-                                    }
-                                }
-                                else {
-                                    
-                                    println(deleteError.valueForKey("Code"))
-                                }
-                            }
-                        }
-                        else {
-                            
-                            // Even if there's a Parse query error, we should still delete the local record(s)
-                            
-                            context.deleteObject(result as NSManagedObject)
-                            
-                            if !context.save(&updateError) {
-                                
-                                // There was a error saving
-                            }
-                            else {
-                                
-                                println("Local record deleted.")
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
     
@@ -975,65 +737,50 @@ class ViewController: UIViewController, SideBarDelegate {
         }
 
         if let strongT: AnyObject = NSUserDefaults.standardUserDefaults().objectForKey("strongThreshold") {
-
             strongThreshold = strongT as NSInteger
         }
         
         if let weakT: AnyObject = NSUserDefaults.standardUserDefaults().objectForKey("weakThreshold") {
-            
             weakThreshold = weakT as NSInteger
         }
         
         
         if strongThreshold > 0 && weakThreshold > 0 {
-            
             imageMedals[i].image = imageWeak
             
             if average > weakThreshold {
-                
                 imageMedals[i].image = imageGood
             }
             
             if average >= strongThreshold {
-                
                 imageMedals[i].image = imageStrong
             }
-
         }
         else {
-            
             imageMedals[i].image = imageGood
         }
     }
     
-    // Manage slide-out side bar menu
-    
     func sideBarDidSelectButtonAtIndex(index: Int) {
-        
+        // Managed slide-out side bar menu
         switch index {
-            
-        case 0:
-            
-            let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("MainView") as UIViewController
-            self.presentViewController(vc, animated: true, completion: nil)
-            
-        case 1:
-
-            let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("PerformanceView") as UIViewController
-            self.presentViewController(vc, animated: true, completion: nil)
-
-        case 2:
-            
-            let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("ProfileView") as UIViewController
-            self.presentViewController(vc, animated: true, completion: nil)
-
-        case 3:
-            
-            let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("SettingsView") as UIViewController
-            self.presentViewController(vc, animated: true, completion: nil)
-            
-        default:
-           println("default")
+            case 0:
+                let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("MainView") as UIViewController
+                self.presentViewController(vc, animated: true, completion: nil)
+            case 1:
+                let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("PerformanceView") as UIViewController
+                self.presentViewController(vc, animated: true, completion: nil)
+            case 2:
+                let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("RankingView") as UIViewController
+                self.presentViewController(vc, animated: true, completion: nil)
+            case 3:
+                let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("ProfileView") as UIViewController
+                self.presentViewController(vc, animated: true, completion: nil)
+            case 4:
+                let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("SettingsView") as UIViewController
+                self.presentViewController(vc, animated: true, completion: nil)
+            default:
+               println("default")
         }
     }
 }

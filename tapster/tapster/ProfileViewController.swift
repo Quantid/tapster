@@ -11,13 +11,11 @@ import UIKit
 class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, SideBarDelegate {
     
     var sideBar:SideBar = SideBar()
-    
     var countryCode: String = ""
     var countryName: String = ""
-
     let screenSize: CGRect = UIScreen.mainScreen().bounds
-    
-    var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
+    var busyIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
+    let appDel = UIApplication.sharedApplication().delegate as AppDelegate
 
     @IBOutlet weak var imageUserPhoto: UIImageView!
     @IBOutlet weak var labelNickname: UILabel!
@@ -29,7 +27,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var labelError: UILabel!
 
     @IBAction func actionMenu(sender: AnyObject) {
-        
         sideBar.showSideBar(true)
     }
 
@@ -42,28 +39,21 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         // Generate photo album or camera alert menu
         
         var alert = UIAlertController(title: "Profile Photo", message: "Where do you want to get your photo?", preferredStyle: .ActionSheet)
-        
-        alert.addAction(UIAlertAction(title: "Photo album", style: UIAlertActionStyle.Default, handler: {action in
-            
+        alert.addAction(UIAlertAction(title: "Photo album", style: UIAlertActionStyle.Default, handler: {
+            action in
             userImage.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
-            
             self.presentViewController(userImage, animated: true, completion: nil)
         }))
-        
-        alert.addAction(UIAlertAction(title: "Camera", style: UIAlertActionStyle.Default, handler: {action in
-            
+        alert.addAction(UIAlertAction(title: "Camera", style: UIAlertActionStyle.Default, handler: {
+            action in
             userImage.sourceType = UIImagePickerControllerSourceType.Camera
-            
             self.presentViewController(userImage, animated: true, completion: nil)
         }))
-        
         presentViewController(alert, animated: true, completion: nil)
     }
     
     func imagePickerController(picker: UIImagePickerController!, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
-        
         self.dismissViewControllerAnimated(true, completion: nil)
-        
         imageUserPhoto.image = image
     }
     
@@ -77,71 +67,74 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
 
         self.view.backgroundColor = UIColor(red:45/255, green:55/255, blue:64/255, alpha:1.0)
         
-        // Populate fields. But first check if NSUser defaults have been set. That means this is segue back from the country table
-        
         let user = PFUser.currentUser()
         
-        let nameFirstNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("nameFirst")
-        let nameLastNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("nameLast")
-        let imageUserPhotoNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("image")
+        var nameFirstNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("nameFirst")
+        var nameLastNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("nameLast")
+        var countryNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("country")
+        var imageUserPhotoNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("image")
+        println(countryNS)
+        // Check if appdelegate variables have been set. That means this is segue back from the country table
+        
+        if appDel.placeholderNameFirst != "" {
+            nameFirstNS = appDel.placeholderNameFirst
+            nameLastNS = appDel.placeholderNameLast
+            imageUserPhotoNS = appDel.placeholderProfilePhoto
+        }
+        
         
         if nameFirstNS == nil && nameLastNS == nil {
+            println("here...")
             
             if user["nameFirst"] == nil {
-                
                 let name: String = user["name"] as String
                 var nameArray = name.componentsSeparatedByString(" ")
                 
                 inputNameFirst.text = nameArray[0]
                 
                 if nameArray.count > 1 {
-                    
                     inputNameLast.text = nameArray[1]
                 }
                 labelNickname.text = user["name"] as? String
             }
             else {
-                
                 labelNickname.text = user["nameFirst"] as? String
                 inputNameFirst.text = user["nameFirst"] as String
                 inputNameLast.text = user["nameLast"] as String
             }
             
             if let country = user["country"] as? String {
-                
                 inputCountry.text = country
             }
         }
         else {
-            
             if let nf = nameFirstNS as? String {
-                
                 inputNameFirst.text = nf
                 labelNickname.text = nf
             }
             
             if let nl = nameLastNS as? String {
-                
                 inputNameLast.text = nl
             }
             
-            inputCountry.text = countryName
+            if countryName != "" {
+                inputCountry.text = countryName
+            }
+            else if let cn = countryNS as? String {
+                inputCountry.text = cn
+            }
         }
         
         // Handle user photo
         
         if let imageData: NSData = imageUserPhotoNS as? NSData {
-            
             imageUserPhoto.image = UIImage (data: imageData)
         }
         else {
-            
             if let imageData = user["profileImage"] as? NSData {
-                
                 imageUserPhoto.image = UIImage (data: imageData)
             }
             else {
-                
                 imageUserPhoto.image = UIImage(named: "profile-silhuette.png")
             }
         }
@@ -151,7 +144,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         imageUserPhoto.contentMode = UIViewContentMode.ScaleAspectFit
         imageUserPhoto.layer.cornerRadius = imageUserPhoto.frame.size.width/2
         imageUserPhoto.layer.borderWidth = 5
-        imageUserPhoto.layer.borderColor = UIColor(red: 138/255, green: 150/255, blue: 158/255, alpha: 1.0).CGColor
+        imageUserPhoto.layer.borderColor = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0).CGColor
         imageUserPhoto.layer.masksToBounds = true
 
         // Date field
@@ -172,19 +165,16 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         labelError.text = ""
         
-        // Clear all NSUserDefaults
-        
-        NSUserDefaults.standardUserDefaults().removeObjectForKey("nameFirst")
-        NSUserDefaults.standardUserDefaults().removeObjectForKey("nameLast")
-        //NSUserDefaults.standardUserDefaults().removeObjectForKey("image")
+        appDel.placeholderNameFirst = ""
+        appDel.placeholderNameLast = ""
+        appDel.placeholderProfilePhoto = nil
     }
     
     func textFieldDidBeginEditing(inputCountry: UITextField) {
-        
-        NSUserDefaults.standardUserDefaults().setObject(inputNameFirst.text, forKey: "nameFirst")
-        NSUserDefaults.standardUserDefaults().setObject(inputNameLast.text, forKey: "nameLast")
-        NSUserDefaults.standardUserDefaults().setObject(UIImagePNGRepresentation(imageUserPhoto.image), forKey: "image")
-        
+        appDel.placeholderNameFirst = inputNameFirst.text
+        appDel.placeholderNameLast = inputNameLast.text
+        appDel.placeholderProfilePhoto = UIImagePNGRepresentation(imageUserPhoto.image)
+
         performSegueWithIdentifier("jumpToCountryTable", sender: self)
     }
 
@@ -195,30 +185,24 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
 
     @IBAction func actionUpdate(sender: AnyObject) {
-        
-        // TO DO: activity swirl and saved alert box on completion.
-        
+
         var error = ""
         
         // Validate form
         
         if inputNameFirst.text == "" || inputNameFirst.text == nil || inputNameFirst.text.utf16Count > 25 {
-            
             error = "Invalid first name"
         }
         
         if inputNameLast.text.utf16Count > 30 {
-            
             error = "Invalid last name"
         }
         
         if inputCountry.text == "" || inputCountry.text == nil {
-            
             error = "Please select a country"
         }
         
         if error == "" {
-           
             var query = PFQuery(className:"_User")
             let userId = PFUser.currentUser().objectId
 
@@ -230,119 +214,85 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                     
                     user["nameFirst"] = self.inputNameFirst.text
                     user["nameLast"] = self.inputNameLast.text
-                    user["country"] = self.countryCode.uppercaseString
+                    user["name"] = self.inputNameFirst.text
+                    user["country"] = self.inputCountry.text
                     
                     if self.imageUserPhoto != nil {
-                        
                         let imageData = UIImagePNGRepresentation(self.imageUserPhoto.image)
                         let imageFile = PFFile(name:"image.png", data:imageData)
                         user["profileImage"] = imageFile
+                        NSUserDefaults.standardUserDefaults().setObject(imageData, forKey: "image")
                     }
                     
-                    self.startActivityIndicator()
-                    
+                    self.busyIndicator = activityIndicator.launchIndicator(self.view)
+
                     user.saveInBackgroundWithBlock {(success: Bool, saveError: NSError!) -> Void in
                     
                         if success {
+                            NSUserDefaults.standardUserDefaults().setObject(self.inputNameFirst.text, forKey: "nameFirst")
+                            NSUserDefaults.standardUserDefaults().setObject(self.inputNameLast.text, forKey: "nameLast")
+                            NSUserDefaults.standardUserDefaults().setObject(self.inputCountry.text, forKey: "country")
                             
                             // Refresh user data
-                            
                             user.fetchInBackgroundWithBlock({(userData: PFObject!, fetchError: NSError!) -> Void in
-                                
                                 if fetchError != nil {
-                                    
                                     NSLog("Cannot refresh user's data. Error:@", fetchError)
                                 }
-                                
-                                println(userData)
                             })
                         }
-                        
-                        self.stopActivityIndicator()
+                        self.updateCompleted()
                     }
                 }
                 else {
-                    
                     NSLog("Cannot update user profile information: %@", error)
                 }
             }
         }
         else {
-            
             labelError.text = error
         }
     }
-    
-    func startActivityIndicator() {
-        
-        // Setup activity indicator
-        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 75, 75))
-        activityIndicator.center = CGPoint(x: self.view.center.x, y: self.view.center.y)
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.White
-        
-        view.addSubview(activityIndicator)
-        
-        activityIndicator.startAnimating()
-        
-        //Lock display from user interaction
-        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
-    }
-    
-    func stopActivityIndicator() {
-        
-        activityIndicator.stopAnimating()
-        
-        //Unlock display for resumption of user interaction
-        UIApplication.sharedApplication().endIgnoringInteractionEvents()
-        
-        // Show alert box message
-        let alert = UIAlertView(title: "Updated", message: "", delegate: self, cancelButtonTitle: "OK")
+
+    func updateCompleted() {
+
+        activityIndicator.stopIndicator(busyIndicator)
+
+        let alert = UIAlertView(title: "Saved", message: "Your profile has been updated", delegate: self, cancelButtonTitle: "OK")
         alert.alertViewStyle = .Default
         alert.show()
+        
+        viewDidLoad()
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {
-        
         // Get rid of keyboard when finished entering text
         textField.resignFirstResponder()
-        
         return true
     }
     
-    // Get rid of keyboard if user touches anywhere on the screen
-    
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        
+        // Get rid of keyboard if user touches anywhere on the screen
         self.view.endEditing(true)
     }
-
-    // Managed slide-out side bar menu
     
     func sideBarDidSelectButtonAtIndex(index: Int) {
-        
+        // Managed slide-out side bar menu
         switch index {
-            
         case 0:
-            
             let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("MainView") as UIViewController
             self.presentViewController(vc, animated: true, completion: nil)
-            
         case 1:
-            
             let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("PerformanceView") as UIViewController
             self.presentViewController(vc, animated: true, completion: nil)
-            
         case 2:
-            
+            let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("RankingView") as UIViewController
+            self.presentViewController(vc, animated: true, completion: nil)
+        case 3:
             let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("ProfileView") as UIViewController
             self.presentViewController(vc, animated: true, completion: nil)
-            
-        case 3:
-            
+        case 4:
             let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("SettingsView") as UIViewController
             self.presentViewController(vc, animated: true, completion: nil)
-            
         default:
             println("default")
         }

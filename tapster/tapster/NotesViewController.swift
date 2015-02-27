@@ -8,15 +8,22 @@
 
 import UIKit
 import CoreData
+import Social
 
 class NotesViewController: UIViewController, UITextViewDelegate {
     
     var dateOfNote: NSDate = NSDate()
+    var isForSharing: Bool = false
     var returnSegue: String = ""
+    let socialMessage: String = "I just scored #left #right on Taptimal - www.taptimal.co"
     
     var currentSyncStatusParse: NSInteger = -1
     var currentSyncStatusQuantid: NSInteger = -1
 
+    @IBOutlet weak var imageTextArea: UIImageView!
+    @IBOutlet weak var buttonAddNote: UIButton!
+    @IBOutlet weak var buttonFacebook: UIButton!
+    @IBOutlet weak var buttonTwitter: UIButton!
     @IBOutlet weak var labelDay: UILabel!
     @IBOutlet weak var labelMonth: UILabel!
     @IBOutlet weak var labelLeftScore: UILabel!
@@ -73,21 +80,18 @@ class NotesViewController: UIViewController, UITextViewDelegate {
                     tapCount = result.valueForKey("tapCount") as NSInteger
 
                     if result.valueForKey("hand") as NSString == "left" {
-                        
-                        labelLeftScore.text = "L:\(tapCount)"
-                        
-                        if results.count == 1 {labelRightScore.text = "R:--"}
-                    } else {
-                        
-                        labelRightScore.text = "R:\(tapCount)"
-                        if results.count == 1 {labelLeftScore.text = "L:--"}
+                        labelLeftScore.text = "L\(tapCount)"
+                        if results.count == 1 {labelRightScore.text = "R--"}
+                    }
+                    else {
+                        labelRightScore.text = "R\(tapCount)"
+                        if results.count == 1 {labelLeftScore.text = "L--"}
                     }
                     
                     if let note = result.valueForKey("note") as? NSString {
-                        
                         inputNote.text = note
-                    } else {
-                        
+                    }
+                    else {
                         inputNote.text = "Enter a note..."
                     }
                 }
@@ -98,13 +102,21 @@ class NotesViewController: UIViewController, UITextViewDelegate {
             }
         }
         else {
-
             println("Fetch failed: \(error)")
         }
         
-        inputNote.delegate = self
+        // Sharing or Note
         
-        // Do any additional setup after loading the view.
+        if isForSharing {
+            inputNote.hidden = true
+            imageTextArea.hidden = true
+            buttonAddNote.hidden = true
+        }
+        else {
+            buttonFacebook.hidden = true
+            buttonTwitter.hidden = true
+            inputNote.delegate = self
+        }
     }
 
     @IBAction func actionProcessNote(sender: AnyObject) {
@@ -115,7 +127,6 @@ class NotesViewController: UIViewController, UITextViewDelegate {
         // Validate note
         
         if noteText.utf16Count > 255 {
-            
             error = "Your note is too long (Max. 255 chars)"
         }
         
@@ -156,26 +167,64 @@ class NotesViewController: UIViewController, UITextViewDelegate {
                 
                 context.save(nil)
                 
-                notifyThenReturn()
+                notifyThenReturn("Saved")
             }
             else {
-                
                 println("Fetch failed: \(errorResults)")
             }
         }
         else {
-            
             labelError.text = error
         }
     }
     
-    func notifyThenReturn() {
+    
+    @IBAction func actionTwitter(sender: AnyObject) {
+
+        var message = socialMessage
+        message = message.stringByReplacingOccurrencesOfString("#left", withString: labelLeftScore.text!, options: NSStringCompareOptions.LiteralSearch, range: nil)
+        message = message.stringByReplacingOccurrencesOfString("#right", withString: labelRightScore.text!, options: NSStringCompareOptions.LiteralSearch, range: nil)
+
+        if SLComposeViewController.isAvailableForServiceType(SLServiceTypeTwitter) {
+            var controller = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
+            controller.setInitialText(message)
+            self.presentViewController(controller, animated:true, completion: {
+                self.notifyThenReturn("Posted")
+            })
+        }
+        else {
+            var alert = UIAlertController(title: "Accounts", message: "Please log into your Twitter app", preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
+    }
+    
+    @IBAction func actionFacebook(sender: AnyObject) {
         
-        var alert = UIAlertController(title: "Saved!", message: nil, preferredStyle: UIAlertControllerStyle.Alert)
+        var message = socialMessage
+        message = message.stringByReplacingOccurrencesOfString("#left", withString: labelLeftScore.text!, options: NSStringCompareOptions.LiteralSearch, range: nil)
+        message = message.stringByReplacingOccurrencesOfString("#right", withString: labelRightScore.text!, options: NSStringCompareOptions.LiteralSearch, range: nil)
+        
+        if SLComposeViewController.isAvailableForServiceType(SLServiceTypeFacebook) {
+            var controller = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
+            controller.setInitialText(message)
+            self.presentViewController(controller, animated:true, completion: {
+                self.notifyThenReturn("Posted")
+            })
+        }
+        else {
+            var alert = UIAlertController(title: "Accounts", message: "Please log into your Facebook app", preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
+    }
+
+    func notifyThenReturn(message: String) {
+        
+        var alert = UIAlertController(title: message, message: nil, preferredStyle: UIAlertControllerStyle.Alert)
         self.presentViewController(alert, animated: true, completion: nil)
         
         alert.dismissViewControllerAnimated(true, completion: {
-        
             self.performSegueWithIdentifier(self.returnSegue, sender: nil)
         })
     }
@@ -190,10 +239,8 @@ class NotesViewController: UIViewController, UITextViewDelegate {
     func textViewShouldBeginEditing(textView: UITextView) -> Bool {
         
         if textView.text == "Enter a note..." {
-            
             textView.text = ""
         }
-
         labelError.text = ""
         
         return true

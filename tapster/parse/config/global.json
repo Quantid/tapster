@@ -1,0 +1,11 @@
+{
+    "applications": {
+        "_default": {
+            "link": "tapster"
+        }, 
+        "tapster": {
+            "applicationId": "gwooYqqidVWUMo6ZY9axBpULe1pcHpDuho6ZPG9k", 
+            "masterKey": "MOi1hvYRO6y0aakmpRPtdC6ZOrsOawSMHjh7sGJA"
+        }
+    }
+}

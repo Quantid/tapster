@@ -33,8 +33,8 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
     init(sourceView:UIView){
         super.init()
         
-        let menuItems: Array = ["Tap Test", "Performance", "Profile", "Settings"]
-        let menuIconItems: Array = ["icon-menu-taptest.png", "icon-menu-performance.png", "icon-menu-profile.png", "icon-menu-settings.png"]
+        let menuItems: Array = ["Tap Test", "Performance", "Ranking", "Profile", "Settings"]
+        let menuIconItems: Array = ["icon-menu-taptest.png", "icon-menu-performance.png", "icon-menu-ranking.png", "icon-menu-profile.png", "icon-menu-settings.png"]
         
         originView = sourceView
         sideBarTableViewController.tableData = menuItems
@@ -57,7 +57,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
     
     func setupSideBar(){
         
-        sideBarContainerView.frame = CGRectMake(-barWidth - 1, originView.frame.origin.y - 3, barWidth, originView.frame.size.height)
+        sideBarContainerView.frame = CGRectMake(-barWidth - 1, originView.frame.origin.y - 3, barWidth, originView.frame.size.height + 5)
         sideBarContainerView.backgroundColor = UIColor.clearColor()
         sideBarContainerView.clipsToBounds = false
         sideBarContainerView.layoutMargins = UIEdgeInsetsZero
@@ -109,10 +109,8 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         let imageUserPhotoNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("image")
 
         if let imageData: NSData = imageUserPhotoNS as? NSData {
-            
             imageUserPhoto.image = UIImage (data: imageData)
         } else {
-            
             imageUserPhoto.image = UIImage(named: "profile-silhuette.png")
         }
 
@@ -120,7 +118,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         imageUserPhoto.contentMode = UIViewContentMode.ScaleAspectFit
         imageUserPhoto.layer.cornerRadius = imageUserPhoto.frame.size.width/2
         imageUserPhoto.layer.borderWidth = 5
-        imageUserPhoto.layer.borderColor = UIColor(red: 138/255, green: 150/255, blue: 158/255, alpha: 1.0).CGColor
+        imageUserPhoto.layer.borderColor = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0).CGColor
         imageUserPhoto.layer.masksToBounds = true
         
         sideBarContainerView.addSubview(imageUserPhoto)
@@ -144,8 +142,8 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         animator.removeAllBehaviors()
         isSideBarOpen = shouldOpen
         
-        let gravityX:CGFloat = (shouldOpen) ? 0.7 : -0.7
-        let magnitude:CGFloat = (shouldOpen) ? 20 : -20
+        let gravityX:CGFloat = (shouldOpen) ? 1.0 : -1.0
+        let magnitude:CGFloat = (shouldOpen) ? 80 : -80
         let boundaryX:CGFloat = (shouldOpen) ? barWidth : -barWidth - 1
         
         

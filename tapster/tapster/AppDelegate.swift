@@ -8,15 +8,24 @@
 
 import UIKit
 import CoreData
+import Foundation
+import SystemConfiguration
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    
+    var placeholderNameFirst: NSString = ""
+    var placeholderNameLast: NSString = ""
+    var placeholderProfilePhoto: NSData?
 
     var window: UIWindow?
 
+    var versionNumber: NSString = "1.03"
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        
+
+        ParseCrashReporting.enable();
+
         Parse.setApplicationId("gwooYqqidVWUMo6ZY9axBpULe1pcHpDuho6ZPG9k", clientKey:"o6DJhyL5vSXxUq1lFK2vQG5cQDWsDwKPcFzO8gGh")
         
         return true
@@ -111,3 +120,55 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+public class Reachability {
+    
+    class func isConnectedToNetwork() -> Bool {
+        
+        var zeroAddress = sockaddr_in(sin_len: 0, sin_family: 0, sin_port: 0, sin_addr: in_addr(s_addr: 0), sin_zero: (0, 0, 0, 0, 0, 0, 0, 0))
+        zeroAddress.sin_len = UInt8(sizeofValue(zeroAddress))
+        zeroAddress.sin_family = sa_family_t(AF_INET)
+        
+        let defaultRouteReachability = withUnsafePointer(&zeroAddress) {
+            SCNetworkReachabilityCreateWithAddress(nil, UnsafePointer($0)).takeRetainedValue()
+        }
+        
+        var flags: SCNetworkReachabilityFlags = 0
+        if SCNetworkReachabilityGetFlags(defaultRouteReachability, &flags) == 0 {
+            return false
+        }
+        
+        let isReachable = (flags & UInt32(kSCNetworkFlagsReachable)) != 0
+        let needsConnection = (flags & UInt32(kSCNetworkFlagsConnectionRequired)) != 0
+        
+        return (isReachable && !needsConnection) ? true : false
+    }
+    
+}
+
+public class activityIndicator {
+    
+    class func launchIndicator(view: UIView) -> UIActivityIndicatorView {
+        
+        let screenSize: CGRect = UIScreen.mainScreen().bounds
+        
+        var activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 75, 75))
+        activityIndicator.center = CGPoint(x: view.center.x, y: screenSize.height / 2)
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.White
+        
+        view.addSubview(activityIndicator)
+        
+        activityIndicator.startAnimating()
+        
+        //UIApplication.sharedApplication().beginIgnoringInteractionEvents()  //Lock display
+        
+        return activityIndicator
+    }
+    
+    class func stopIndicator(activityIndicator: UIActivityIndicatorView) {
+        
+        activityIndicator.stopAnimating()
+        //UIApplication.sharedApplication().endIgnoringInteractionEvents()    // Unlock display
+    }
+
+}

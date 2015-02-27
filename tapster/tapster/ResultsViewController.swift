@@ -12,7 +12,6 @@ import CoreData
 class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, SideBarDelegate  {
     
     var sideBar:SideBar = SideBar()
-    
     let screenSize: CGRect = UIScreen.mainScreen().bounds
 
     let imageBackground = UIImageView()
@@ -35,7 +34,6 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
     var ac = 0
     
     @IBAction func actionMenu(sender: AnyObject) {
-        
             sideBar.showSideBar(true)
     }
         
@@ -45,7 +43,6 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         setupPerformanceView()  // Setup performace view at the top of table
         
         // Establish side bar menu
-        
         sideBar = SideBar(sourceView: self.view)
         sideBar.delegate = self
         
@@ -100,140 +97,66 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
             var request = NSFetchRequest(entityName: "Results")
             
             request.returnsObjectsAsFaults = false
-
-            let datePredicate = NSPredicate(format: "date == %@", dateQuery)
-            request.predicate = datePredicate
+            request.predicate = NSPredicate(format: "date == %@", dateQuery)
 
             var results = context.executeFetchRequest(request, error: nil)!
-
-            var interval = dateQuery.timeIntervalSinceDate(dateLastWeek) / daysInSeconds
             
             if results[0].valueForKey("hand")! as NSString == "right" {
                 
                 var tc = results[0].valueForKey("tapCount") as NSInteger
-                
                 rightScore.append(tc)
-                average = tc
-                
-                if interval < averagingPeriod {
-                    rightTotal = rightTotal + tc
-                    rightCounter++
-                }
-                
+
                 if results.count > 1 {
                     
                     var tc = results[1].valueForKey("tapCount") as NSInteger
-                    
                     leftScore.append(tc)
-                    average = average + tc
-                    
-                    if interval < averagingPeriod {
-                        
-                        leftTotal = leftTotal + tc
-                        leftCounter++
-                    }
-                    
-                    // Handle array of averages
-                    
-                    averageOfPairedResults.append(average / 2)
                 }
                 else {
-                    
                     leftScore.append(0)
                 }
             }
             else {
-                
                 var tc = results[0].valueForKey("tapCount") as NSInteger
-                
                 leftScore.append(tc)
-                average = tc
-                
-                if interval < averagingPeriod {
-                    
-                    leftTotal = leftTotal + tc
-                    leftCounter++
-                }
                 
                 if results.count > 1 {
-                    
                     var tc = results[1].valueForKey("tapCount") as NSInteger
-                    
                     rightScore.append(tc)
-                    average = average + tc
-                    
-                    if interval < averagingPeriod {
-                        
-                        rightTotal = rightTotal + tc
-                        rightCounter++
-                    }
-                    
-                    // Handle array of averages
-                    
-                    averageOfPairedResults.append(average / 2)
                 }
                 else {
-                    
                     rightScore.append(0)
                 }
             }
         
             dateResult.append(results[0].valueForKey("date") as NSDate)
-
             monthString.append(dateMonthFormatter.stringFromDate(dateQuery) as NSString)
             dayString.append(dateDayFormatter.stringFromDate(dateQuery) as NSString)
-            
-            // Display performance life average
-            
-            if leftCounter > 0 && rightCounter > 0 {
-                
-                var leftLifeAverage = Int(leftTotal / leftCounter)
-                var rightLifeAverage = Int(rightTotal / rightCounter)
-                
-                labelLeftAverage.text = "L\(leftLifeAverage)"
-                labelRightAverage.text = "R\(rightLifeAverage)"
-                
-                awardMedal((leftLifeAverage + rightLifeAverage)/2)
-            }
-            else {
-                
-                labelLeftAverage.frame = CGRectMake(72, imageBackground.frame.origin.y + 17, 60, 200)
-                labelLeftAverage.font = UIFont(name: "HelveticaNeue-Light", size: 18)
-                labelLeftAverage.text = "Not enough activity...."
-                labelRightAverage.hidden = true
-            }
             
             // Handle displaying note icon
             
             if let note = results[0].valueForKey("note") as? NSString {
-                
                 if note == "" {
-                    
                     hideNoteIcon.append(true)
-                } else {
-                    
+                }
+                else {
                     hideNoteIcon.append(false)
                 }
-                
-            } else {
-                
+            }
+            else {
                 hideNoteIcon.append(true)
             }
             
             // Handle displaying sync icon
             
             if let sync = results[0].valueForKey("syncStatusParse") as? NSInteger {
-
                 if sync > 0 {
-                    
                     hideSyncIcon.append(true)
-                } else {
-                    
+                }
+                else {
                     hideSyncIcon.append(false)
                 }
-                
-            } else {
-                
+            }
+            else {
                 hideSyncIcon.append(true)
             }
 
@@ -245,81 +168,27 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
           
             println("\(dateString) = [R]\(rightScore[ac-1]) [L]\(leftScore[ac-1])")
         }
-        
-        println(averageOfPairedResults)
-        
-        calculatePerformanceThresholds(averageOfPairedResults)
+
+        let lifeAverageResults = Calculations().lifeAverage()
+
+        if lifeAverageResults.count == 3 {
+            labelLeftAverage.text = "L\(lifeAverageResults[0])"
+            labelRightAverage.text = "R\(lifeAverageResults[1])"
+            awardMedal(lifeAverageResults[2])
+        }
+        else {
+            labelLeftAverage.frame = CGRectMake(72, imageBackground.frame.origin.y + 17, 60, 200)
+            labelLeftAverage.font = UIFont(name: "HelveticaNeue-Light", size: 18)
+            labelLeftAverage.text = "Not enough activity...."
+            labelRightAverage.hidden = true
+        }
     }
     
     override func viewDidAppear(animated: Bool) {
     }
 
     override func viewDidLayoutSubviews() {
-        
         tableView.frame = CGRectMake(0, 120, screenSize.width, screenSize.height - 140)
-    }
-    
-    func calculatePerformanceThresholds(arrayOfAverages: [NSInteger]) {
-        
-        println(arrayOfAverages)
-        
-        if arrayOfAverages.count > 4 {
-            
-            // Sorrt array
-            
-            let sortedArrayOfAverages = arrayOfAverages.sorted(>)
-            
-            println(sortedArrayOfAverages)
-            
-            var topTotal: NSInteger = 0
-            var bottomTotal: NSInteger = 0
-            var topAverage: NSInteger = 0
-            var bottomAverage: NSInteger = 0
-            var counter = 0
-            var topThresholdPercent = 0.1
-            var bottomThresholdPercent = 0.9
-            
-            // Adjust threshold levels if there are an insufficient amount of results
-            
-            if sortedArrayOfAverages.count < 100 {
-                
-                topThresholdPercent = 0.2
-                bottomThresholdPercent = 0.8
-            }
-            
-            var topPercent = round(Double(sortedArrayOfAverages.count) * topThresholdPercent)
-            var bottomPercent = round(Double(sortedArrayOfAverages.count) * bottomThresholdPercent)
-
-            for var i = 0; i < Int(topPercent); i++ {
-
-                topTotal = topTotal + sortedArrayOfAverages[i]
-                
-                counter++
-            }
-            
-            let strongThreshold = topTotal / counter
-            
-            counter = 0
-            
-            for var i = Int(bottomPercent); i < sortedArrayOfAverages.count; i++ {
-                println("here...")
-                
-                bottomTotal = bottomTotal + sortedArrayOfAverages[i]
-                
-                counter++
-            }
-            
-            let weakThreshold = bottomTotal / counter
-            
-            NSUserDefaults.standardUserDefaults().setObject(strongThreshold, forKey: "strongThreshold")
-            NSUserDefaults.standardUserDefaults().setObject(weakThreshold, forKey: "weakThreshold")
-            println("Strong threshold = \(strongThreshold) AND weak threshold = \(weakThreshold)")
-        }
-        else {
-            
-            NSUserDefaults.standardUserDefaults().setObject(nil, forKey: "strongThreshold")
-            NSUserDefaults.standardUserDefaults().setObject(nil, forKey: "weakThreshold")
-        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -344,26 +213,30 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell: cellResult = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as cellResult
+        let row = indexPath.row
+        var leftScoreString = String(leftScore[row])
+        var rightScoreString = String(rightScore[row])
         
-        var leftScoreString = String(leftScore[indexPath.row])
-        var rightScoreString = String(rightScore[indexPath.row])
-        
-        if leftScore[indexPath.row] == 0 {
-            
+        if leftScore[row] == 0 {
             leftScoreString = "--"
         }
 
-        if rightScore[indexPath.row] == 0 {
-            
+        if rightScore[row] == 0 {
             rightScoreString = "--"
         }
         
-        cell.labelDay.text = dayString[indexPath.row]
-        cell.labelMonth.text = monthString[indexPath.row].uppercaseString
+        cell.labelDay.text = dayString[row]
+        cell.labelMonth.text = monthString[row].uppercaseString
         cell.labelLeftScore.text = "L" + leftScoreString
         cell.labelRightScore.text = "R" + rightScoreString
-        cell.imageNote.hidden = hideNoteIcon[indexPath.row]
-        cell.imageSync.hidden = hideSyncIcon[indexPath.row]
+        cell.imageNote.hidden = hideNoteIcon[row]
+        cell.imageSync.hidden = hideSyncIcon[row]
+        
+        if row % 2 == 0 {
+            cell.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
+        } else {
+            cell.backgroundColor = UIColor.whiteColor()
+        }
 
         return cell
     }
@@ -378,12 +251,11 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(tableView: UITableView!, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath!) {
+        
         if (editingStyle == UITableViewCellEditingStyle.Delete) {
             
             // DELETE RECORD. Update record with sync status = 3
-            
-            // Initiate core data
-            
+
             let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
             let context:NSManagedObjectContext = appDel.managedObjectContext!
             
@@ -397,7 +269,6 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
             if let results = context.executeFetchRequest(request, error: &error) {
                 
                 for result in results {
-                    
                     result.setValue(3, forKey: "syncStatusParse")
                     result.setValue(3, forKey: "syncStatusQuantid")
                 }
@@ -405,16 +276,13 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
                 context.save(&updateError)
                 
                 if updateError == nil {
-                    
                     // Success
                 }
                 else {
-                    
                     println("Failed to register deleted record. Error: \(updateError)")
                 }
             }
             else {
-                
                 println("Fetch failed: \(error)")
             }
             
@@ -469,10 +337,9 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         let imageUserPhotoNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("image")
         
         if let imageData: NSData = imageUserPhotoNS as? NSData {
-            
             imageUserPhoto.image = UIImage (data: imageData)
-        } else {
-            
+        }
+        else {
             imageUserPhoto.image = UIImage(named: "profile-silhuette.png")
         }
 
@@ -480,8 +347,8 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         imageUserPhoto.center = CGPoint(x: 39, y: imageBackground.center.y)
         imageUserPhoto.contentMode = UIViewContentMode.ScaleAspectFit
         imageUserPhoto.layer.cornerRadius = imageUserPhoto.frame.size.width/2
-        imageUserPhoto.layer.borderWidth = 2
-        imageUserPhoto.layer.borderColor = UIColor(red: 78/255, green: 88/255, blue: 98/255, alpha: 1.0).CGColor
+        imageUserPhoto.layer.borderWidth = 3
+        imageUserPhoto.layer.borderColor = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0).CGColor
         imageUserPhoto.layer.masksToBounds = true
         
         view.addSubview(imageUserPhoto)
@@ -504,33 +371,25 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         var weakThreshold: NSInteger = 0
         
         if let strongT: AnyObject = NSUserDefaults.standardUserDefaults().objectForKey("strongThreshold") {
-            
             strongThreshold = strongT as NSInteger
         }
         
         if let weakT: AnyObject = NSUserDefaults.standardUserDefaults().objectForKey("weakThreshold") {
-            
             weakThreshold = weakT as NSInteger
         }
         
-        
         if strongThreshold > 0 && weakThreshold > 0 {
-            
             imageMedal.image = imageWeak
             
             if average > weakThreshold {
-                
                 imageMedal.image = imageGood
             }
             
             if average >= strongThreshold {
-                
                 imageMedal.image = imageStrong
             }
-            
         }
         else {
-            
             imageMedal.image = imageGood
         }
     }
@@ -554,22 +413,18 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
             var j: CGFloat = CGFloat(i)
             
             buttonCharts.append(UIButton())
-            
             buttonCharts[i].frame = CGRectMake(0, 0, 50, 40)
-            //buttonCharts[i].backgroundColor = UIColor(red: 86/255, green: 199/255, blue: 149/255, alpha: 1.0)
             buttonCharts[i].tag = 19 + i
             buttonCharts[i].center = CGPoint(x: halfOneThirdWidth + (oneThirdWidth * j), y: screenSize.height - 33)
             buttonCharts[i].addTarget(self, action: "actionCharting:", forControlEvents: UIControlEvents.TouchUpInside)
             view.addSubview(buttonCharts[i])
         }
-        
         buttonCharts[0].setImage(UIImage(named: "icon-chart-left.png"), forState: UIControlState.Normal)
         buttonCharts[1].setImage(UIImage(named: "icon-chart-both.png"), forState: UIControlState.Normal)
         buttonCharts[2].setImage(UIImage(named: "icon-chart-right.png"), forState: UIControlState.Normal)
     }
     
     func actionCharting(sender: UIButton) {
-
         performSegueWithIdentifier("jumpToCharts", sender: sender)
     }
     
@@ -578,20 +433,15 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
         if segue.identifier == "jumpToNotes" {
             
             if let selectedIndex = self.tableView.indexPathForSelectedRow()?.row {
-                
                 var dateOfSelectedItem = dateResult[selectedIndex] as NSDate
-                
                 var secondVC: NotesViewController = segue.destinationViewController as NotesViewController
-                
                 secondVC.dateOfNote = dateOfSelectedItem
                 secondVC.returnSegue = "jumpToResults"
             }
         }
         else {
-            
             if let senderId = sender?.tag {
-                println("Chart button segue tag working")
-                
+
                 var chartVC: ChartViewController = segue.destinationViewController as ChartViewController
                 
                 chartVC.chartLeftData = leftScore
@@ -599,44 +449,37 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
                 chartVC.chartDateData = dateResult
                 
                 switch senderId {
-                    
-                case 19:
-                    chartVC.chartType = "left"
-                case 20:
-                    chartVC.chartType = "left+right"
-                case 21:
-                    chartVC.chartType = "right"
-                default:
-                    break
+                    case 19:
+                        chartVC.chartType = "left"
+                    case 20:
+                        chartVC.chartType = "left+right"
+                    case 21:
+                        chartVC.chartType = "right"
+                    default:
+                        break
                 }
             }
         }
     }
-
+    
     func sideBarDidSelectButtonAtIndex(index: Int) {
-        
+        // Managed slide-out side bar menu
         switch index {
-            
         case 0:
-            
             let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("MainView") as UIViewController
             self.presentViewController(vc, animated: true, completion: nil)
-            
         case 1:
-            
             let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("PerformanceView") as UIViewController
             self.presentViewController(vc, animated: true, completion: nil)
-            
         case 2:
-            
+            let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("RankingView") as UIViewController
+            self.presentViewController(vc, animated: true, completion: nil)
+        case 3:
             let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("ProfileView") as UIViewController
             self.presentViewController(vc, animated: true, completion: nil)
-            
-        case 3:
-            
+        case 4:
             let vc:UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("SettingsView") as UIViewController
             self.presentViewController(vc, animated: true, completion: nil)
-            
         default:
             println("default")
         }

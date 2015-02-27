@@ -24,7 +24,6 @@
 		D51033561A55C13A00934BB1 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033551A55C13A00934BB1 /* MobileCoreServices.framework */; };
 		D51033581A55C14200934BB1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033571A55C14200934BB1 /* QuartzCore.framework */; };
 		D510335A1A55C14E00934BB1 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033591A55C14E00934BB1 /* Security.framework */; };
-		D510335C1A55C15500934BB1 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D510335B1A55C15500934BB1 /* StoreKit.framework */; };
 		D510335E1A55C17600934BB1 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D510335D1A55C17600934BB1 /* SystemConfiguration.framework */; };
 		D51033601A55C17F00934BB1 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D510335F1A55C17F00934BB1 /* libz.dylib */; };
 		D51033621A55C18800934BB1 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D51033611A55C18800934BB1 /* libsqlite3.dylib */; };
@@ -50,12 +49,22 @@
 		D53DD1901A5C833900E8E59A /* icon-menu-selector@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D53DD18F1A5C833900E8E59A /* icon-menu-selector@2x.png */; };
 		D53DD1931A5CDB8A00E8E59A /* button-chart.png in Resources */ = {isa = PBXBuildFile; fileRef = D53DD1911A5CDB8A00E8E59A /* button-chart.png */; };
 		D53DD1941A5CDB8A00E8E59A /* button-share.png in Resources */ = {isa = PBXBuildFile; fileRef = D53DD1921A5CDB8A00E8E59A /* button-share.png */; };
+		D54568CD1A9BF106008391D7 /* RankingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54568CC1A9BF106008391D7 /* RankingViewController.swift */; };
+		D54933D31A9A36EC0030BCA4 /* icon-menu-ranking@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = D54933D11A9A36EC0030BCA4 /* icon-menu-ranking@1x.png */; };
+		D54933D41A9A36EC0030BCA4 /* icon-menu-ranking@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D54933D21A9A36EC0030BCA4 /* icon-menu-ranking@2x.png */; };
+		D54933D61A9A3AD60030BCA4 /* libstdc++.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D54933D51A9A3AD60030BCA4 /* libstdc++.6.dylib */; };
+		D54933D81A9A3C0D0030BCA4 /* ParseCrashReporting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D54933D71A9A3C0D0030BCA4 /* ParseCrashReporting.framework */; };
 		D54F4B511A5E0711007024A0 /* NotesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54F4B501A5E0711007024A0 /* NotesViewController.swift */; };
 		D54F4B551A5E0805007024A0 /* textarea-notes@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D54F4B521A5E0805007024A0 /* textarea-notes@2x.png */; };
-		D54F4B561A5E0805007024A0 /* button-addnote@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D54F4B531A5E0805007024A0 /* button-addnote@2x.png */; };
 		D54F4B591A5E0C73007024A0 /* bar-top@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D54F4B581A5E0C73007024A0 /* bar-top@2x.png */; };
 		D54F4B5D1A5E24B0007024A0 /* background-calendar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D54F4B5C1A5E24B0007024A0 /* background-calendar@2x.png */; };
 		D54FB56C1A6719E30042DCAC /* CountryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54FB56B1A6719E30042DCAC /* CountryTableViewController.swift */; };
+		D55524071A9A776C00FFD051 /* button-add-note@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = D55524011A9A776C00FFD051 /* button-add-note@1x.png */; };
+		D55524081A9A776C00FFD051 /* button-add-note@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D55524021A9A776C00FFD051 /* button-add-note@2x.png */; };
+		D55524091A9A776C00FFD051 /* button-facebook@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = D55524031A9A776C00FFD051 /* button-facebook@1x.png */; };
+		D555240A1A9A776C00FFD051 /* button-facebook@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D55524041A9A776C00FFD051 /* button-facebook@2x.png */; };
+		D555240B1A9A776C00FFD051 /* button-twitter@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = D55524051A9A776C00FFD051 /* button-twitter@1x.png */; };
+		D555240C1A9A776C00FFD051 /* button-twitter@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D55524061A9A776C00FFD051 /* button-twitter@2x.png */; };
 		D55F89181A6EB976003D095E /* tap-surface-iphone6-R@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D55F89161A6EB976003D095E /* tap-surface-iphone6-R@2x.png */; };
 		D55F89191A6EB976003D095E /* tap-surface-iphone6-L@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D55F89171A6EB976003D095E /* tap-surface-iphone6-L@2x.png */; };
 		D56400611A60DBE400F09A18 /* icon-menu-performance@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D564005D1A60DBE400F09A18 /* icon-menu-performance@2x.png */; };
@@ -107,6 +116,7 @@
 		D5BF64941A6D5E3700021F55 /* medal-weak@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5BF648E1A6D5E3700021F55 /* medal-weak@2x.png */; };
 		D5C1011A1A571A1A00580D31 /* ResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5C101191A571A1A00580D31 /* ResultsViewController.swift */; };
 		D5D23F6C1A6FA062001132EF /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D23F6B1A6FA062001132EF /* SettingsViewController.swift */; };
+		D5DA95021A9DF59200501CBC /* Calculations.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DA95011A9DF59200501CBC /* Calculations.swift */; };
 		D5DE0A581A6C2D3B00CF248D /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5DE0A571A6C2D3B00CF248D /* Social.framework */; };
 		D5DE0A5A1A6C2DB800CF248D /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5DE0A591A6C2DB800CF248D /* Accounts.framework */; };
 		D5DE0A5E1A6C347C00CF248D /* ChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DE0A5D1A6C347C00CF248D /* ChartViewController.swift */; };
@@ -175,7 +185,6 @@
 		D51033551A55C13A00934BB1 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		D51033571A55C14200934BB1 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		D51033591A55C14E00934BB1 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		D510335B1A55C15500934BB1 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		D510335D1A55C17600934BB1 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		D510335F1A55C17F00934BB1 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		D51033611A55C18800934BB1 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
@@ -202,12 +211,22 @@
 		D53DD18F1A5C833900E8E59A /* icon-menu-selector@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-menu-selector@2x.png"; sourceTree = "<group>"; };
 		D53DD1911A5CDB8A00E8E59A /* button-chart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-chart.png"; sourceTree = "<group>"; };
 		D53DD1921A5CDB8A00E8E59A /* button-share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-share.png"; sourceTree = "<group>"; };
+		D54568CC1A9BF106008391D7 /* RankingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RankingViewController.swift; sourceTree = "<group>"; };
+		D54933D11A9A36EC0030BCA4 /* icon-menu-ranking@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-menu-ranking@1x.png"; sourceTree = "<group>"; };
+		D54933D21A9A36EC0030BCA4 /* icon-menu-ranking@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-menu-ranking@2x.png"; sourceTree = "<group>"; };
+		D54933D51A9A3AD60030BCA4 /* libstdc++.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.dylib"; path = "usr/lib/libstdc++.6.dylib"; sourceTree = SDKROOT; };
+		D54933D71A9A3C0D0030BCA4 /* ParseCrashReporting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ParseCrashReporting.framework; sourceTree = "<group>"; };
 		D54F4B501A5E0711007024A0 /* NotesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotesViewController.swift; sourceTree = "<group>"; };
 		D54F4B521A5E0805007024A0 /* textarea-notes@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "textarea-notes@2x.png"; sourceTree = "<group>"; };
-		D54F4B531A5E0805007024A0 /* button-addnote@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-addnote@2x.png"; sourceTree = "<group>"; };
 		D54F4B581A5E0C73007024A0 /* bar-top@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bar-top@2x.png"; sourceTree = "<group>"; };
 		D54F4B5C1A5E24B0007024A0 /* background-calendar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "background-calendar@2x.png"; sourceTree = "<group>"; };
 		D54FB56B1A6719E30042DCAC /* CountryTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountryTableViewController.swift; sourceTree = "<group>"; };
+		D55524011A9A776C00FFD051 /* button-add-note@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-add-note@1x.png"; sourceTree = "<group>"; };
+		D55524021A9A776C00FFD051 /* button-add-note@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-add-note@2x.png"; sourceTree = "<group>"; };
+		D55524031A9A776C00FFD051 /* button-facebook@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-facebook@1x.png"; sourceTree = "<group>"; };
+		D55524041A9A776C00FFD051 /* button-facebook@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-facebook@2x.png"; sourceTree = "<group>"; };
+		D55524051A9A776C00FFD051 /* button-twitter@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-twitter@1x.png"; sourceTree = "<group>"; };
+		D55524061A9A776C00FFD051 /* button-twitter@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-twitter@2x.png"; sourceTree = "<group>"; };
 		D55F89161A6EB976003D095E /* tap-surface-iphone6-R@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tap-surface-iphone6-R@2x.png"; sourceTree = "<group>"; };
 		D55F89171A6EB976003D095E /* tap-surface-iphone6-L@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tap-surface-iphone6-L@2x.png"; sourceTree = "<group>"; };
 		D564005D1A60DBE400F09A18 /* icon-menu-performance@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-menu-performance@2x.png"; sourceTree = "<group>"; };
@@ -259,6 +278,7 @@
 		D5BF648E1A6D5E3700021F55 /* medal-weak@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "medal-weak@2x.png"; sourceTree = "<group>"; };
 		D5C101191A571A1A00580D31 /* ResultsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultsViewController.swift; sourceTree = "<group>"; };
 		D5D23F6B1A6FA062001132EF /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		D5DA95011A9DF59200501CBC /* Calculations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Calculations.swift; sourceTree = "<group>"; };
 		D5DE0A571A6C2D3B00CF248D /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		D5DE0A591A6C2DB800CF248D /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		D5DE0A5D1A6C347C00CF248D /* ChartViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartViewController.swift; sourceTree = "<group>"; };
@@ -298,15 +318,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D54933D61A9A3AD60030BCA4 /* libstdc++.6.dylib in Frameworks */,
 				D5DE0A5A1A6C2DB800CF248D /* Accounts.framework in Frameworks */,
 				D5DE0A581A6C2D3B00CF248D /* Social.framework in Frameworks */,
 				D51033641A55C19500934BB1 /* CoreData.framework in Frameworks */,
 				D51033621A55C18800934BB1 /* libsqlite3.dylib in Frameworks */,
 				D51033601A55C17F00934BB1 /* libz.dylib in Frameworks */,
 				D510335E1A55C17600934BB1 /* SystemConfiguration.framework in Frameworks */,
-				D510335C1A55C15500934BB1 /* StoreKit.framework in Frameworks */,
 				D510335A1A55C14E00934BB1 /* Security.framework in Frameworks */,
 				D51033581A55C14200934BB1 /* QuartzCore.framework in Frameworks */,
+				D54933D81A9A3C0D0030BCA4 /* ParseCrashReporting.framework in Frameworks */,
 				D51033561A55C13A00934BB1 /* MobileCoreServices.framework in Frameworks */,
 				D51033541A55C13000934BB1 /* CoreLocation.framework in Frameworks */,
 				D51033521A55C12900934BB1 /* CoreGraphics.framework in Frameworks */,
@@ -331,6 +352,7 @@
 		9FB2E82086ADCBD2A4E43C59 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D54933D51A9A3AD60030BCA4 /* libstdc++.6.dylib */,
 				D5DE0A591A6C2DB800CF248D /* Accounts.framework */,
 				D5DE0A571A6C2D3B00CF248D /* Social.framework */,
 				B4093294EFB60F6161AF5B58 /* libPods.a */,
@@ -350,11 +372,11 @@
 		D51033161A55BF6800934BB1 = {
 			isa = PBXGroup;
 			children = (
+				D54933D71A9A3C0D0030BCA4 /* ParseCrashReporting.framework */,
 				D51033631A55C19500934BB1 /* CoreData.framework */,
 				D51033611A55C18800934BB1 /* libsqlite3.dylib */,
 				D510335F1A55C17F00934BB1 /* libz.dylib */,
 				D510335D1A55C17600934BB1 /* SystemConfiguration.framework */,
-				D510335B1A55C15500934BB1 /* StoreKit.framework */,
 				D51033591A55C14E00934BB1 /* Security.framework */,
 				D51033571A55C14200934BB1 /* QuartzCore.framework */,
 				D51033551A55C13A00934BB1 /* MobileCoreServices.framework */,
@@ -391,10 +413,12 @@
 				D53142861A71720D00CE6951 /* PageContentViewController.swift */,
 				D51033291A55BF6900934BB1 /* ViewController.swift */,
 				D5C101191A571A1A00580D31 /* ResultsViewController.swift */,
+				D54568CC1A9BF106008391D7 /* RankingViewController.swift */,
 				D5E30DEF1A64E13D003C7E40 /* ProfileViewController.swift */,
 				D5D23F6B1A6FA062001132EF /* SettingsViewController.swift */,
 				D5DE0A5D1A6C347C00CF248D /* ChartViewController.swift */,
 				D54F4B501A5E0711007024A0 /* NotesViewController.swift */,
+				D5DA95011A9DF59200501CBC /* Calculations.swift */,
 				D56400651A60DC3400F09A18 /* SideBar.swift */,
 				D56400661A60DC3400F09A18 /* SideBarTableViewController.swift */,
 				D5F69C341A5F41F600C2E201 /* cellResult.swift */,
@@ -414,6 +438,12 @@
 				D531428A1A71BDD400CE6951 /* image-walkthrough1@1x.png */,
 				D531428B1A71BDD400CE6951 /* image-walkthrough1@2x.png */,
 				D531428C1A71BDD400CE6951 /* image-walkthrough3@1x.png */,
+				D55524011A9A776C00FFD051 /* button-add-note@1x.png */,
+				D55524021A9A776C00FFD051 /* button-add-note@2x.png */,
+				D55524031A9A776C00FFD051 /* button-facebook@1x.png */,
+				D55524041A9A776C00FFD051 /* button-facebook@2x.png */,
+				D55524051A9A776C00FFD051 /* button-twitter@1x.png */,
+				D55524061A9A776C00FFD051 /* button-twitter@2x.png */,
 				D531428D1A71BDD400CE6951 /* image-walkthrough3@2x.png */,
 				D531428E1A71BDD400CE6951 /* image-walkthrough2@2x.png */,
 				D53142961A71BEC400CE6951 /* image-walkthrough4@1x.png */,
@@ -495,12 +525,13 @@
 				D53DD18F1A5C833900E8E59A /* icon-menu-selector@2x.png */,
 				D564005D1A60DBE400F09A18 /* icon-menu-performance@2x.png */,
 				D564005E1A60DBE400F09A18 /* icon-menu-profile@2x.png */,
+				D54933D11A9A36EC0030BCA4 /* icon-menu-ranking@1x.png */,
+				D54933D21A9A36EC0030BCA4 /* icon-menu-ranking@2x.png */,
 				D564005F1A60DBE400F09A18 /* icon-menu-settings@2x.png */,
 				D56400601A60DBE400F09A18 /* icon-menu-taptest@2x.png */,
 				D54F4B581A5E0C73007024A0 /* bar-top@2x.png */,
 				D54F4B521A5E0805007024A0 /* textarea-notes@2x.png */,
 				D54F4B5C1A5E24B0007024A0 /* background-calendar@2x.png */,
-				D54F4B531A5E0805007024A0 /* button-addnote@2x.png */,
 				D510336C1A56276500934BB1 /* leftOFF@2x.png */,
 				D53DD18B1A5C7F7B00E8E59A /* icon-notes.png */,
 				D53DD18C1A5C7F7B00E8E59A /* icon-share.png */,
@@ -581,6 +612,11 @@
 					D510331E1A55BF6800934BB1 = {
 						CreatedOnToolsVersion = 6.1.1;
 						DevelopmentTeam = MN624PMPN4;
+						SystemCapabilities = {
+							com.apple.InAppPurchase = {
+								enabled = 0;
+							};
+						};
 					};
 					D51033361A55BF6900934BB1 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -615,6 +651,7 @@
 				D5B3796F1A6F19D0002E321E /* label-background@1x.png in Resources */,
 				D5BA94F61A6AD6AB001F89BB /* Icon-60@3x.png in Resources */,
 				D5FEFD4D1A6D997F00C24C08 /* tap-surface-iphone4-R@2x.png in Resources */,
+				D55524091A9A776C00FFD051 /* button-facebook@1x.png in Resources */,
 				D53142981A71BEC400CE6951 /* image-walkthrough4@1x.png in Resources */,
 				D5E30DF31A64E523003C7E40 /* inputbox-small@1x.png in Resources */,
 				D5FEFD4A1A6D997F00C24C08 /* tap-surface-iphone3-L.png in Resources */,
@@ -632,8 +669,10 @@
 				D5BA95041A6B0DE3001F89BB /* icon-chart-left@2x.png in Resources */,
 				D5B379781A6F21E2002E321E /* button-sync@2x.png in Resources */,
 				D56400B51A61DE3300F09A18 /* inputbox@2x.png in Resources */,
+				D55524081A9A776C00FFD051 /* button-add-note@2x.png in Resources */,
 				D5BA94F51A6AD6AB001F89BB /* Icon-60@2x.png in Resources */,
 				D56400741A61910B00F09A18 /* masthead@2x.png in Resources */,
+				D54933D31A9A36EC0030BCA4 /* icon-menu-ranking@1x.png in Resources */,
 				D5BA95061A6B0DE3001F89BB /* icon-chart-right@2x.png in Resources */,
 				D5BA95051A6B0DE3001F89BB /* icon-chart-right@1x.png in Resources */,
 				D5B379761A6F21E2002E321E /* button-export@2x.png in Resources */,
@@ -658,9 +697,11 @@
 				D5BF64911A6D5E3700021F55 /* medal-strong.png in Resources */,
 				D5E30DE51A64CDD8003C7E40 /* button-back-arrow@1x.png in Resources */,
 				D5E30DE61A64CDD8003C7E40 /* button-back-arrow@2x.png in Resources */,
+				D555240B1A9A776C00FFD051 /* button-twitter@1x.png in Resources */,
 				D5FEFD5A1A6DC84100C24C08 /* profile-silhuette@1x.png in Resources */,
 				D564007B1A6196F200F09A18 /* button-login@1x.png in Resources */,
 				D5E30DDD1A6493C1003C7E40 /* icon-note@1x.png in Resources */,
+				D54933D41A9A36EC0030BCA4 /* icon-menu-ranking@2x.png in Resources */,
 				D5E30DEB1A64E021003C7E40 /* frame-border-avatar@1x.png in Resources */,
 				D5B379751A6F21E2002E321E /* button-export@1x.png in Resources */,
 				D5E30DED1A64E021003C7E40 /* frame-avatar@1x.png in Resources */,
@@ -690,15 +731,17 @@
 				D53142941A71BDD400CE6951 /* image-walkthrough2@2x.png in Resources */,
 				D5BA94FA1A6AEADC001F89BB /* launch-screen-4s@2x.png in Resources */,
 				D5E30DF41A64E523003C7E40 /* inputbox-small@2x.png in Resources */,
-				D54F4B561A5E0805007024A0 /* button-addnote@2x.png in Resources */,
 				D5E30DD61A6490E1003C7E40 /* icon-menu-selector@1x.png in Resources */,
 				D51033711A56276500934BB1 /* leftOFF@2x.png in Resources */,
 				D5F04A3D1A6C7E9D00763A78 /* logo-large@3x.png in Resources */,
 				D5E30DDB1A6493C1003C7E40 /* icon-sync@1x.png in Resources */,
+				D555240A1A9A776C00FFD051 /* button-facebook@2x.png in Resources */,
 				D5883BDA1A68666100DB1C55 /* background-history-375@2x.png in Resources */,
 				D5FEFD5B1A6DC84100C24C08 /* profile-silhuette@2x.png in Resources */,
+				D555240C1A9A776C00FFD051 /* button-twitter@2x.png in Resources */,
 				D5B379771A6F21E2002E321E /* button-sync@1x.png in Resources */,
 				D54F4B551A5E0805007024A0 /* textarea-notes@2x.png in Resources */,
+				D55524071A9A776C00FFD051 /* button-add-note@1x.png in Resources */,
 				D53DD1931A5CDB8A00E8E59A /* button-chart.png in Resources */,
 				D5FEFD4B1A6D997F00C24C08 /* tap-surface-iphone3-R.png in Resources */,
 				D53142911A71BDD400CE6951 /* image-walkthrough1@2x.png in Resources */,
@@ -764,6 +807,7 @@
 				D5D23F6C1A6FA062001132EF /* SettingsViewController.swift in Sources */,
 				D56400761A6192D000F09A18 /* RegisterViewController.swift in Sources */,
 				D56400681A60DC3400F09A18 /* SideBarTableViewController.swift in Sources */,
+				D5DA95021A9DF59200501CBC /* Calculations.swift in Sources */,
 				D53142871A71720D00CE6951 /* PageContentViewController.swift in Sources */,
 				D54FB56C1A6719E30042DCAC /* CountryTableViewController.swift in Sources */,
 				D5E30DF01A64E13D003C7E40 /* ProfileViewController.swift in Sources */,
@@ -776,6 +820,7 @@
 				D54F4B511A5E0711007024A0 /* NotesViewController.swift in Sources */,
 				D51033251A55BF6800934BB1 /* AppDelegate.swift in Sources */,
 				D51033281A55BF6900934BB1 /* tapster.xcdatamodeld in Sources */,
+				D54568CD1A9BF106008391D7 /* RankingViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -906,6 +951,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/tapster",
+					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = tapster/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -928,6 +974,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/tapster",
+					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = tapster/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
