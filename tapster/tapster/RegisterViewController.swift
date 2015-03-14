@@ -20,10 +20,9 @@ extension String {
         
         // Need to be completed
         if self.utf16Count < 8 {
-            
             return false
-        } else {
-            
+        }
+        else {
             return true
         }
     }
@@ -59,29 +58,25 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     @IBAction func actionToggleGender(sender: AnyObject) {
         
        if gender == "male" {
-            
             var image = UIImage(named: "slider-female.png")
             buttonGender.setImage(image, forState: .Normal)
             gender = "female"
-            
-        } else {
-            
+       }
+       else {
             var image = UIImage(named: "slider-male.png")
             buttonGender.setImage(image, forState: .Normal)
             gender = "male"
         }
-        
     }
     
     @IBAction func actionLogin(sender: AnyObject) {
         
         if screen == "welcome" {
-            
             screen = "login"
             buttonRegister.hidden = true
             prepareSigningScreens()
-        } else {
-            
+        }
+        else {
             processForm()
         }
     }
@@ -89,12 +84,11 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     @IBAction func actionRegister(sender: AnyObject) {
         
         if screen == "welcome" {
-            
             screen = "register"
             buttonLogin.hidden = true
             prepareSigningScreens()
-        } else {
-            
+        }
+        else {
             processForm()
         }
     }
@@ -107,14 +101,11 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         // Set up variables
         
         switch screenSize.width {
-            
         case 320:
-            
             if screenSize.height == 480 {
-                
                 device = "iphone4"
-            } else {
-                
+            }
+            else {
                 device = "iphone5"
             }
         case 375:
@@ -130,8 +121,6 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         buttonGender.hidden = true
         
         // Setup error message label
-        
-        //errorMessage = UILabel(frame: CGRect(x: 0, y: 0, width: 300, height: 20))
         errorMessage.textColor = UIColor(red: 227/255, green: 89/255, blue: 89/255, alpha: 1.0)
         errorMessage.font = UIFont(name: "HelveticaNeue-LightItalic", size: 14)
         errorMessage.center = CGPoint(x: (screenSize.width/2) , y: screenSize.height - screenSize.height/4)
@@ -152,18 +141,14 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         buttonHeight = buttonRegister.frame.height
         
         switch screen {
-            
             case "welcome":
                 buttonRegister.center = CGPoint(x: (screenSize.width/2) , y: (screenSize.height/2) - (buttonHeight/2) - screenSize.height/22)
                 buttonLogin.center = CGPoint(x: (screenSize.width/2) , y: (screenSize.height/2) + (buttonHeight/2) + screenSize.height/22)
-
             case "login":
                 buttonLogin.center = CGPoint(x: (screenSize.width/2) , y: screenSize.height - (buttonHeight/2) - screenSize.height/10)
-
             case "register":
                 buttonGender.center = CGPoint(x: (screenSize.width/2) , y: imageInputboxes[3].center.y + buttonHeight + 10)
                 buttonRegister.center = CGPoint(x: (screenSize.width/2) , y: screenSize.height - (buttonHeight/2) - screenSize.height/10)
-
         default:
             println("Somthing...")
         }
@@ -174,11 +159,9 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         // Checks user is logged in. If yes, jump to main screen.
         
         if PFUser.currentUser() != nil {
-            
             performSegueWithIdentifier("jumpToMain", sender: self)
         }
         else {
-            
             self.view.hidden = false
         }
     }
@@ -197,11 +180,9 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
             // Define textfield names and UI item layout
         
             textfieldNames = ["Email", "Password"]
-            
             inputItemSpacing = [190, 250]
             
             if device == "iphone6" || device == "iphone6plus" {
-                
                 inputItemSpacing = [220, 290]
             }
             
@@ -209,11 +190,9 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
             // Define textfield names and UI item layout
             
             textfieldNames = ["Name", "Email", "Password", "Date of birth"]
-         
             inputItemSpacing = [70, 130, 190, 250]
             
             if device == "iphone6" || device == "iphone6plus" {
-                
                 inputItemSpacing = [70, 150, 220, 290]
             }
             
@@ -296,64 +275,46 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         var DOB = ""
 
         switch screen {
-            
         case "login":
                 maximumTextLength = [50, 35]
-
         case "register":
                 maximumTextLength = [35, 50, 35, 14]
-                
                 name = inputFields[find(textfieldNames, "Name")!].text
-                let DOB = inputFields[find(textfieldNames, "Date of birth")!].text
-                
-                // Validate DOB
-                
+                DOB = inputFields[find(textfieldNames, "Date of birth")!].text
+
                 if DOB == "" || DOB.utf16Count != 11 {
-                    
                     error = "Enter a valid date of birth"
                 }
-                
-                // Convert DOB from string to date
-                
+
                 dateFormatter.dateFormat = "dd MMM yyyy"
                 if let validateDOB: NSDate = dateFormatter.dateFromString(DOB) {
                     
                 }
                 else {
-                    
                     error = "Enter a valid date of birth"
-            }
+                }
         default:
             println("something...")
         }
 
-        // Validate text length
+        // Validate form elements
         
         for var i = 0; i < maximumTextLength.count; i++ {
-            
             if inputFields[i].text.utf16Count > maximumTextLength[i] {
-                
                 error = textfieldNames[i] + " is too long"
             }
             println(inputFields[i].text.utf16Count)
         }
         
-        // Validate Email address
-        
         if !email.isValidEmail() {
-            
             error = "Invalid email address"
         }
-        
-        // Validate Password
-        
+
         if !password.isValidPassword() {
-            
             error = "Invalid password"
         }
         
         if email.lowercaseString == password.lowercaseString {
-            
             error = "Email and password cannot be the same"
         }
         
@@ -361,50 +322,45 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         
         if error == "" {
             
+            var user = PFUser()
+            dateFormatter.dateFormat = "dd MMM yyyy"
+            
+            startActivityIndicator()
+            
             switch screen {
-                
-            case "login":
-                
-                    startActivityIndicator()
-                    
-                    var user = PFUser()
-                    
-                    PFUser.logInWithUsernameInBackground(email, password:password) {(user: PFUser!, signInError: NSError!) -> Void in
+                case "login":
+                    PFUser.logInWithUsernameInBackground(email, password:password) {
+                        (user: PFUser!, signInError: NSError!) -> Void in
+                        
                         if user != nil {
+                            // Success
+                            NSUserDefaults.standardUserDefaults().setObject(user["nameFirst"], forKey: "nameFirst")
+                            NSUserDefaults.standardUserDefaults().setObject(user["nameLast"], forKey: "nameLast")
+                            NSUserDefaults.standardUserDefaults().setObject(user["country"], forKey: "country")
                             
-                            // Do stuff after successful login.
+                            let isSharing = user["isSharing"] as Bool
+                            if isSharing {
+                                NSUserDefaults.standardUserDefaults().setObject("true", forKey: "isSharing")
+                            }
+                            else {
+                                NSUserDefaults.standardUserDefaults().setObject("false", forKey: "isSharing")
+                            }
                             
+                            let imageFile = user["profileImage"] as? PFFile
+                            if let imageData = imageFile?.getData() {
+                                NSUserDefaults.standardUserDefaults().setObject(imageData, forKey: "image")
+                            }
+
                             self.performSegueWithIdentifier("jumpToMain", sender: self)
                         }
                         else {
-                            
-                            // The login failed. Check error to see why.
-                            
-                            if let errorString = signInError.userInfo?["error"] as? String {
-                                if errorString.rangeOfString("Internet connection") != nil {
-                                    error = "Your Internet connection appears to be offline"
-                                }
-                                else {
-                                    error = errorString
-                                }
-                            }
-                            else {
-                                error = "Please try again later"
-                            }
+                            // Failed
+                            self.handleError(signInError)
                         }
-                        
                         self.stopActivityIndicator()
-                        
-                        self.errorMessage.text = error
                     }
-            case "register":
-                
-                    dateFormatter.dateFormat = "dd MMM yyyy"
+                case "register":
                     let dateDOB = dateFormatter.dateFromString(DOB)
-
-                    startActivityIndicator()
-                    
-                    var user = PFUser()
                     
                     user.username = email.lowercaseString
                     user.password = password
@@ -412,40 +368,54 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
                     user["name"] = name
                     user["gender"] = gender
                     user["DOB"] = dateDOB
+                    user["isSharing"] = false
                     
-                    user.signUpInBackgroundWithBlock {(succeeded: Bool!, signUpError: NSError!) -> Void in
-                        
+                    user.signUpInBackgroundWithBlock {
+                        (succeeded: Bool!, signUpError: NSError!) -> Void in
+
                         if signUpError == nil {
-                            // Hooray! Let them use the app now.
-                            
+                            // Success
+                            NSUserDefaults.standardUserDefaults().setObject("false", forKey: "isSharing")
+                            NSUserDefaults.standardUserDefaults().setObject("false", forKey: "isReminderSet")
+                            NSUserDefaults.standardUserDefaults().removeObjectForKey("nameFirst")
+                            NSUserDefaults.standardUserDefaults().removeObjectForKey("nameLast")
+                            NSUserDefaults.standardUserDefaults().removeObjectForKey("country")
+                            NSUserDefaults.standardUserDefaults().removeObjectForKey("image")
+
                             self.performSegueWithIdentifier("jumpToWalkthrough", sender: self)
                         }
                         else {
-                            //Sign up failed
-                            if let errorString = signUpError.userInfo?["error"] as? NSString {
-                                error = errorString
-                            }
-                            else {
-                                error = "Please try again later"
-                            }
+                            // Failed
+                            self.handleError(signUpError)
                         }
-                        
                         self.stopActivityIndicator()
-                        
-                        self.errorMessage.text = error
                     }
-            default:
-                
-                error = "Error: Try closing and relaunching the app"
+                default:
+                    error = "Error: Try closing and relaunching the app"
+                    self.stopActivityIndicator()
             }
-            
         }
+        errorMessage.text = error
+    }
+    
+    func handleError(handleError: NSError) {
+        var error = ""
         
+        if let errorString = handleError.userInfo?["error"] as? String {
+            if errorString.rangeOfString("Internet connection") != nil {
+                error = "Your Internet connection appears to be offline"
+            }
+            else {
+                error = errorString
+            }
+        }
+        else {
+            error = "Please try again later"
+        }
         errorMessage.text = error
     }
     
     func startActivityIndicator() {
-        
         activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 75, 75))
         activityIndicator.center = CGPoint(x: self.view.center.x, y: (self.view.center.y + screenSize.height/5))
         activityIndicator.hidesWhenStopped = true
@@ -454,32 +424,22 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         view.addSubview(activityIndicator)
         
         activityIndicator.startAnimating()
-        
-        //Lock display from user interaction
         UIApplication.sharedApplication().beginIgnoringInteractionEvents()
     }
     
     func stopActivityIndicator() {
-        
         activityIndicator.stopAnimating()
-        
-        //Unlock display for resumption of user interaction
         UIApplication.sharedApplication().endIgnoringInteractionEvents()
     }
     
-    // Get rid of keyboard when finished entering text
-    
     func textFieldShouldReturn(textField: UITextField) -> Bool {
-        
+        // Get rid of keyboard when finished entering text
         textField.resignFirstResponder()
-        
         return true
     }
     
-    // Get rid of keyboard if user touches anywhere on the screen
-    
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        
+        // Get rid of keyboard if user touches anywhere on the screen
         self.view.endEditing(true)
     }
 }

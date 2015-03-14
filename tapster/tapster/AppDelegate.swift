@@ -20,13 +20,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    var versionNumber: NSString = "1.03"
+    var versionNumber: NSString = "1.1"
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 
         ParseCrashReporting.enable();
 
-        Parse.setApplicationId("gwooYqqidVWUMo6ZY9axBpULe1pcHpDuho6ZPG9k", clientKey:"o6DJhyL5vSXxUq1lFK2vQG5cQDWsDwKPcFzO8gGh")
+        Parse.setApplicationId("UVxryS7IJbcB81BIQco71fFlMQviUYxeQ2qCyNbE", clientKey:"uEEL8yQMkExC9mT1ss8BlwYNyaXUlG5o6gwuwLCb")
         
         return true
     }

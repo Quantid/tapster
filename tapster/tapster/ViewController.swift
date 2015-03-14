@@ -30,7 +30,7 @@ class ViewController: UIViewController, SideBarDelegate {
     var tapsurfaceFileName = ""
     
     var lat: Double = 0
-    var long: Double = 0
+    var lng: Double = 0
 
     var timeMilliseconds = 0
     var timeSeconds = 0
@@ -95,11 +95,9 @@ class ViewController: UIViewController, SideBarDelegate {
     func actionTapSurface(sender: AnyObject) {
         
         if tappingHasStarted {
-            
             tapCount++
         }
         else {
-            
             tapCount = 0
             tappingHasStarted = true
             tapCount++
@@ -109,7 +107,6 @@ class ViewController: UIViewController, SideBarDelegate {
             
             timer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("timerCountDown"), userInfo: nil, repeats: true)
         }
-        
         labelTapCounter.text = String(tapCount)
     }
     
@@ -124,13 +121,12 @@ class ViewController: UIViewController, SideBarDelegate {
         var image = UIImage(named: "background-history-375.png")
         
         if screenSize.width == 414 {
-            
             historyBackgroundWidth = 414
             var image = UIImage(named: "background-history-414.png")
         }
         
         let imageBackgroundHistory = UIImageView(image: image)
-        imageBackgroundHistory.frame = CGRectMake(0, screenSize.height - 115, 375 , 115)
+        imageBackgroundHistory.frame = CGRectMake(0, screenSize.height - 115, screenSize.width , 115)
         imageBackgroundHistory.contentMode = UIViewContentMode.ScaleAspectFill
         
         view.addSubview(imageBackgroundHistory)
@@ -179,11 +175,9 @@ class ViewController: UIViewController, SideBarDelegate {
         var y: CGFloat = screenSize.height - 74
         
         for var i = 0; i < 2; i++ {
-            
             if i == 1 {
                 y = y + 48
             }
-            
             imageMedals[i].frame = CGRectMake(-90, -90, 35, 35)
             imageMedals[i].contentMode = UIViewContentMode.ScaleAspectFit
             imageMedals[i].center = CGPoint(x: x, y: y)
@@ -196,7 +190,6 @@ class ViewController: UIViewController, SideBarDelegate {
         switch screenSize.width {
             
         case 320:
-            
             if screenSize.height == 480 {
                 
                 //iphone4
@@ -246,9 +239,8 @@ class ViewController: UIViewController, SideBarDelegate {
         PFGeoPoint.geoPointForCurrentLocationInBackground {(geoPoint: PFGeoPoint!, error: NSError!) -> Void in
             
             if error == nil {
-                
                 self.lat = geoPoint.latitude
-                self.long = geoPoint.longitude
+                self.lng = geoPoint.longitude
             }
         }
         
@@ -264,7 +256,7 @@ class ViewController: UIViewController, SideBarDelegate {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+
     func timerCountDown(){
         
         if timeSeconds == 0 && timeMilliseconds == 0 {
@@ -295,7 +287,7 @@ class ViewController: UIViewController, SideBarDelegate {
                     }
                 }
                 else {
-                    // save failed. Present user with an error
+                    NSLog("Failed to save tapcount result.")
                 }
             }))
             alert.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Destructive, handler: nil))
@@ -325,20 +317,18 @@ class ViewController: UIViewController, SideBarDelegate {
         
         if (handSetting == "left" || handSetting == "right") && tapCount > 0 {
             
+            var error: NSError?
             var date = NSDate()
-            var shouldPair = getUnpairedResult(handSetting)
+            var pairing = getUnpairedResult(handSetting)
             
-            if shouldPair.shouldFormPair {
-                
-                date = shouldPair.date
+            if pairing.shouldFormPair {
+                date = pairing.date
             }
 
-            // Initialise core data
-            
             let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
             let context:NSManagedObjectContext = appDel.managedObjectContext!
+            
             var result = NSEntityDescription.insertNewObjectForEntityForName("Results", inManagedObjectContext: context) as NSManagedObject
-            var error: NSError?
             
             result.setValue(date, forKey: "date")
             result.setValue(tapCount, forKey: "tapCount")
@@ -346,25 +336,24 @@ class ViewController: UIViewController, SideBarDelegate {
             result.setValue(0, forKey: "syncStatusParse")
             result.setValue(0, forKey: "syncStatusQuantid")
             result.setValue(lat, forKey: "lat")
-            result.setValue(long, forKey: "long")
+            result.setValue(lng, forKey: "lng")
             
             if !context.save(&error) {
-                
-                // Save failed. Handle error
-                
                 println("Could not save \(error), \(error?.userInfo)")
-                
                 return false
             }
             
             println("Success - saved!")
             
+            // Display award notification
+            
+            if pairing.shouldFormPair {
+                let performance = performanceId((pairing.tapCount + tapCount) / 2)
+                awardMedalNotification(performance)
+            }
             return true
         }
         else {
-            
-            // Handle error
-            
             return false
         }
     }
@@ -389,22 +378,18 @@ class ViewController: UIViewController, SideBarDelegate {
         
         labelGetTapping.text = "" // Clear get tapping message (if it's there)
         
-        var resultsByDate: AnyObject = getRecentResultsByDate()
+        var resultsByDate: AnyObject = recentResultsByDate()
         
         if resultsByDate.count > 0 {
-            
             for var i = 0; i < resultsByDate.count; i++ {
-                
                 dates.append(resultsByDate[i].valueForKey("date") as NSDate)
             }
-            
             
             var i = 1 // label tag counter
             var j = 0 // result record counter
             var counter = 0 // loop counter ensures two loops happen ONLY when there's a sufficient number of results
             
             while (counter < 2 && counter < dates.count) || (counter == 2 && isPaired && counter < dates.count) {
-
                 isPaired = false
                 var labelHistoryDate = self.view.viewWithTag(i) as UILabel
                 var labelHistoryLeftResult = self.view.viewWithTag(i+1) as UILabel
@@ -413,10 +398,9 @@ class ViewController: UIViewController, SideBarDelegate {
                 // Update variables used for notes segue
                 
                 if counter == 0 {
-                    
                     dateHistoryNote1 = dates[j]
-                } else {
-
+                }
+                else {
                     dateHistoryNote2 = dates[j]
                 }
                 
@@ -425,7 +409,6 @@ class ViewController: UIViewController, SideBarDelegate {
                 if j < (dates.count - 1) {
                     
                     if dates[j] == dates[j+1] {
-                        
                         isPaired = true
                     }
                 }
@@ -433,7 +416,6 @@ class ViewController: UIViewController, SideBarDelegate {
                 // Update history with paired or unpaired results
                 
                 if isPaired {
-                    
                     dateString = getDateHistoryString(dates[j])
                     labelHistoryDate.text = dateString.uppercaseString
                     
@@ -454,7 +436,6 @@ class ViewController: UIViewController, SideBarDelegate {
                     counter++
                 }
                 else {
-                    
                     tapCount = resultsByDate[j].valueForKey("tapCount") as NSInteger
                     dateString = getDateHistoryString(dates[j])
                     labelHistoryDate.text = dateString.uppercaseString
@@ -476,7 +457,7 @@ class ViewController: UIViewController, SideBarDelegate {
             
             // Check if there's only results for the first row of the history. If so, erase second row labels
             
-            if counter == 1 || (dates.count == 2 && isPaired){
+            if counter == 1 || (dates.count == 2 && isPaired) {
                 
                 // Clear all unused history labels
                 
@@ -517,7 +498,7 @@ class ViewController: UIViewController, SideBarDelegate {
          }
     }
     
-    func getUnpairedResult(hand: String) -> (shouldFormPair: Bool, date: NSDate) {
+    func getUnpairedResult(hand: String) -> (shouldFormPair: Bool, date: NSDate, tapCount: NSInteger) {
         
         /* 
         The Problem: tap testing is conducted individually for each hand - right and left. However, a complete
@@ -533,80 +514,58 @@ class ViewController: UIViewController, SideBarDelegate {
         
         var responseBool = false
         var responseDate = NSDate()
+        var responseTapCount: NSInteger = 0
         var dateMostRecent = NSDate()
         var handMostRecent = ""
         
-        // Initialise core data
-        
         let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         let context:NSManagedObjectContext = appDel.managedObjectContext!
+        
         var request = NSFetchRequest(entityName: "Results")
-        
-        //request.returnsObjectsAsFaults = false
-        //request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
-        
-        // Get results ordered by descending date
-        
-        var resultsByDate: AnyObject = getRecentResultsByDate()
+        var resultsByDate: AnyObject = recentResultsByDate()
 
         if resultsByDate.count > 0 {
-            
             handMostRecent = resultsByDate[0].valueForKey("hand") as String!
             dateMostRecent = resultsByDate[0].valueForKey("date") as NSDate
+            responseTapCount = resultsByDate[0].valueForKey("tapCount") as NSInteger
 
             // Checks if most recent result is aleady paired and is for opposite hand
             
             request.predicate = NSPredicate(format: "date = %@ and hand = %@", dateMostRecent, oppositeHand(handMostRecent))
-            //request.predicate = NSPredicate(format: "hand = %@", oppositeHand(handMostRecent))
             
             var results = context.executeFetchRequest(request, error: nil)
 
-            if results?.count > 0 {
-                
-                // Result is already paired. No available pair exisits. Do nothing
-            }
-            else {
-                
+            if results?.count == 0 {
+
                 println("unpaired...")
                 
                 // The test is unpaired. Check is it is older than 15 mins
                 
-                let interval = NSDate().timeIntervalSinceDate(dateMostRecent)
-                
-                if interval < 900 {
-                    
-                    // The test is unpaided AND is less than 15 mins old. Check it is for the opposite hand
-                    
+                if abs(dateMostRecent.timeIntervalSinceNow) < 900 {
+                    responseDate = dateMostRecent
                     if hand == oppositeHand(handMostRecent) {
-                        
-                        responseDate = dateMostRecent
                         responseBool = true
                     }
                 }
             }
         }
-        
-        return (responseBool, responseDate)
+        println("bool:\(responseBool), date:\(responseDate), tapcount:\(responseTapCount)")
+        return (responseBool, responseDate, responseTapCount)
     }
     
-    func getRecentResultsByDate() -> [AnyObject] {
-       
-        // Initialise core data
-        
+    func recentResultsByDate() -> [AnyObject] {
+
         let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         let context:NSManagedObjectContext = appDel.managedObjectContext!
         
         var request = NSFetchRequest(entityName: "Results")
-        request.predicate = NSPredicate(format: "syncStatusParse < %@", "3")!
-        request.returnsObjectsAsFaults = false
-
+        request.predicate = NSPredicate(format: "syncStatusParse < 3")!
         let sortDescriptor1 = NSSortDescriptor(key: "date", ascending: false)
         let sortDescriptor2 = NSSortDescriptor(key: "hand", ascending: true)
-        let sortDescriptors = [sortDescriptor1, sortDescriptor2]
-        request.sortDescriptors = sortDescriptors
+        request.sortDescriptors = [sortDescriptor1, sortDescriptor2]
+        request.returnsObjectsAsFaults = false
+        request.fetchLimit = 6
         
-        // Get results ordered by descending date and ascending hand
-
         var results = context.executeFetchRequest(request, error: nil)
 
         return results!
@@ -636,7 +595,6 @@ class ViewController: UIViewController, SideBarDelegate {
         calendar.timeZone = NSTimeZone.systemTimeZone()
         let dateFormatter = NSDateFormatter()
         dateFormatter.timeZone = calendar.timeZone
-        //dateFormatter.dateFormat = "yyyy-MM-dd"
         
         let components = calendar.components(NSCalendarUnit.CalendarUnitMonth | NSCalendarUnit.CalendarUnitDay | NSCalendarUnit.CalendarUnitMinute,fromDate: startDate, toDate: NSDate(), options: nil)
         let months = components.month
@@ -719,15 +677,55 @@ class ViewController: UIViewController, SideBarDelegate {
         }
     }
     
+    func awardMedalNotification(award: NSString) {
+        
+        let center_x = screenSize.width / 2
+        let center_y = screenSize.height / 2
+        
+        let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .Dark)) as UIVisualEffectView
+        visualEffectView.frame = view.bounds
+        view.addSubview(visualEffectView)
+
+        let awardView: UIImageView = UIImageView()
+        awardView.frame = CGRectMake(0, 0, screenSize.width * 0.75, screenSize.height * 0.5)
+        awardView.center = CGPoint(x: center_x, y: screenSize.height + (screenSize.height * 0.25))
+        awardView.backgroundColor = UIColor(red: 86/255, green: 199/255, blue: 149/255, alpha: 1.0)
+        awardView.layer.cornerRadius = 10
+        awardView.layer.masksToBounds = true
+        
+        let awardMedal: UIImage = UIImage(named: "medal-\(award)-large.png")!
+        let awardMedalView: UIImageView = UIImageView(image: awardMedal)
+        awardMedalView.center = CGPoint(x: awardView.frame.width / 2, y: awardView.frame.height / 2)
+        
+        let awardLabel: UILabel = UILabel(frame: CGRect(x: 0, y: 0, width: 120, height: 50))
+        awardLabel.text = award.uppercaseString
+        awardLabel.textAlignment = NSTextAlignment.Center
+        awardLabel.textColor = UIColor(red: 26/255, green: 40/255, blue: 158/255, alpha: 1.0)
+        awardLabel.font = UIFont(name: "HelveticaNeue-Medium", size: 28)
+        awardLabel.center = CGPoint(x: awardMedalView.center.x, y: awardMedalView.center.y + 95)
+
+        awardView.addSubview(awardMedalView)
+        awardView.addSubview(awardLabel)
+        view.addSubview(awardView)
+        
+        UIView.animateWithDuration(1.0, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: {
+                awardView.center = CGPoint(x: center_x, y: center_y)
+            },
+            completion: { finished in
+                
+                UIView.animateWithDuration(0.5, delay: 1, options: UIViewAnimationOptions.CurveEaseOut,
+                    animations: {
+                        awardView.center = CGPoint(x: center_x, y: self.screenSize.height + (self.screenSize.height * 0.25))
+                    },
+                    completion: { finished in
+                        awardView.removeFromSuperview()
+                        visualEffectView.removeFromSuperview()
+                })
+        })
+    }
+
     func awardMedals(average: NSInteger, slot: NSInteger){
-        
-        let imageStrong: UIImage = UIImage(named: "medal-strong.png")!
-        let imageGood: UIImage = UIImage(named: "medal-good.png")!
-        let imageWeak: UIImage = UIImage(named: "medal-weak.png")!
-        
-        var strongThreshold: NSInteger = 0
-        var weakThreshold: NSInteger = 0
-        
+
         var i = slot
         
         if slot == 4 {
@@ -735,6 +733,15 @@ class ViewController: UIViewController, SideBarDelegate {
         } else {
             i = 0
         }
+        
+        imageMedals[i].image = UIImage(named: "medal-\(performanceId(average)).png")
+    }
+    
+    func performanceId(average: NSInteger) -> NSString {
+        
+        var response: NSString = ""
+        var strongThreshold: NSInteger = 0
+        var weakThreshold: NSInteger = 0
 
         if let strongT: AnyObject = NSUserDefaults.standardUserDefaults().objectForKey("strongThreshold") {
             strongThreshold = strongT as NSInteger
@@ -744,21 +751,21 @@ class ViewController: UIViewController, SideBarDelegate {
             weakThreshold = weakT as NSInteger
         }
         
-        
         if strongThreshold > 0 && weakThreshold > 0 {
-            imageMedals[i].image = imageWeak
+            response = "weak"
             
             if average > weakThreshold {
-                imageMedals[i].image = imageGood
+                response = "good"
             }
             
             if average >= strongThreshold {
-                imageMedals[i].image = imageStrong
+                response = "strong"
             }
         }
         else {
-            imageMedals[i].image = imageGood
+            response = "good"
         }
+        return response
     }
     
     func sideBarDidSelectButtonAtIndex(index: Int) {

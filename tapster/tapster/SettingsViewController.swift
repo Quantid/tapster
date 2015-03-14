@@ -25,16 +25,23 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
     let labelReminderTime: UILabel = UILabel()
     let screenSize: CGRect = UIScreen.mainScreen().bounds
     let dateFormatter = NSDateFormatter()
-    var alert: UIAlertController = UIAlertController()
     let message: UIAlertView = UIAlertView()
     var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
+    var alertLogout: UIAlertController = UIAlertController()
     
     var imageLabelBackgrounds: [UIImageView] = []
     var labelTitles: [UILabel] = []
     var labelSubs: [UILabel] = []
     
+    @IBOutlet weak var buttonImportCSV: UIButton!
+    @IBAction func actionImportCSV(sender: AnyObject) {
+        importCSVFile()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        buttonImportCSV.hidden = true
         
         // Menu selector button
         
@@ -53,13 +60,13 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
         view.addSubview(scrollView)
         
         var labelBackgroundPositionY = [30, 5, 30, 30, 5, 30, 30, 30, 30]
-        var labelTitleText = ["Morning Reminder", "Reminder Time", "Sharing", "Sync Status", "Force Sync", "Export Data", "Your Feedback", "Log Out of Taptimal", "Version:"]
+        var labelTitleText = ["Morning Reminder", "Reminder Time", "Sharing", "Sync Status", "Cloud Restore", "Export Data", "Your Feedback", "Log Out of Taptimal", "Version:"]
         var labelSubText = [
             "Receive a reminder every morning to do test",
             "Set the time you want to receive the alert",
             "Allow others to see your life average score",
             "Last sync conducted at:",
-            "Manually force synchronisation process",
+            "Restore your data backed-up in the cloud",
             "Export your results as a CSV file",
             "Tell us what you think about Taptimal",
             "Logging out will not remove your data",
@@ -174,7 +181,7 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
         buttonSync.setImage(UIImage(named: "icon-disclosure.png"), forState: UIControlState.Normal)
         buttonSync.imageEdgeInsets = UIEdgeInsetsMake(0, buttonSync.frame.width-15, 0, 0)
         buttonSync.center = CGPoint(x: imageLabelBackgrounds[4].center.x, y: imageLabelBackgrounds[4].center.y)
-        buttonSync.addTarget(self, action: "actionForceSync", forControlEvents: UIControlEvents.TouchUpInside)
+        buttonSync.addTarget(self, action: "actionCloudRestore", forControlEvents: UIControlEvents.TouchUpInside)
         
         // Set up EXPORT button
         
@@ -267,7 +274,7 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
             
             if grantedSettings.types == UIUserNotificationType.None {
                 
-                alert = UIAlertController(title: "Enable Notifications", message: "Sorry, we can't activate reminders. Go to your iPhone Settings and allow Taptimal to send notifications.", preferredStyle: UIAlertControllerStyle.Alert)
+                let alert = UIAlertController(title: "Enable Notifications", message: "Sorry, we can't activate reminders. Go to your iPhone Settings and allow Taptimal to send notifications.", preferredStyle: UIAlertControllerStyle.Alert)
                 alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
                 self.presentViewController(alert, animated: true, completion: nil)
                 
@@ -361,13 +368,16 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
                         post["lat"] = lat
                     }
                     
-                    if let long = result.valueForKey("long") as? Double {
-                        post["long"] = long
+                    if let lng = result.valueForKey("lng") as? Double {
+                        post["lng"] = lng
                     }
                     
-                    post.saveInBackgroundWithBlock {(success: Bool, postError:NSError!) -> Void in
+                    post.saveInBackgroundWithBlock {
+                        (success: Bool, postError:NSError!) -> Void in
                         if success {
+                            result.setValue(post.objectId, forKey: "objectId")
                             result.setValue(1, forKey: "syncStatusParse")
+                            
                             context.save(&updateError)
                             
                             if updateError == nil {
@@ -408,14 +418,12 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
                 println("\(results.count) updated records found")
                 
                 for result in results {
-                    
-                    var datePredicate = result.valueForKey("date") as NSDate
-                    
-                    let predicate = NSPredicate(format: "date == %@", datePredicate)
-                    
-                    var query = PFQuery(className: "Results", predicate: predicate)
-                    
-                    query.getFirstObjectInBackgroundWithBlock {(record: PFObject!, queryError:NSError!) -> Void in
+                    var query = PFQuery(className: "Results")
+
+                    let objectId = result.valueForKey("objectId") as NSString
+
+                    query.getObjectInBackgroundWithId(objectId){
+                        (record: PFObject!, queryError:NSError!) -> Void in
                         
                         if query.countObjects() > 0 {
                             
@@ -423,27 +431,23 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
                                 
                                 record["note"] = result.valueForKey("note")
                                 
-                                record.saveInBackgroundWithBlock {(success: Bool, saveError: NSError!) -> Void in
+                                record.saveInBackgroundWithBlock {
+                                    (success: Bool, saveError: NSError!) -> Void in
                                     
                                     if success {
-                                        
                                         result.setValue(1, forKey: "syncStatusParse")
                                         
                                         context.save(&updateError)
                                         
                                         if updateError == nil {
-                                            
                                             println("Success: updated a core data record on Parse")
                                         }
                                         else {
-                                            
                                             self.showAlert("Error:", msg: "There was a problem updating core data.")
                                         }
                                     }
                                     else {
-                                        
                                         if let errorString = saveError.userInfo?["error"] as? NSString {
-                                            
                                             self.showAlert("Error:", msg: errorString)
                                         }
                                     }
@@ -461,11 +465,9 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
                             context.save(&updateError)
                             
                             if updateError == nil {
-                                
                                 println("Success: updated a core data record on Parse")
                             }
                             else {
-                                
                                 self.showAlert("Error:", msg: "There was a problem updating core data.")
                             }
                         }
@@ -473,11 +475,7 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
                 }
             }
         }
-        else {
-            
-            // Failed to fetch records for udating
-        }
-        
+
         // STEP 3. Remove deleted measurements from Parse
         
         request.predicate = NSPredicate(format: "syncStatusParse = %@", "3")!
@@ -489,54 +487,34 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
                 println("\(results.count) deleted records found")
                 
                 for result in results {
+                    var query = PFQuery(className: "Results")
                     
-                    var datePredicate = result.valueForKey("date") as NSDate
-                    
-                    let predicate = NSPredicate(format: "date == %@", datePredicate)
-                    
-                    var query = PFQuery(className: "Results", predicate: predicate)
-                    
-                    query.getFirstObjectInBackgroundWithBlock {(record: PFObject!, queryError:NSError!) -> Void in
+                    if let objectId = result.valueForKey("objectId") as? NSString {
                         
-                        if queryError == nil {
+                        query.getObjectInBackgroundWithId(objectId){
+                            (record: PFObject!, queryError:NSError!) -> Void in
                             
-                            record.deleteInBackgroundWithBlock{(success: Bool, deleteError: NSError!) -> Void in
-                                
-                                if success {
+                            if queryError == nil {
+                                record.deleteInBackgroundWithBlock{
+                                    (success: Bool, deleteError: NSError!) -> Void in
                                     
-                                    context.deleteObject(result as NSManagedObject)
-                                    
-                                    if !context.save(&updateError) {
-                                        
-                                        self.showAlert("Error:", msg: "There was a problem updating core data.")
-                                    }
-                                    else {
-                                        
-                                        println("Local record deleted.")
-                                    }
-                                }
-                                else {
-                                    
-                                    if let errorString = deleteError.userInfo?["error"] as? NSString {
-                                        
-                                        self.showAlert("Error:", msg: errorString)
+                                    if !success {
+                                        if let errorString = deleteError.userInfo?["error"] as? NSString {
+                                            self.showAlert("Error:", msg: errorString)
+                                        }
                                     }
                                 }
                             }
                         }
-                        else {
-                            
-                            // Even if there's a Parse query error, we should still delete the local record(s)
-                            
-                            context.deleteObject(result as NSManagedObject)
-                            
-                            if !context.save(&updateError) {
-                                self.showAlert("Error:", msg: "There was a problem updating core data.")
-                            }
-                            else {
-                                println("Local record deleted.")
-                            }
-                        }
+                    }
+                    // Delete from core data
+                    context.deleteObject(result as NSManagedObject)
+                    
+                    if !context.save(&updateError) {
+                        self.showAlert("Error:", msg: "There was a problem updating core data.")
+                    }
+                    else {
+                        println("Local record deleted.")
                     }
                 }
             }
@@ -573,8 +551,202 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
         }
     }
     
-    func actionForceSync() {
+    func importCSVFile() {
+
+        var insertError: NSError?
+        var fetchError: NSError?
+        dateFormatter.dateFormat = "dd-MM-yyyy HH:mm"
+
+        let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let context:NSManagedObjectContext = appDel.managedObjectContext!
+
+        let bundle = NSBundle.mainBundle()
+        let myFilePath = bundle.pathForResource("taptimal-results", ofType: "csv")
+        if let fileContent = String(contentsOfFile: myFilePath!, encoding: NSUTF8StringEncoding, error: nil) {
+            var rows = fileContent.componentsSeparatedByString("\n")
+            
+            for row in rows {
+                let items = row.componentsSeparatedByString(",")
+                if items.count > 4 {
+                    var note: NSString?
+                    let date = dateFormatter.dateFromString(items[0])!
+                    let hand = items[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+                    let tapCount = (items[2] as NSString).integerValue
+                    let lat = (items[3] as NSString).doubleValue
+                    let lng = (items[4] as NSString).doubleValue
+                    if items.count > 5 {
+                        note = items[5]
+                    }
+                    
+                    var request = NSFetchRequest(entityName: "Results")
+                    request.predicate = NSPredicate(format: "date = %@ AND hand = %@", date, hand) // Check if record already exists
+                    
+                    if let results = context.executeFetchRequest(request, error: &fetchError){
+                        
+                        if results.count == 0 {
+                            var record = NSEntityDescription.insertNewObjectForEntityForName("Results", inManagedObjectContext: context) as NSManagedObject
+                            record.setValue(date, forKey: "date")
+                            record.setValue(tapCount, forKey: "tapCount")
+                            record.setValue(hand, forKey: "hand")
+                            record.setValue(0, forKey: "syncStatusParse")
+                            record.setValue(0, forKey: "syncStatusQuantid")
+                            record.setValue(lat, forKey: "lat")
+                            record.setValue(lng, forKey: "lng")
+                            if let nt = note {
+                                record.setValue(nt, forKey: "note")
+                            }
+                            
+                            println("\(date),\(hand),\(tapCount),\(lat),\(lng),\(note)")
+
+                            if context.save(&insertError) {
+                                println("saved...")
+                            }
+                            else {
+                                println("Could not save \(insertError), \(insertError?.userInfo)")
+                            }
+                        }
+                        else {
+                            println("Record already exists.")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func actionCloudRestore() {
         
+        if Reachability.isConnectedToNetwork() {
+            let alertWarning = UIAlertController(
+                title: "Warning",
+                message: "This will delete your local Taptimal data and restore your data from the cloud. Are you sure you want to continue?",
+                preferredStyle: UIAlertControllerStyle.Alert
+            )
+            alertWarning.addAction(UIAlertAction(title: "Canel", style: UIAlertActionStyle.Default, handler: nil))
+            alertWarning.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: {
+                action in
+                
+                self.launchActivityIndicator()
+                
+                // Check if there are any unsynced core data records
+                if self.unsyncedRecords() {
+                    self.stopActivityIndicator()
+                    self.showAlert("Restore Failed", msg: "Data found which hasn't yet been backed-up to the cloud. Try again later.")
+                }
+                else {
+                    // WARNING! - Delete all records
+                    let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+                    let context:NSManagedObjectContext = appDel.managedObjectContext!
+                    var request = NSFetchRequest(entityName: "Results")
+                    
+                    var fetchError : NSError?
+                    if let results = context.executeFetchRequest(request, error: &fetchError){
+                        if fetchError == nil {
+                            for result in results {
+                                context.deleteObject(result as NSManagedObject)
+                            }
+                            println("Deleted: \(results.count) records")
+                            
+                            var saveError : NSError?
+                            context.save(&saveError)
+                            
+                            if saveError != nil {
+                                println("Error encountered deleting records: \(saveError?.userInfo)")
+                                return
+                            }
+                        }
+                    }
+                    self.restoreFromParse()
+                }
+            }))
+            self.presentViewController(alertWarning, animated: true, completion: nil)
+        }
+        else {
+            showAlert("No Internet", msg: "Your phone seems to have lost its data connection. Try again later.")
+        }
+    }
+    
+    func unsyncedRecords() -> Bool {
+        
+        var fetchError : NSError?
+        var response: Bool = true
+        
+        let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let context:NSManagedObjectContext = appDel.managedObjectContext!
+        
+        var request = NSFetchRequest(entityName: "Results")
+        request.predicate = NSPredicate(format: "syncStatusParse = 0")
+        
+        if let results = context.executeFetchRequest(request, error: &fetchError) {
+            if results.count == 0 {
+                response = false
+            }
+        }
+        return response
+    }
+    
+    func restoreFromParse() {
+
+        let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let context:NSManagedObjectContext = appDel.managedObjectContext!
+        
+        var query = PFQuery(className: "Results")
+        query.whereKey("user", equalTo: PFUser.currentUser())
+        query.findObjectsInBackgroundWithBlock {
+            (results: [AnyObject]!, error: NSError!) -> Void in
+            
+            if error == nil {
+                
+                var restoreCounter: NSInteger = 0
+                
+                for result in results {
+                    
+                    var note: NSString?
+                    let objectId = result.valueForKey("objectId") as NSString
+                    let date = result.valueForKey("date") as NSDate
+                    var hand = result.valueForKey("hand") as String
+                    let tapCount = result.valueForKey("tapCount") as NSInteger
+                    let lat = result.valueForKey("lat") as Double
+                    let lng = result.valueForKey("lng") as Double
+                    if let noted = result.valueForKey("note") as? NSString {
+                        note = noted
+                    }
+                    
+                    // Clead data
+                    hand = hand.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+                    
+                    var fetchError : NSError?
+                    var record = NSEntityDescription.insertNewObjectForEntityForName("Results", inManagedObjectContext: context) as NSManagedObject
+                    
+                    record.setValue(objectId, forKey: "objectId")
+                    record.setValue(date, forKey: "date")
+                    record.setValue(tapCount, forKey: "tapCount")
+                    record.setValue(hand, forKey: "hand")
+                    record.setValue(1, forKey: "syncStatusParse")
+                    record.setValue(1, forKey: "syncStatusQuantid")
+                    record.setValue(lat, forKey: "lat")
+                    record.setValue(lng, forKey: "lng")
+                    if let nt = note {
+                        record.setValue(nt, forKey: "note")
+                    }
+                    
+                    println("\(date),\(hand),\(tapCount),\(lat),\(lng),\(note)")
+                    
+                    var insertError : NSError?
+                    if context.save(&insertError) {
+                        println("Saved \(restoreCounter) records")
+                        restoreCounter++
+                    }
+                    else {
+                        println("Error: Could not save \(insertError), \(insertError?.userInfo)")
+                    }
+                }
+            }
+            self.stopActivityIndicator()
+        }
+    }
+    
+    func actionForceSync() {
         if Reachability.isConnectedToNetwork() {
             
             message.title = "Syncing..."
@@ -591,7 +763,7 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
             syncWithParse()
         }
         else {
-            showAlert("No Internet", msg: "Your phone seems to have lost it's data connection. Try again later.")
+            showAlert("No Internet", msg: "Your phone seems to have lost its data connection. Try again later.")
         }
     }
     
@@ -600,13 +772,11 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
     }
     
     func actionLogout() {
-        
-        // Log out user
-        
+
         PFUser.logOut()
         
-        alert = UIAlertController(title: "Logging out...", message: "", preferredStyle: UIAlertControllerStyle.Alert)
-        self.presentViewController(alert, animated: true, completion: nil)
+        alertLogout = UIAlertController(title: "Logging out...", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+        self.presentViewController(alertLogout, animated: true, completion: nil)
         
         launchActivityIndicator()
         
@@ -673,26 +843,15 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
     }
     
     func actionExport() {
-        
-        // Export to CSV file and launch email
-        
-        var dateCSV: NSString = ""
-        var handCSV: NSString = ""
-        var tapCountCSV: NSInteger = 0
-        var noteCSV: NSString = ""
+
+        var fetchError : NSError?
         var resultLine: NSString = ""
         var fileCSV: NSString = ""
-        var messageText: NSString = ""
-        
-        dateFormatter.dateFormat = "dd-MM-yyyy HH:mm" // Set csv date format
-        
-        // Initiate core data
-        
+        dateFormatter.dateFormat = "dd-MM-yyyy HH:mm"
+       
         let appDel:AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         let context:NSManagedObjectContext = appDel.managedObjectContext!
         var request = NSFetchRequest(entityName: "Results")
-        
-        var fetchError : NSError?
         
         if let results = context.executeFetchRequest(request, error: &fetchError) {
             
@@ -702,33 +861,29 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
                 let fileManager = NSFileManager.defaultManager()
                 let documentsPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] as NSString
                 fileCSV = documentsPath.stringByAppendingPathComponent("taptimal-results.csv")
-                
-                //if !fileManager.fileExistsAtPath(documentsPath) {
-                    
-                    fileManager.createFileAtPath(fileCSV, contents: nil, attributes: nil)
-                //}
-                
+                fileManager.createFileAtPath(fileCSV, contents: nil, attributes: nil)
                 let fileHandle: NSFileHandle? = NSFileHandle(forUpdatingAtPath: fileCSV)
                 
                 if fileHandle == nil {
-                    
-                    println("Failed to initate file")
+                    NSLog("Failed to initate file for export")
                 }
                 else {
-                    
                     fileHandle?.seekToEndOfFile()
                     
                     for result in results {
-                        
-                        dateCSV = dateFormatter.stringFromDate(result.valueForKey("date") as NSDate) as NSString
-                        handCSV = result.valueForKey("hand") as NSString
-                        tapCountCSV = result.valueForKey("tapCount") as NSInteger
+                        let dateCSV = dateFormatter.stringFromDate(result.valueForKey("date") as NSDate) as NSString
+                        let handCSV = result.valueForKey("hand") as NSString
+                        let tapCountCSV = result.valueForKey("tapCount") as NSInteger
+                        let latCSV = result.valueForKey("lat") as Double
+                        let lngCSV = result.valueForKey("lng") as Double
                         
                         if let noteCSV = result.valueForKey("note") as? NSString {
-                            resultLine = ("\(dateCSV), \(handCSV), \(tapCountCSV), \(noteCSV) \n")
+                            resultLine = ("\(dateCSV),\(handCSV),\(tapCountCSV),\(noteCSV)\n")
+                            //resultLine = ("\(dateCSV),\(handCSV),\(tapCountCSV),\(latCSV),\(lngCSV),\(noteCSV)\n")
                         }
                         else {
-                            resultLine = ("\(dateCSV), \(handCSV), \(tapCountCSV), \n")
+                            resultLine = ("\(dateCSV),\(handCSV),\(tapCountCSV)\n")
+                            //resultLine = ("\(dateCSV),\(handCSV),\(tapCountCSV),\(latCSV),\(lngCSV)\n")
                         }
                         fileHandle?.writeData(resultLine.dataUsingEncoding(NSUTF8StringEncoding)!)
                     }
@@ -740,13 +895,10 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
                 
                 return
             }
-            
             // EMAIL
-            
             if MFMailComposeViewController.canSendMail() {
-                
+                var messageText: NSString = ""
                 let mailComposer: MFMailComposeViewController = MFMailComposeViewController()
-                
                 mailComposer.mailComposeDelegate = self
                 mailComposer.setSubject("Taptimal CSV file")
                 
@@ -803,12 +955,10 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
     }
     
     func timerLogoutCompleted() {
-        
         stopActivityIndicator()
-        alert.dismissViewControllerAnimated(true, completion: {
+        alertLogout.dismissViewControllerAnimated(true, completion: {
             self.performSegueWithIdentifier("jumpToRegister", sender: nil)
         })
-
     }
     
     func handleTimePicker(sender: AnyObject) {
@@ -832,13 +982,16 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
     
     
     func showAlert(title: NSString, msg: NSString) {
-        alert = UIAlertController(title: title, message: msg, preferredStyle: UIAlertControllerStyle.Alert)
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
-        self.presentViewController(alert, animated: true, completion: nil)
+        if (self.isViewLoaded() && self.view.window != nil) {
+            // Only show alerts if Settings ViewController is active
+            var alert: UIAlertController = UIAlertController()
+            alert = UIAlertController(title: title, message: msg, preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
     }
     
     func launchActivityIndicator() {
-        
         activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 75, 75))
         activityIndicator.center = CGPoint(x: self.view.center.x, y: screenSize.height / 2)
         activityIndicator.hidesWhenStopped = true
@@ -852,7 +1005,6 @@ class SettingsViewController: UIViewController, SideBarDelegate, MFMailComposeVi
     }
     
     func stopActivityIndicator() {
-        
         message.dismissWithClickedButtonIndex(0, animated: true)
         activityIndicator.stopAnimating()
         UIApplication.sharedApplication().endIgnoringInteractionEvents()    // Unlock display

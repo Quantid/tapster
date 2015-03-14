@@ -17,6 +17,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     var busyIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
     let appDel = UIApplication.sharedApplication().delegate as AppDelegate
 
+    @IBOutlet weak var mainScroll: UIScrollView!
     @IBOutlet weak var imageUserPhoto: UIImageView!
     @IBOutlet weak var labelNickname: UILabel!
     @IBOutlet weak var inputCountry: UITextField!
@@ -73,7 +74,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         var nameLastNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("nameLast")
         var countryNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("country")
         var imageUserPhotoNS: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey("image")
-        println(countryNS)
+
         // Check if appdelegate variables have been set. That means this is segue back from the country table
         
         if appDel.placeholderNameFirst != "" {
@@ -84,18 +85,17 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         
         if nameFirstNS == nil && nameLastNS == nil {
-            println("here...")
-            
+
             if user["nameFirst"] == nil {
                 let name: String = user["name"] as String
                 var nameArray = name.componentsSeparatedByString(" ")
                 
                 inputNameFirst.text = nameArray[0]
-                
+                labelNickname.text = nameArray[0]
+
                 if nameArray.count > 1 {
                     inputNameLast.text = nameArray[1]
                 }
-                labelNickname.text = user["name"] as? String
             }
             else {
                 labelNickname.text = user["nameFirst"] as? String
@@ -170,6 +170,10 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         appDel.placeholderProfilePhoto = nil
     }
     
+    override func viewDidLayoutSubviews() {
+        mainScroll.contentSize = CGSizeMake(320, screenSize.height);
+    }
+    
     func textFieldDidBeginEditing(inputCountry: UITextField) {
         appDel.placeholderNameFirst = inputNameFirst.text
         appDel.placeholderNameLast = inputNameLast.text
@@ -185,23 +189,20 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
 
     @IBAction func actionUpdate(sender: AnyObject) {
-
-        var error = ""
         
         // Validate form
+
+        var error = ""
         
         if inputNameFirst.text == "" || inputNameFirst.text == nil || inputNameFirst.text.utf16Count > 25 {
             error = "Invalid first name"
         }
-        
         if inputNameLast.text.utf16Count > 30 {
             error = "Invalid last name"
         }
-        
         if inputCountry.text == "" || inputCountry.text == nil {
             error = "Please select a country"
         }
-        
         if error == "" {
             var query = PFQuery(className:"_User")
             let userId = PFUser.currentUser().objectId
@@ -209,9 +210,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             query.getObjectInBackgroundWithId(userId) {(user: PFObject!, error: NSError!) -> Void in
                 
                 if error == nil {
-
-                    // Success. Now update user details
-                    
+                    // Success
                     user["nameFirst"] = self.inputNameFirst.text
                     user["nameLast"] = self.inputNameLast.text
                     user["name"] = self.inputNameFirst.text

@@ -177,9 +177,10 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
             awardMedal(lifeAverageResults[2])
         }
         else {
-            labelLeftAverage.frame = CGRectMake(72, imageBackground.frame.origin.y + 17, 60, 200)
-            labelLeftAverage.font = UIFont(name: "HelveticaNeue-Light", size: 18)
-            labelLeftAverage.text = "Not enough activity...."
+            println("y:\(imageBackground.frame.origin.y)")
+            labelLeftAverage.frame = CGRectMake(72, imageBackground.frame.origin.y + 17, 250, 28)
+            labelLeftAverage.font = UIFont(name: "HelveticaNeue", size: 16)
+            labelLeftAverage.text = "No results yet. Let's get tapping..."
             labelRightAverage.hidden = true
         }
     }

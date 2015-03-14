@@ -64,23 +64,24 @@ class RankingViewController: UIViewController, UITableViewDelegate, UITableViewD
             (players, error) -> Void in
             
             for player in players {
-                
-                self.playerName.append(player["name"] as NSString)
-                self.playerScore.append(player["lifeAverage"] as NSInteger)
-                self.playerScoreDate.append(player["dateLifeAverage"] as NSDate)
-                
-                let LR_String = player["lifeAverageLR"] as String
-                let LR_Array = split(LR_String) {$0 == "#"}
-                self.playerScoreLR.append("L\(LR_Array[0]) | R\(LR_Array[1])")
-                
-                let imageFile = player["profileImage"] as? PFFile
-                if let imageData = imageFile?.getData() {
-                    self.playerImagePhoto.append(UIImage(data: imageData)!)
+                if let hasLifeAverage = player["lifeAverage"] as? NSInteger {
+                    self.playerName.append(player["name"] as NSString)
+                    self.playerScore.append(player["lifeAverage"] as NSInteger)
+                    self.playerScoreDate.append(player["dateLifeAverage"] as NSDate)
+                    
+                    let LR_String = player["lifeAverageLR"] as String
+                    let LR_Array = split(LR_String) {$0 == "#"}
+                    self.playerScoreLR.append("L\(LR_Array[0]) | R\(LR_Array[1])")
+                    
+                    let imageFile = player["profileImage"] as? PFFile
+                    if let imageData = imageFile?.getData() {
+                        self.playerImagePhoto.append(UIImage(data: imageData)!)
+                    }
+                    else {
+                        self.playerImagePhoto.append(UIImage(named: "profile-silhuette.png")!)
+                    }
+                    self.tableView.reloadData()
                 }
-                else {
-                    self.playerImagePhoto.append(UIImage(named: "profile-silhuette.png")!)
-                }
-                self.tableView.reloadData()
             }
             activityIndicator.stopIndicator(self.busyIndicator)
         })

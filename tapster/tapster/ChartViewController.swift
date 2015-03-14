@@ -9,13 +9,12 @@
 import UIKit
 
 extension UIColor {
-    
     class func leftPlotColor() -> UIColor {
-        return UIColor(red: 21.0/255.0, green: 46.0/255.0, blue: 158.0/255.0, alpha: 1.0)
+        return UIColor(red: 160/255.0, green: 175/255.0, blue: 201/255.0, alpha: 1.0)
     }
     
     class func rightPlotColor() -> UIColor {
-        return UIColor(red: 158.0/255.0, green: 27.0/255.0, blue: 21.0/255.0, alpha: 1.0)
+        return UIColor(red: 247/255.0, green: 101/255.0, blue: 72/255.0, alpha: 1.0)
     }
     
 }
@@ -50,7 +49,6 @@ class ChartViewController: UIViewController, JBBarChartViewDelegate, JBBarChartV
         // Get the selected period
         
         switch selectorChartPeriod.selectedSegmentIndex {
-            
         case 0:
             subTitle = " - past month"
         case 1:
@@ -73,40 +71,32 @@ class ChartViewController: UIViewController, JBBarChartViewDelegate, JBBarChartV
         // Handle chart data
         
         switch chartType {
-            
             case "left":
                 chartDataX = chartLeftData.reverse()
                 chartTitle = "Left taps"
-            
             case "right":
                 chartDataX = chartRightData.reverse()
                 chartTitle = "Right taps"
-            
             case "left+right":
                 chartDataX = chartLeftData.reverse()
                 chartDataX2 = chartRightData.reverse()
                 chartTitle = "Left and Right taps"
-
         default:
             chartDataX = chartLeftData.reverse()
             chartTitle = "Left taps"
         }
         
-        // Remove 0 from results array
-        
-        println(chartDataX)
-        while (find(chartDataX, 0) != nil) {
+        if chartType == "left" || chartType == "right" {
+            // Remove 0 from results array
+            while (find(chartDataX, 0) != nil) {
+                var indx = find(chartDataX, 0)
+                chartDataX.removeAtIndex(indx!)
+            }
             
-            var indx = find(chartDataX, 0)
-            
-            chartDataX.removeAtIndex(indx!)
-        }
-        
-        while (find(chartDataX2, 0) != nil) {
-            
-            var indx = find(chartDataX2, 0)
-            
-            chartDataX2.removeAtIndex(indx!)
+            while (find(chartDataX2, 0) != nil) {
+                var indx = find(chartDataX2, 0)
+                chartDataX2.removeAtIndex(indx!)
+            }
         }
 
         // Get max and min values
